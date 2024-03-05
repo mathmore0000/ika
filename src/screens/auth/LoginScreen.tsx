@@ -9,14 +9,21 @@ import {
   View,
   TextInput,
   Button,
+  Alert,
 } from "react-native";
-import { isEmailValid, isPasswordValid } from "@/data/validations/auth/login";
+import { isEmailValid, isPasswordValid } from "@/data/validations/auth/auth";
 import api from "@/server/api";
 import { NavigationProps } from "@/constants/interfaces/props/DefaultNavigation";
+import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
 const Login: React.FC<NavigationProps> = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
+
+  const clearFields = () => {
+    onChangeEmail("");
+    onChangePassword("");
+  };
 
   const handlePressSignUp = () => {
     navigation.navigate("SignUp");
@@ -24,20 +31,24 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
 
   const handlePressLogin = async () => {
     if (!isEmailValid(email) || !isPasswordValid(password))
-      return console.log("Invalid email or password");
+      return showErrorToast("Usuário ou senha inválidos");
+
     // notify error
     try {
-      const response = await api.post("/sessions", {
+      const response = await api.post("/user/login", {
         email: email,
         password: password,
       });
 
       await SecureStore.setItemAsync("token", response.data.token);
+      console.log(response.data);
 
       navigation.navigate("Home");
+      clearFields();
+      showSuccessToast("Usuário logado com sucesso");
     } catch (_err) {
       console.log(_err);
-      // notify error
+      showErrorToast("Usuário ou senha inválidos");
     }
   };
   return (
