@@ -1,12 +1,13 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
+import { Image, TouchableOpacity, Text, View, TextInput, Button } from "react-native";
 import {
   isEmailValid,
   isPasswordValid,
   isUsernameValid,
 } from "@/data/validations/auth/auth";
+import styles from "@/assets/_auth/styles";
 import api from "@/server/api";
 import { NavigationProps } from "@/constants/interfaces/props/DefaultNavigation";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
@@ -47,50 +48,31 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
-      <Text>SignUp</Text>
+      <StatusBar style="light" />
+      <Image source={require('@/../assets/logo.png')} style={styles.logo} />
+
       <TextInput
         style={styles.input}
-        onChangeText={onChangeName}
-        value={name}
-        placeholder="John Doe"
+        placeholder="Nome"
+        placeholderTextColor="#FFF"
       />
       <TextInput
         style={styles.input}
-        onChangeText={onChangeEmail}
-        value={email}
-        placeholder="john@gmail.com"
+        placeholder="E-mail"
+        placeholderTextColor="#FFF"
       />
       <TextInput
         style={styles.input}
-        onChangeText={onChangePassword}
-        value={password}
-        secureTextEntry={true}
-        placeholder="********"
-      />
-      <Button
-        onPress={handlePressSignUp}
-        title="SignUp"
-        accessibilityLabel="Sign up into your account"
+        placeholder="Senha"
+        placeholderTextColor="#FFF"
+        secureTextEntry
       />
 
-      <StatusBar style="auto" />
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Cadastrar-se</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-});
 
 export default SignUp;

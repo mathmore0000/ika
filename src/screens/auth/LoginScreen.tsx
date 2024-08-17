@@ -3,14 +3,13 @@ import { StatusBar } from "expo-status-bar";
 import * as SecureStore from "expo-secure-store";
 
 import {
-  StyleSheet,
+  Image,
   Text,
   TouchableOpacity,
   View,
-  TextInput,
-  Button,
-  Alert,
+  TextInput
 } from "react-native";
+import styles from "@/assets/_auth/styles";  // Importando os estilos do arquivo separado
 import { isEmailValid, isPasswordValid } from "@/data/validations/auth/auth";
 import api from "@/server/api";
 import { NavigationProps } from "@/constants/interfaces/props/DefaultNavigation";
@@ -27,9 +26,12 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
 
   const handlePressSignUp = () => {
     navigation.navigate("SignUp");
+    return;
   };
 
   const handlePressLogin = async () => {
+    navigation.navigate("Home");
+    return;
     if (!isEmailValid(email) || !isPasswordValid(password))
       return showErrorToast("Usuário ou senha inválidos");
 
@@ -53,47 +55,35 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
-      <Text>Login</Text>
+      <StatusBar style="light" />
+      <Image source={require('@/../assets/logo.png')} style={styles.logo} />
+
       <TextInput
         style={styles.input}
-        onChangeText={onChangeEmail}
-        value={email}
-        placeholder="john@gmail.com"
+        placeholder="User"
+        placeholderTextColor="#FFF"
       />
       <TextInput
         style={styles.input}
-        onChangeText={onChangePassword}
-        value={password}
-        secureTextEntry={true}
-        placeholder="********"
-      />
-      <Button
-        onPress={handlePressLogin}
-        title="Login"
-        accessibilityLabel="Login into your account"
+        placeholder="Senha"
+        placeholderTextColor="#FFF"
+        secureTextEntry
       />
 
-      <StatusBar style="auto" />
-      <TouchableOpacity onPress={handlePressSignUp}>
-        <Text>Criar conta</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handlePressSignUp}
+        >
+          <Text style={styles.buttonText}>Cadastrar-se</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={handlePressLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-});
 
 export default Login;
