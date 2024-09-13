@@ -1,50 +1,33 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+
+// Obter a largura da tela
+const { width, height } = Dimensions.get('window');
+// Definir tamanhos proporcionais com base na largura da tela
+const buttonWidth = width * 0.12; // 12% da largura da tela para o botão
+const buttonHeight = buttonWidth; // Botão circular, altura = largura
+const borderRadius = buttonWidth / 2; // Raio circular baseado no tamanho do botão
 
 export default StyleSheet.create({
-    header: {
-        padding: 20, // Espaçamento maior
-        backgroundColor: "#001F3F",
-        alignItems: "left",
-    },
-    headerText: {
-        color: "#FFFFFF",
-        fontSize: 28, // Aumenta o tamanho da fonte
-        fontWeight: "bold", // Negrito
-    },
-    subHeaderText: {
-        color: "#FFFFFF",
-        fontSize: 18, // Aumenta o tamanho da data
-        marginTop: 10, // Adiciona mais espaçamento entre o título e a data
-    },
-    calendarContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between", // Melhor espaçamento entre os dias
-        paddingHorizontal: 15,
-        paddingVertical: 20, // Aumentei o padding vertical para mais espaçamento
-    },
-    highlightedDay: {
-        backgroundColor: "#4F628E",
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        marginHorizontal: 5,
-    },
-    dayContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        marginHorizontal: 5,
-        borderRadius: 10,
-        backgroundColor: "#192A56",
+    medicineCardTaken: {
+        backgroundColor: "#483DF7", // Azul claro para os cartões
+        borderRadius: 15, // Bordas arredondadas
+        padding: 20, // Espaçamento interno
+        marginVertical: 15, // Espaçamento entre os cartões
+        width: "100%", // Faz o cartão ocupar a largura disponível
+        height: 150, // Altura fixa para os cartões
+        justifyContent: "flex-start", // Iniciar o conteúdo do topo
+        alignItems: "stretch", // Estica o conteúdo horizontalmente
     },
     medicineCard: {
-        backgroundColor: "#192A56",
-        borderRadius: 10,
-        padding: 15,
-        marginVertical: 15, // Aumentei a margem vertical para separar mais os cartões
-        marginHorizontal: 20,
-        flex: 1,
+        backgroundColor: "#010B40", // Azul claro para os cartões
+        borderRadius: 15, // Bordas arredondadas
+        padding: 20, // Espaçamento interno
+        marginVertical: 15, // Espaçamento entre os cartões
+        width: "100%", // Faz o cartão ocupar a largura disponível
+        height: 150, // Altura fixa para os cartões
+        justifyContent: "flex-start", // Iniciar o conteúdo do topo
+        alignItems: "stretch", // Estica o conteúdo horizontalmente
     },
     timeText: {
         color: "#FFFFFF",
@@ -57,29 +40,124 @@ export default StyleSheet.create({
         marginTop: 10,
     },
     statusText: {
-        color: "#B0C4DE",
+        color: "#A0B0E0", // Cor clara para o status "Tomado"
         fontSize: 14,
         marginTop: 10,
     },
     takenTime: {
-        color: "#B0C4DE",
-        fontSize: 14,
-        marginTop: 5,
+        backgroundColor: "#A0B0E0", // Cor de fundo mais clara para indicar que está "Tomado"
+        textAlign: "center",
+        paddingVertical: 10,
+        fontSize: 16,
+        width: "100%", // O botão ocupa toda a largura do cartão
+        alignSelf: "center", // Centralizar o botão
+        borderBottomLeftRadius: 10, // Arredondar apenas as partes inferiores
+        borderBottomRightRadius: 10, // Arredondar apenas as partes inferiores
+        borderTopLeftRadius: 0, // Deixar as partes de cima retas
+        borderTopRightRadius: 0, // Deixar as partes de cima retas
+        color: "#FFFFFF", // Texto branco para o botão
+        fontWeight: "bold",
+    },
+    takenButton: {
+        color: "#FFFFFF",
+        backgroundColor: "#010B40", // Cor mais clara para o botão "Tomar"
+        textAlign: "center",
+        borderBottomLeftRadius: 10, // Arredondar apenas as partes inferiores
+        borderBottomRightRadius: 10, // Arredondar apenas as partes inferiores
+        borderTopLeftRadius: 0, // Deixar as partes de cima retas
+        borderTopRightRadius: 0, // Deixar as partes de cima retas
+        paddingVertical: 10,
+        fontSize: 16,
+        width: "110%", // O botão ocupa toda a largura do cartão
+        alignSelf: "stretch", // Garantir que o botão ocupe toda a largura
+        position: "absolute", // Posiciona o botão
+        bottom: 0, // Encosta o botão no final do cartão
+        left: 0,
+        right: 0,
     },
     actionButton: {
         color: "#FFFFFF",
-        backgroundColor: "#4F628E",
+        backgroundColor: "#483DF7", // Cor mais clara para o botão "Tomar"
         textAlign: "center",
-        borderRadius: 5,
-        paddingVertical: 5,
-        marginTop: 10,
+        borderBottomLeftRadius: 10, // Arredondar apenas as partes inferiores
+        borderBottomRightRadius: 10, // Arredondar apenas as partes inferiores
+        borderTopLeftRadius: 0, // Deixar as partes de cima retas
+        borderTopRightRadius: 0, // Deixar as partes de cima retas
+        paddingVertical: 10,
         fontSize: 16,
+        width: "110%", // O botão ocupa toda a largura do cartão
+        alignSelf: "stretch", // Garantir que o botão ocupe toda a largura
+        position: "absolute", // Posiciona o botão
+        bottom: 0, // Encosta o botão no final do cartão
+        left: 0,
+        right: 0,
+    },
+    calendarContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+    },
+    dayWrapper: {
+        height: 100,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 5,
+        borderRadius: 15,
+        marginHorizontal: 5,
+    },
+    highlightedDay: {
+        backgroundColor: "#192A56", // Cor de fundo do dia selecionado, abrangendo o nome e o número
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 15, // Raio para o highlight pegar o nome e o número
+    },
+    dayText: {
+        color: "#FFFFFF", // Cor padrão para o nome do dia
+        fontSize: 18,
+        marginBottom: 5,
+        textTransform: "capitalize", // Faz a primeira letra ser maiúscula
+        textAlign: "center", // Centraliza o texto horizontalmente
+        fontWeight: "bold",
+    },
+    highlightedText: {
+        color: "#FFFFFF", // Cor do texto para o nome do dia selecionado
+        fontWeight: "bold",
+    },
+    dayContainer: {
+        backgroundColor: "#FFFFFF", // Fundo branco para o número do dia
+        borderRadius: 25,
+        width: 50,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1,
+        borderColor: "#192A56",
+    },
+    dayNumber: {
+        color: "#192A56", // Cor para o número do dia
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    header: {
+        padding: 20, // Espaçamento maior
+        backgroundColor: "#001F3F"
+    },
+    headerText: {
+        color: "#FFFFFF",
+        fontSize: 28, // Aumenta o tamanho da fonte
+        fontWeight: "bold", // Negrito
+    },
+    subHeaderText: {
+        color: "#FFFFFF",
+        fontSize: 18, // Aumenta o tamanho da data
+        marginTop: 10, // Adiciona mais espaçamento entre o título e a data
     },
     noMedicinesText: {
         color: "#FFFFFF",
-        textAlign: "center",
-        fontSize: 16,
-        marginTop: 20,
+        fontSize: 18, // Aumenta o tamanho da fonte
+        fontWeight: "bold", // Deixa o texto em negrito
+        textAlign: "center", // Alinhamento horizontal
     },
     container: {
         flex: 1,

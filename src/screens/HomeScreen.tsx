@@ -30,40 +30,51 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.calendarContainer}
+        style={{ maxHeight: 120 }} // Limitar a altura do ScrollView horizontal
       >
         {weekDays.map((day, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => setSelectedDay(day.fullDate)} // Atualiza o dia selecionado ao clicar
-            style={[styles.dayContainer, selectedDay === day.fullDate && styles.highlightedDay]}
+            style={[
+              styles.dayWrapper, // Wrapper para englobar nome e número
+              selectedDay === day.fullDate && styles.highlightedDay, // Aplica o highlight completo
+            ]}
           >
-            <Text style={styles.dayText}>{day.name}</Text>
-            <Text style={styles.dayNumber}>{day.number}</Text>
+            <Text style={[styles.dayText, selectedDay === day.fullDate && styles.highlightedText]}>
+              {day.name}
+            </Text>
+            <View style={styles.dayContainer}>
+              <Text style={styles.dayNumber}>{day.number}</Text>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
+
       {/* Exibição dos remédios */}
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 20 }}>
         {selectedMedicines.length > 0 ? (
           selectedMedicines.map((medicine, index) => (
-            <View key={index} style={styles.medicineCard}>
-              <Text style={styles.timeText}>{medicine.time}</Text>
-              <Text style={styles.medicineText}>{medicine.name}</Text>
+            <View key={index} style={medicine.status === "Tomado" ? styles.medicineCardTaken : styles.medicineCard }>
+              <View>
+                <Text style={styles.timeText}>{medicine.time}</Text>
+                <Text style={styles.medicineText}>{medicine.name}</Text>
+              </View>
               {medicine.status === "Tomado" ? (
-                <Text style={styles.statusText}>{medicine.status}</Text>
+                <Text style={styles.takenButton}>Tomado {medicine.takenTime}</Text> // O botão agora estará no rodapé
               ) : (
-                <Text style={styles.actionButton}>{medicine.status}</Text>
+                <Text style={styles.actionButton}>Tomar</Text> // O botão agora estará no rodapé
               )}
-              {medicine.takenTime ? (
-                <Text style={styles.takenTime}>{medicine.takenTime}</Text>
-              ) : null}
             </View>
           ))
         ) : (
-          <Text style={styles.noMedicinesText}>Nenhum remédio para este dia</Text>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={styles.noMedicinesText}>Nenhum remédio para este dia</Text>
+          </View>
         )}
       </ScrollView>
+
     </View>
   );
 };
