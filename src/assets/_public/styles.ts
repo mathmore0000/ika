@@ -11,11 +11,11 @@ const borderRadius = buttonWidth / 2; // Raio circular baseado no tamanho do bot
 export default StyleSheet.create({
     medicineCardTaken: {
         backgroundColor: "#483DF7", // Azul claro para os cartões
+        width: "100%", // Faz o cartão ocupar a largura disponível
+        height: 170, // Altura fixa para os cartões
         borderRadius: 15, // Bordas arredondadas
         padding: 20, // Espaçamento interno
         marginVertical: 15, // Espaçamento entre os cartões
-        width: "100%", // Faz o cartão ocupar a largura disponível
-        height: 150, // Altura fixa para os cartões
         justifyContent: "flex-start", // Iniciar o conteúdo do topo
         alignItems: "stretch", // Estica o conteúdo horizontalmente
     },
@@ -36,7 +36,8 @@ export default StyleSheet.create({
     },
     medicineText: {
         color: "#FFFFFF",
-        fontSize: 16,
+        fontWeight: "bold",
+        fontSize: 18,
         marginTop: 10,
     },
     statusText: {
@@ -98,6 +99,9 @@ export default StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 15,
     },
+    cardsContainer: {
+        marginTop: -25
+    },
     dayWrapper: {
         height: 100,
         alignItems: "center",
@@ -145,22 +149,29 @@ export default StyleSheet.create({
     },
     headerText: {
         color: "#FFFFFF",
-        fontSize: 28, // Aumenta o tamanho da fonte
-        fontWeight: "bold", // Negrito
+        fontSize: 32, // Aumenta o tamanho da fonte
     },
     subHeaderText: {
         color: "#FFFFFF",
-        fontSize: 18, // Aumenta o tamanho da data
-        marginTop: 10, // Adiciona mais espaçamento entre o título e a data
+        fontSize: 22, // Aumenta o tamanho da data
+        marginTop: 5, // Adiciona mais espaçamento entre o título e a data
     },
     noMedicinesText: {
-        color: "#FFFFFF",
+        color: "#000000",
         fontSize: 18, // Aumenta o tamanho da fonte
         fontWeight: "bold", // Deixa o texto em negrito
         textAlign: "center", // Alinhamento horizontal
     },
+    blueCirclecontainer: {
+        backgroundColor: "#001F3F", // Fundo azul escuro
+        width: 450,
+        height: 300,
+        position: "absolute",
+        alignSelf: "center",
+        borderRadius: borderRadius*2
+    },
     container: {
         flex: 1,
-        backgroundColor: "#001F3F", // Fundo azul escuro
+        backgroundColor: "#F2EDE9", // Fundo azul escuro
     },
 });

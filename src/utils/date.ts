@@ -3,7 +3,6 @@ const getLocalDate = () => {
   // Ajusta a data para o fuso horário local
   const offsetInMinutes = now.getTimezoneOffset();
   const localDate = new Date(now.getTime() - offsetInMinutes * 60 * 1000);
-
   return localDate;
 };
 
@@ -18,10 +17,11 @@ export const getDay = (date: Date) => {
 // Função para pegar o array de dias a partir de hoje
 export const getDaysArray = (startDate: Date) => {
   const days = [];
-  const startOfWeek = new Date(startDate.setDate(startDate.getDate() - startDate.getDay())); // Começa no domingo
+  const startOfWeek = new Date(startDate); // Criar uma cópia de startDate
+  startOfWeek.setDate(startDate.getDate() - startDate.getDay()); // Começa no domingo
 
   for (let i = 0; i < 7; i++) {
-    const date = new Date(startOfWeek);
+    const date = new Date(startOfWeek); // Criar uma cópia para cada dia
     date.setDate(startOfWeek.getDate() + i);
     days.push({
       name: date.toLocaleDateString("pt-BR", { weekday: "short" }), // Nome do dia (Seg, Ter, Qua)
@@ -34,7 +34,7 @@ export const getDaysArray = (startDate: Date) => {
 
 const getFormattedDate = (date: Date) => {
   const daysOfWeek = [
-    "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"
+    "Domingo", "Segunda - feira", "Terça - feira", "Quarta - feira", "Quinta - feira", "Sexta - feira", "Sábado"
   ];
   const months = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho",
@@ -45,7 +45,7 @@ const getFormattedDate = (date: Date) => {
   const month = months[date.getMonth()];
   const year = date.getFullYear();
 
-  return `${dayOfWeek}, ${day} de ${month} de ${year}`;
+  return `${dayOfWeek}, ${month} ${day}`;
 };
 
 export const todayFormatted = getFormattedDate(today);

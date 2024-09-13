@@ -16,6 +16,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.blueCirclecontainer} />
 
       {/* Cabeçalho */}
       <View style={styles.header}>
@@ -26,54 +27,56 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       </View>
 
       {/* Cabeçalho com os dias da semana */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.calendarContainer}
-        style={{ maxHeight: 120 }} // Limitar a altura do ScrollView horizontal
-      >
+      <View style={styles.calendarContainer}>
         {weekDays.map((day, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => setSelectedDay(day.fullDate)} // Atualiza o dia selecionado ao clicar
+            onPress={() => setSelectedDay(day.fullDate)}
             style={[
-              styles.dayWrapper, // Wrapper para englobar nome e número
-              selectedDay === day.fullDate && styles.highlightedDay, // Aplica o highlight completo
+              styles.dayWrapper,
+              selectedDay === day.fullDate && styles.highlightedDay,
             ]}
           >
             <Text style={[styles.dayText, selectedDay === day.fullDate && styles.highlightedText]}>
-              {day.name}
+              {day.name.split(".")[0]}
             </Text>
             <View style={styles.dayContainer}>
               <Text style={styles.dayNumber}>{day.number}</Text>
             </View>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
 
 
-      {/* Exibição dos remédios */}
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 20 }}>
-        {selectedMedicines.length > 0 ? (
-          selectedMedicines.map((medicine, index) => (
-            <View key={index} style={medicine.status === "Tomado" ? styles.medicineCardTaken : styles.medicineCard }>
-              <View>
-                <Text style={styles.timeText}>{medicine.time}</Text>
-                <Text style={styles.medicineText}>{medicine.name}</Text>
+      <View style={styles.cardsContainer}>
+        {/* Exibição dos remédios */}
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 20 }}>
+          {selectedMedicines.length > 0 ? (
+            selectedMedicines.map((medicine, index) => (
+              <View key={index} style={medicine.status === "Tomado" ? styles.medicineCardTaken : styles.medicineCard}>
+                <View>
+                  <Text style={styles.timeText}>   {medicine.time}</Text>
+                  <Text style={styles.medicineText}>{medicine.name}</Text>
+
+                  {medicine.status === "Tomado" ? <Text style={{
+                    color: "#000000",
+                    fontSize: 18,
+                  }}>Tomado</Text> : null}
+                </View>
+                {medicine.status === "Tomado" ? (
+                  <Text style={styles.takenButton}>Tomado {medicine.takenTime}</Text> // O botão agora estará no rodapé
+                ) : (
+                  <Text style={styles.actionButton}>Tomar</Text> // O botão agora estará no rodapé
+                )}
               </View>
-              {medicine.status === "Tomado" ? (
-                <Text style={styles.takenButton}>Tomado {medicine.takenTime}</Text> // O botão agora estará no rodapé
-              ) : (
-                <Text style={styles.actionButton}>Tomar</Text> // O botão agora estará no rodapé
-              )}
+            ))
+          ) : (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <Text style={styles.noMedicinesText}>Nenhum remédio para este dia</Text>
             </View>
-          ))
-        ) : (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text style={styles.noMedicinesText}>Nenhum remédio para este dia</Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      </View>
 
     </View>
   );
