@@ -1,5 +1,8 @@
-export interface IconNodeProps {
+// Home.ts
+import { DefaultProps } from './base';
+
+export interface IconNodeProps extends DefaultProps {
   destination: string;
   icon: string;
-  navigation?: any; // bulit-in type for React Navigation
+  central: boolean
 }

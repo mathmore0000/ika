@@ -1,3 +1,5 @@
-export interface FooterProps {
-  navigation: any; // bulit-in type for React Navigation
+// Home.ts
+import { DefaultProps } from './base';
+
+export interface FooterProps extends DefaultProps {
 }

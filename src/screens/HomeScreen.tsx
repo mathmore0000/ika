@@ -4,8 +4,9 @@ import { HomeProps } from "@/constants/interfaces/props/Home";
 import medicinesData from "@/assets/mock/MedicineMock.json";
 import styles from "../assets/_public/styles"; // Estilos
 import { getDaysArray, getDay, today, todayFormatted } from "@/utils/date"; // Função para obter os dias da semana
+import AppLayout from "@/components/shared/AppLayout";
 
-const Home: React.FC<HomeProps> = ({ navigation }) => {
+const Home: React.FC<HomeProps> = ({ navigation, local="Home" }) => {
   const weekDays = getDaysArray(today); // Pega os dias da semana
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]); // Estado do dia selecionado (começa com o dia atual)
 
@@ -50,7 +51,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
 
       <View style={styles.cardsContainer}>
         {/* Exibição dos remédios */}
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 20 }}>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
           {selectedMedicines.length > 0 ? (
             selectedMedicines.map((medicine, index) => (
               <View key={index} style={medicine.status === "Tomado" ? styles.medicineCardTaken : styles.medicineCard}>
@@ -71,13 +72,13 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
               </View>
             ))
           ) : (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={styles.noMedicinesContainer }>
               <Text style={styles.noMedicinesText}>Nenhum remédio para este dia</Text>
             </View>
           )}
         </ScrollView>
       </View>
-
+      <AppLayout navigation={navigation} local={local} />
     </View>
   );
 };

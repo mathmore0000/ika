@@ -1,3 +1,7 @@
-export interface HomeProps {
-  navigation: any; // bulit-in type for React Navigation
+// Home.ts
+import { DefaultProps } from './base';
+
+export interface HomeProps extends DefaultProps {
+  // Any additional properties specific to Home can go here
+  someOtherProp?: string; // Optional prop
 }

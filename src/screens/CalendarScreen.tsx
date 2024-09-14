@@ -1,9 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
+import AppLayout from "@/components/shared/AppLayout";
+import { CalendarProps } from "@/constants/interfaces/props/Calendar";
 
-const Chat = () => {
+const Chat: React.FC<CalendarProps> = ({ navigation, local="Calendar" }) => {
   return (
     <View style={styles.container}>
       <Text>Calendar</Text>
+      <AppLayout navigation={navigation} local={local} />
     </View>
   );
 };

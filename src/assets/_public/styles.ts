@@ -100,7 +100,8 @@ export default StyleSheet.create({
         paddingVertical: 15,
     },
     cardsContainer: {
-        marginTop: -25
+        marginTop: -5,
+        marginBottom: 320
     },
     dayWrapper: {
         height: 100,
@@ -156,11 +157,16 @@ export default StyleSheet.create({
         fontSize: 22, // Aumenta o tamanho da data
         marginTop: 5, // Adiciona mais espaçamento entre o título e a data
     },
+    noMedicinesContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        height: height / 2
+    },
     noMedicinesText: {
         color: "#000000",
         fontSize: 18, // Aumenta o tamanho da fonte
         fontWeight: "bold", // Deixa o texto em negrito
-        textAlign: "center", // Alinhamento horizontal
     },
     blueCirclecontainer: {
         backgroundColor: "#001F3F", // Fundo azul escuro
@@ -168,7 +174,7 @@ export default StyleSheet.create({
         height: 300,
         position: "absolute",
         alignSelf: "center",
-        borderRadius: borderRadius*2
+        borderRadius: borderRadius * 2
     },
     container: {
         flex: 1,
