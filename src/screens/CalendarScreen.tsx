@@ -1,23 +1,86 @@
-import { StyleSheet, Text, View } from "react-native";
-import AppLayout from "@/components/shared/AppLayout";
+import React, { useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { CalendarProps } from "@/constants/interfaces/props/Calendar";
+import medicinesData from "@/assets/mock/MedicineMock.json";
+import styles from "../assets/_public/styles"; // Estilos
+import { getDaysArray, getDay, today, todayFormatted } from "@/utils/date"; // Função para obter os dias da semana
+import AppLayout from "@/components/shared/AppLayout";
 
-const Chat: React.FC<CalendarProps> = ({ navigation, local="Calendar" }) => {
+const Calendar: React.FC<CalendarProps> = ({ navigation, local="Calendar" }) => {
+  const weekDays = getDaysArray(today); // Pega os dias da semana
+  const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]); // Estado do dia selecionado (começa com o dia atual)
+
+  // Filtrar remédios para o dia selecionado
+  const selectedMedicines = medicinesData.find(
+    (data) => data.date === selectedDay
+  )?.medicines || [];
+
   return (
     <View style={styles.container}>
-      <Text>Calendar</Text>
+      <View style={styles.blueCirclecontainer} />
+
+      {/* Cabeçalho */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Hoje</Text>
+        <Text style={styles.subHeaderText}>
+          {todayFormatted}
+        </Text>
+      </View>
+
+      {/* Cabeçalho com os dias da semana */}
+      <View style={styles.calendarContainer}>
+        {weekDays.map((day, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => setSelectedDay(day.fullDate)}
+            style={[
+              styles.dayWrapper,
+              selectedDay === day.fullDate && styles.highlightedDay,
+            ]}
+          >
+            <Text style={[styles.dayText, selectedDay === day.fullDate && styles.highlightedText]}>
+              {day.name.split(".")[0]}
+            </Text>
+            <View style={styles.dayContainer}>
+              <Text style={styles.dayNumber}>{day.number}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+
+      <View style={styles.cardsContainer}>
+        {/* Exibição dos remédios */}
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
+          {selectedMedicines.length > 0 ? (
+            selectedMedicines.map((medicine, index) => (
+              <View key={index} style={medicine.status === "Tomado" ? styles.medicineCardTaken : styles.medicineCard}>
+                <View>
+                  <Text style={styles.timeText}>   {medicine.time}</Text>
+                  <Text style={styles.medicineText}>{medicine.name}</Text>
+
+                  {medicine.status === "Tomado" ? <Text style={{
+                    color: "#000000",
+                    fontSize: 18,
+                  }}>Tomado</Text> : null}
+                </View>
+                {medicine.status === "Tomado" ? (
+                  <Text style={styles.takenButton}>Tomado {medicine.takenTime}</Text> // O botão agora estará no rodapé
+                ) : (
+                  <Text style={styles.actionButton}>Tomar</Text> // O botão agora estará no rodapé
+                )}
+              </View>
+            ))
+          ) : (
+            <View style={styles.noMedicinesContainer }>
+              <Text style={styles.noMedicinesText}>Nenhum remédio para este dia</Text>
+            </View>
+          )}
+        </ScrollView>
+      </View>
       <AppLayout navigation={navigation} local={local} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
-export default Chat;
+export default Calendar;

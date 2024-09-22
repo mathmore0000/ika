@@ -1,6 +1,6 @@
 [
   { "text": "Home", "destination": "Home", "icon": "home" },
-  { "text": "Talk", "destination": "Chat", "icon": "chat" },
+  { "text": "Settings", "destination": "Settings", "icon": "settings" },
   { "text": "Calendar", "destination": "Calendar", "icon": "calendar-month" },
   { "text": "User", "destination": "User", "icon": "person" },
   { "text": "Notifications", "destination": "Notifications", "icon": "email" }

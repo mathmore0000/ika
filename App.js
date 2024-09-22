@@ -2,10 +2,10 @@ import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootSiblingParent } from "react-native-root-siblings";
-import HomeScreen from "@/screens/HomeScreen";
-import ChatScreen from "@/screens/ChatScreen";
+import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
-import NotificationsScreen from "@/screens/NotificationsScreen";
+import NotificationsScreen from "@/screens/Notifications/NotificationsScreen";
+import NotificationDetailsScreen from "@/screens/Notifications/NotificationDetailsScreen";
 import UserScreen from "@/screens/UserScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
@@ -26,10 +26,10 @@ export default function App() {
     <RootSiblingParent>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Auth">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
           <Stack.Screen name="User" component={UserScreen} />
 
           <Stack.Screen
@@ -49,7 +49,6 @@ Exemplificando segregação por stack, stack settings, etc
 function ChatStackNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
       <Stack.Screen name="Calendar" component={CalendarScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />

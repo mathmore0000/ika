@@ -30,7 +30,7 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
   };
 
   const handlePressLogin = async () => {
-    navigation.navigate("Home");
+    navigation.navigate("Calendar");
     return;
     if (!isEmailValid(email) || !isPasswordValid(password))
       return showErrorToast("Usuário ou senha inválidos");
@@ -45,7 +45,7 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
       await SecureStore.setItemAsync("token", response.data.token);
       console.log(response.data);
 
-      navigation.navigate("Home");
+      navigation.navigate("Calendar");
       clearFields();
       showSuccessToast("Usuário logado com sucesso");
     } catch (_err) {
