@@ -6,7 +6,6 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { ResponsiblesProps } from "@/constants/interfaces/props/Responsibles";
 import RemoteImage from "@/components/shared/RemoteImage";
 import AddNewResponsibleScreen from './AddNewResponsibleScreen';
-import { RootSiblingParent } from 'react-native-root-siblings';
 
 const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
   const BASE_URL = "/responsibles"
@@ -87,13 +86,11 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
         transparent={true}
         onRequestClose={closeModal}
       >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-        <RootSiblingParent>
-              <AddNewResponsibleScreen BASE_URL={BASE_URL} fetchResponsibles={fetchResponsibles} fetchSupervisedUsers={fetchSupervisedUsers} closeModal={closeModal} />
-        </RootSiblingParent>
-            </View>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <AddNewResponsibleScreen BASE_URL={BASE_URL} fetchResponsibles={fetchResponsibles} fetchSupervisedUsers={fetchSupervisedUsers} closeModal={closeModal} />
           </View>
+        </View>
       </Modal>
       <Text style={styles.header}>Supervisionados</Text>
       <TouchableOpacity

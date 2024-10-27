@@ -1,7 +1,6 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { RootSiblingParent } from "react-native-root-siblings";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 
@@ -10,6 +9,7 @@ import CalendarScreen from "@/screens/CalendarScreen";
 import NotificationsScreen from "@/screens/Notifications/NotificationsScreen";
 import NotificationDetailsScreen from "@/screens/Notifications/NotificationDetailsScreen";
 import ResponsiblesScreen from "@/screens/Responsibles/ResponsiblesScreen";
+import MedicationsScreen from "@/screens/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
@@ -68,15 +68,14 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
         <Stack.Screen name="Responsibles" component={ResponsiblesScreen} />
+        <Stack.Screen name="Medications" component={MedicationsScreen} />
       </Stack.Navigator>
     );
   }
 
   return (
-    <RootSiblingParent>
-      <NavigationContainer>
-        {isAuthenticated ? <MainStack /> : <AuthStack />}
-      </NavigationContainer>
-    </RootSiblingParent>
+    <NavigationContainer>
+      {isAuthenticated ? <MainStack /> : <AuthStack />}
+    </NavigationContainer>
   );
 }

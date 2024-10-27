@@ -1,5 +1,5 @@
 [
-  { "text": "Home", "destination": "Home", "icon": "home" },
+  { "text": "Medications", "destination": "Medications", "icon": "medication" },
   { "text": "Settings", "destination": "Settings", "icon": "settings" },
   { "text": "Calendar", "destination": "Calendar", "icon": "calendar-month" },
   { "text": "Responsibles", "destination": "Responsibles", "icon": "person" },
