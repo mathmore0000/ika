@@ -1,28 +1,25 @@
-import Toast from "react-native-root-toast";
+import Toast from 'react-native-simple-toast';
 
 const showErrorToast = (
   message: string,
-  duration: number = Toast.durations.LONG
+  duration: number = Toast.LONG
 ) => {
-  Toast.show(message, {
-    duration: duration,
-    backgroundColor: "red",
-    shadow: true,
-    animation: true,
-    hideOnPress: true,
-  });
+  Toast.show(message, duration,
+    {
+      backgroundColor: 'blue',
+      tapToDismissEnabled: true,
+    });
 };
 
 const showSuccessToast = (
   message: string,
-  duration: number = Toast.durations.LONG
+  duration: number = Toast.LONG
 ) => {
-  Toast.show(message, {
-    duration: duration,
+  Toast.show(message, 
+    duration,
+    {
     backgroundColor: "green",
-    shadow: true,
-    animation: true,
-    hideOnPress: true,
+    tapToDismissEnabled: true,
   });
 };
 

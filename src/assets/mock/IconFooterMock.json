@@ -2,6 +2,6 @@
   { "text": "Home", "destination": "Home", "icon": "home" },
   { "text": "Settings", "destination": "Settings", "icon": "settings" },
   { "text": "Calendar", "destination": "Calendar", "icon": "calendar-month" },
-  { "text": "User", "destination": "User", "icon": "person" },
+  { "text": "Responsibles", "destination": "Responsibles", "icon": "person" },
   { "text": "Notifications", "destination": "Notifications", "icon": "email" }
 ]
