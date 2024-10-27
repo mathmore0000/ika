@@ -1,14 +1,10 @@
-export function isEmailValid(value: string) {
+export function validateEmail(value: string): string | null {
   if (!value) {
-    return 0;
-  }
-  if (!value.includes("@")) {
-    return 0;
+    return "E-mail é obrigatório.";
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(value)) {
-    return 0;
+    return "E-mail inválido. Insira um e-mail válido.";
   }
-
-  return 1;
+  return null; // Sem erros
 }

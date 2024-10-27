@@ -1,18 +1,23 @@
-export function isPasswordValid(value: string) {
+export function validatePassword(value: string): string | null {
   if (!value) {
-    return 0;
+    return "Senha é obrigatória.";
   }
-  if (value.length < 6) {
-    return 0;
+  if (value.length < 6 || value.length > 50) {
+    return "A senha deve ter entre 6 e 50 caracteres.";
   }
-  if (value.length > 50) {
-    return 0;
-  }
-  const passwordRegex =
-    /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{6,}$/;
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_])/;
   if (!passwordRegex.test(value)) {
-    return 0;
+    return "A senha deve conter letras maiúsculas, minúsculas, números e símbolos.";
   }
+  return null; // Sem erros
+}
 
-  return 1;
+export function validatePasswordLogin(value: string): string | null {
+  if (!value) {
+    return "Senha é obrigatória.";
+  }
+  if (value.length < 6 || value.length > 50) {
+    return "A senha deve ter entre 6 e 50 caracteres.";
+  }
+  return null; // Sem erros
 }

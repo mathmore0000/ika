@@ -1,17 +1,13 @@
-export function isUsernameValid(value: string) {
+export function validateName(value: string): string | null {
   if (!value) {
-    return 0;
+    return "Nome é obrigatório.";
   }
-  if (value.length < 2) {
-    return 0;
+  if (value.length < 2 || value.length > 50) {
+    return "O nome deve ter entre 2 e 50 caracteres.";
   }
-  if (value.length > 50) {
-    return 0;
+  const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/;
+  if (!nameRegex.test(value)) {
+    return "Nome inválido. Use apenas letras e espaços.";
   }
-  const passwordRegex = /^[a-zA-Z0-9]{2,50}$/;
-  if (!passwordRegex.test(value)) {
-    return 0;
-  }
-
-  return 1;
+  return null; // Sem erros
 }

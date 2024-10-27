@@ -20,6 +20,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginVertical: 10,
     color: "#FFF",
+    borderWidth: 1,
+    borderColor: "#FFF",
+  },
+  inputError: {
+    borderColor: "red",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: "row",

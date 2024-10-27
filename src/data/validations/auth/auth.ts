@@ -1,5 +1,5 @@
-import { isEmailValid } from "./_email";
-import { isPasswordValid } from "./_password";
-import { isUsernameValid } from "./_username";
+import { validateEmail } from "./_email";
+import { validatePassword, validatePasswordLogin } from "./_password";
+import { validateName } from "./_username";
 
-export { isEmailValid, isPasswordValid, isUsernameValid };
+export { validateEmail, validatePassword, validatePasswordLogin, validateName };
