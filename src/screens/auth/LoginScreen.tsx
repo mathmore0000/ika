@@ -76,7 +76,7 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      <Image source={require('@/../assets/logo.png')} style={styles.logo} />
+      <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
 
       <TextInput
         style={[
