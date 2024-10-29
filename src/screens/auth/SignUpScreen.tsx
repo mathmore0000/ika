@@ -98,10 +98,10 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
         <Image className="mt-4" source={require('@/assets/images/logo.png')} style={styles.logo} />
       </View>
       <View className="w-full items-center flex flex-col gap-10">
-        <View className="w-full items-center flex flex-col gap-6" >
+        <View className="items-center flex flex-col gap-6  w-[80%]" >
           <View className="w-full items-center flex flex-col">
             <TextInput
-              className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
+              className="h-14 w-full rounded-[25px] bg-white text-black px-4"
               style={[errors.name && styles.inputError]}
               placeholder="Nome"
               placeholderTextColor="#000"
@@ -118,7 +118,7 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
 
           <View className="w-full items-center flex flex-col">
             <TextInput
-              className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
+              className="h-14 w-full rounded-[25px] bg-white text-black px-4"
               style={[errors.email && styles.inputError]}
               placeholder="E-mail"
               placeholderTextColor="#000"
@@ -135,7 +135,7 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
 
           <View className="w-full items-center flex flex-col">
             <TextInput
-              className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
+              className="h-14 w-full rounded-[25px] bg-white text-black px-4"
               style={[errors.password && styles.inputError]}
               placeholder="Senha"
               placeholderTextColor="#000"
@@ -151,9 +151,9 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
             {errors.password && <Text className="text-sm text-red-600 font-semibold">{errors.password}</Text>}
           </View>
         </View>
-        <View className="w-full flex items-center flex-col gap-6">
-          <TouchableOpacity className="bg-white w-[80%] flex items-center justify-center h-12 rounded-[25px]" onPress={handlePressSignUp}>
-            <Text style={styles.buttonText}>Cadastrar-se</Text>
+        <View className="w-[80%] flex items-center flex-col gap-6">          
+          <TouchableOpacity className="bg-white w-full flex items-center justify-center h-12 rounded-[25px]" onPress={handlePressSignUp}>
+            <Text className="text-black font-semibold">Cadastrar-se</Text>
           </TouchableOpacity>
           <Text className="text-white cursor-pointer font-semibold" onPress={handlePressLogin}>Já possui conta? Entre!</Text>
         </View>
