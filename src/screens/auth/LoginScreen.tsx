@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import * as SecureStore from "expo-secure-store";
-
 import {
   Image,
   Text,
   TouchableOpacity,
   View,
-  TextInput
+  TextInput,
+  Keyboard,
 } from "react-native";
 import styles from "@/assets/_auth/styles-login";
 import { validateEmail, validatePasswordLogin } from "@/data/validations/auth/auth";
@@ -19,6 +19,20 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const clearFields = () => {
     onChangeEmail("");
@@ -72,7 +86,6 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
     }
   };
 
-
   return (
     <View className="flex items-center justify-between bg-primary-light flex-1">
       <StatusBar style="light" />
@@ -80,13 +93,11 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
         <Image className="mt-4" source={require('@/assets/images/logo.png')} style={styles.logo} />
       </View>
       <View className="w-full items-center flex flex-col gap-10">
-        <View className="w-full items-center flex flex-col gap-6" >
-          <View className="w-full items-center flex flex-col" >
+        <View className="w-full items-center flex flex-col gap-6">
+          <View className="w-full items-center flex flex-col">
             <TextInput
               className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
-              style={[
-                errors.email && styles.inputError,
-              ]}
+              style={[errors.email && styles.inputError]}
               placeholder="E-mail"
               placeholderTextColor="#000"
               value={email}
@@ -97,14 +108,12 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
                 }
               }}
             />
-            {errors.password && <Text className="text-sm text-red-600 font-semibold">{errors.email}</Text>}
+            {errors.email && <Text className="text-sm text-red-600 font-semibold">{errors.email}</Text>}
           </View>
-          <View className="w-full items-center flex flex-col" >
+          <View className="w-full items-center flex flex-col">
             <TextInput
               className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
-              style={[
-                errors.password && styles.inputError,
-              ]}
+              style={[errors.password && styles.inputError]}
               placeholder="Senha"
               placeholderTextColor="#000"
               secureTextEntry
@@ -119,17 +128,18 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
             {errors.password && <Text className="text-sm text-red-600 font-semibold">{errors.password}</Text>}
           </View>
         </View>
-
-
         <View className="w-full flex items-center flex-col gap-6">
           <TouchableOpacity className="bg-white w-[80%] flex items-center justify-center h-12 rounded-[25px]" onPress={handlePressLogin}>
             <Text className="text-black font-semibold">Entrar</Text>
           </TouchableOpacity>
           <Text className="text-white cursor-pointer font-semibold" onPress={handlePressSignUp}>Não tem conta? cadastrar-se!</Text>
-
         </View>
       </View>
-      <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
+
+      {/* Condicional para exibir a View de rodapé apenas quando o teclado estiver fechado */}
+      {!isKeyboardVisible && (
+        <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
+      )}
     </View>
   );
 };
