@@ -74,58 +74,62 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
+    <View className="flex items-center justify-between bg-primary-light flex-1">
       <StatusBar style="light" />
-      <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
-
-      <TextInput
-        style={[
-          styles.input,
-          errors.email && styles.inputError,
-        ]}
-        placeholder="E-mail"
-        placeholderTextColor="#FFF"
-        value={email}
-        onChangeText={(text) => {
-          onChangeEmail(text);
-          if (errors.email) {
-            setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
-          }
-        }}
-      />
-      {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-      <TextInput
-        style={[
-          styles.input,
-          errors.password && styles.inputError,
-        ]}
-        placeholder="Senha"
-        placeholderTextColor="#FFF"
-        secureTextEntry
-        value={password}
-        onChangeText={(text) => {
-          onChangePassword(text);
-          if (errors.password) {
-            setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
-          }
-        }}
-      />
-      {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handlePressSignUp}
-        >
-          <Text style={styles.buttonText}>Cadastrar-se</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={handlePressLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
+      <View className="flex items-center min-h-[15rem] justify-center bg-white w-full rounded-br-[20rem]">
+        <Image className="mt-4" source={require('@/assets/images/logo.png')} style={styles.logo} />
       </View>
+      <View className="w-full items-center flex flex-col gap-10">
+        <View className="w-full items-center flex flex-col gap-6" >
+          <View className="w-full items-center flex flex-col" >
+            <TextInput
+              className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
+              style={[
+                errors.email && styles.inputError,
+              ]}
+              placeholder="E-mail"
+              placeholderTextColor="#000"
+              value={email}
+              onChangeText={(text) => {
+                onChangeEmail(text);
+                if (errors.email) {
+                  setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+                }
+              }}
+            />
+            {errors.password && <Text className="text-sm text-red-600 font-semibold">{errors.email}</Text>}
+          </View>
+          <View className="w-full items-center flex flex-col" >
+            <TextInput
+              className="h-14 w-[80%] rounded-[25px] bg-white text-black px-4"
+              style={[
+                errors.password && styles.inputError,
+              ]}
+              placeholder="Senha"
+              placeholderTextColor="#000"
+              secureTextEntry
+              value={password}
+              onChangeText={(text) => {
+                onChangePassword(text);
+                if (errors.password) {
+                  setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+                }
+              }}
+            />
+            {errors.password && <Text className="text-sm text-red-600 font-semibold">{errors.password}</Text>}
+          </View>
+        </View>
+
+
+        <View className="w-full flex items-center flex-col gap-6">
+          <TouchableOpacity className="bg-white w-[80%] flex items-center justify-center h-12 rounded-[25px]" onPress={handlePressLogin}>
+            <Text className="text-black font-semibold">Entrar</Text>
+          </TouchableOpacity>
+          <Text className="text-white cursor-pointer font-semibold" onPress={handlePressSignUp}>Não tem conta? cadastrar-se!</Text>
+
+        </View>
+      </View>
+      <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
     </View>
   );
 };
