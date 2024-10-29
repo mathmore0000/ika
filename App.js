@@ -13,6 +13,7 @@ import MedicationsScreen from "@/screens/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
+import "./src/assets/styles/global.css";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
