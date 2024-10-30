@@ -14,10 +14,11 @@ import { validateEmail, validatePasswordLogin } from "@/data/validations/auth/au
 import api from "@/server/api";
 import { NavigationProps } from "@/constants/interfaces/props/DefaultNavigation";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
+import { navigate } from "@/navigation/RootNavigation"; // Configuração global de navegação, se ainda não tiver
 
 const Login: React.FC<NavigationProps> = ({ navigation }) => {
-  const [email, onChangeEmail] = React.useState("");
-  const [password, onChangePassword] = React.useState("");
+  const [email, onChangeEmail] = React.useState("matheusmoreira2004@live.com");
+  const [password, onChangePassword] = React.useState("password12345");
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
   const clearFields = () => {

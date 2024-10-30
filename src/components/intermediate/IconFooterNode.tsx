@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { IconNodeProps } from "@/constants/interfaces/props/IconNode";
 
-const IconNode: React.FC<IconNodeProps> = ({ destination, icon, navigation, central }) => {
+const IconNode: React.FC<IconNodeProps> = ({ navigation, destination, icon, central }) => {
   return (
     <TouchableOpacity
       style={styles.link}
