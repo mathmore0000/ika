@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Image, TouchableOpacity, Text, View, TextInput } from "react-native";
+import { Image, TouchableOpacity, Text, View, TextInput, Keyboard } from "react-native";
 import {
   validateName,
   validateEmail,
@@ -13,10 +13,23 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 
 const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
-
   const [name, onChangeName] = React.useState("");
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const clearFields = () => {
     onChangeName("");
@@ -24,25 +37,22 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
     onChangePassword("");
     setErrors({});
   };
+  
+  const handlePressLogin = () => {
+    navigation.navigate("Login");
+  };
 
   const handlePressSignUp = async () => {
     const newErrors: { [key: string]: string } = {};
-
     const nameError = validateName(name);
-    if (nameError) {
-      newErrors.name = nameError;
-    }
-
+    if (nameError) newErrors.name = nameError;
+    
     const emailError = validateEmail(email);
-    if (emailError) {
-      newErrors.email = emailError;
-    }
-
+    if (emailError) newErrors.email = emailError;
+    
     const passwordError = validatePassword(password);
-    if (passwordError) {
-      newErrors.password = passwordError;
-    }
-
+    if (passwordError) newErrors.password = passwordError;
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -51,7 +61,6 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
     }
 
     try {
-      // Chamada à API
       await api.post("/auth/signup", {
         displayName: name,
         email: email,
@@ -64,14 +73,12 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
       navigation.navigate("Login");
     } catch (err: any) {
       if (err.response) {
-        // Erro da API
         console.log("Erro de resposta:", err.response.data);
-        if (err.response.data == "Email already in use") {
+        if (err.response.data === "Email already in use") {
           const errorMessage = "E-mail já está em uso.";
           newErrors.email = errorMessage;
           setErrors(newErrors);
           return showErrorToast(errorMessage);
-
         }
         return showErrorToast("Erro ao criar usuário.");
       }
@@ -85,65 +92,76 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex items-center justify-between bg-primary-light flex-1">
       <StatusBar style="light" />
-      <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
+      <View className="flex items-center min-h-[15rem] justify-center bg-white w-full rounded-br-[20rem]">
+        <Image className="mt-4" source={require('@/assets/images/logo.png')} style={styles.logo} />
+      </View>
+      <View className="w-full items-center flex flex-col gap-10">
+        <View className="items-center flex flex-col gap-6  w-[80%]" >
+          <View className="w-full items-center flex flex-col">
+            <TextInput
+              className="h-14 w-full rounded-[25px] bg-white text-black px-4"
+              style={[errors.name && styles.inputError]}
+              placeholder="Nome"
+              placeholderTextColor="#000"
+              value={name}
+              onChangeText={(text) => {
+                onChangeName(text);
+                if (errors.name) {
+                  setErrors((prevErrors) => ({ ...prevErrors, name: "" }));
+                }
+              }}
+            />
+            {errors.name && <Text className="text-sm text-red-600 font-semibold">{errors.name}</Text>}
+          </View>
 
-      <TextInput
-        style={[
-          styles.input,
-          errors.name && styles.inputError,
-        ]}
-        placeholder="Nome"
-        placeholderTextColor="#FFF"
-        value={name}
-        onChangeText={(text) => {
-          onChangeName(text);
-          if (errors.name) {
-            setErrors((prevErrors) => ({ ...prevErrors, name: "" }));
-          }
-        }}
-      />
-      {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+          <View className="w-full items-center flex flex-col">
+            <TextInput
+              className="h-14 w-full rounded-[25px] bg-white text-black px-4"
+              style={[errors.email && styles.inputError]}
+              placeholder="E-mail"
+              placeholderTextColor="#000"
+              value={email}
+              onChangeText={(text) => {
+                onChangeEmail(text);
+                if (errors.email) {
+                  setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+                }
+              }}
+            />
+            {errors.email && <Text className="text-sm text-red-600 font-semibold">{errors.email}</Text>}
+          </View>
 
-      <TextInput
-        style={[
-          styles.input,
-          errors.email && styles.inputError,
-        ]}
-        placeholder="E-mail"
-        placeholderTextColor="#FFF"
-        value={email}
-        onChangeText={(text) => {
-          onChangeEmail(text);
-          if (errors.email) {
-            setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
-          }
-        }}
-      />
-      {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-      <TextInput
-        style={[
-          styles.input,
-          errors.password && styles.inputError,
-        ]}
-        placeholder="Senha"
-        placeholderTextColor="#FFF"
-        secureTextEntry
-        value={password}
-        onChangeText={(text) => {
-          onChangePassword(text);
-          if (errors.password) {
-            setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
-          }
-        }}
-      />
-      {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-
-      <TouchableOpacity style={styles.button} onPress={handlePressSignUp}>
-        <Text style={styles.buttonText}>Cadastrar-se</Text>
-      </TouchableOpacity>
+          <View className="w-full items-center flex flex-col">
+            <TextInput
+              className="h-14 w-full rounded-[25px] bg-white text-black px-4"
+              style={[errors.password && styles.inputError]}
+              placeholder="Senha"
+              placeholderTextColor="#000"
+              secureTextEntry
+              value={password}
+              onChangeText={(text) => {
+                onChangePassword(text);
+                if (errors.password) {
+                  setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+                }
+              }}
+            />
+            {errors.password && <Text className="text-sm text-red-600 font-semibold">{errors.password}</Text>}
+          </View>
+        </View>
+        <View className="w-[80%] flex items-center flex-col gap-6">          
+          <TouchableOpacity className="bg-white w-full flex items-center justify-center h-12 rounded-[25px]" onPress={handlePressSignUp}>
+            <Text className="text-black font-semibold">Cadastrar-se</Text>
+          </TouchableOpacity>
+          <Text className="text-white cursor-pointer font-semibold" onPress={handlePressLogin}>Já possui conta? Entre!</Text>
+        </View>
+      </View>
+      
+      {!isKeyboardVisible && (
+        <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
+      )}
     </View>
   );
 };

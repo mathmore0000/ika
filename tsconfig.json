@@ -16,6 +16,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "src/screens/auth/styles.js"
+    "src/screens/auth/styles.js",
+    "nativewind-env.d.ts"
   ]
 }

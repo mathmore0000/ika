@@ -15,6 +15,7 @@ import MedicationsScreen from "@/screens/Medications/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
+import "./src/assets/styles/global.css";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -43,8 +44,8 @@ export default function App() {
     setCurrentScreen("Login");
     return (
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown: false}}/>
       </Stack.Navigator>
     );
   }
