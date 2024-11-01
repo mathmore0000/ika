@@ -1,17 +1,15 @@
-// MedicationCard.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Modal } from "react-native";
 import styles from "@/screens/_styles/medications";
 import api from "@/server/api";
 import StockModal from "./StockModal";
-import dayjs from "dayjs"; // Biblioteca para manipulação de datas
+import dayjs from "dayjs";
 import { showErrorToast } from "@/utils/toast";
 
 const MedicationCard = ({ userMedication, fetchMedications }) => {
   const [stock, setStock] = useState([]);
   const [isStockModalVisible, setIsStockModalVisible] = useState(false);
 
-  // 
   const fetchStock = async (id: String) => {
     try {
       const response = await api.get(`/user-medication-stocks/allStock/${id}`, {
@@ -23,7 +21,6 @@ const MedicationCard = ({ userMedication, fetchMedications }) => {
     }
   };
 
-  // Calcular horários de doses com base em firstDosageTime e timeBetween
   const calculateDoseTimes = () => {
     const doseTimes = [];
     let doseTime = dayjs(userMedication.firstDosageTime);
@@ -31,9 +28,9 @@ const MedicationCard = ({ userMedication, fetchMedications }) => {
     const interval = userMedication.timeBetween;
 
     do {
-      doseTimes.push(doseTime.format("HH:mm")); // Formata a hora para "HH:mm"
-      doseTime = doseTime.add(interval, "hour"); // Incrementa pelo intervalo
-    } while (!doseTime.isSame(initialDoseTimePlus1, "minute")); // Continua até o horário inicial
+      doseTimes.push(doseTime.format("HH:mm"));
+      doseTime = doseTime.add(interval, "hour");
+    } while (!doseTime.isSame(initialDoseTimePlus1, "minute"));
 
     return doseTimes.sort();
   };
@@ -42,6 +39,11 @@ const MedicationCard = ({ userMedication, fetchMedications }) => {
 
   const openStockModal = () => setIsStockModalVisible(true);
   const closeStockModal = () => setIsStockModalVisible(false);
+
+  const handleStockAdded = () => {
+    closeStockModal();
+    fetchStock(userMedication.medication.id); // Atualiza o estoque
+  };
 
   useEffect(() => {
     fetchStock(userMedication.medication.id);
@@ -60,7 +62,7 @@ const MedicationCard = ({ userMedication, fetchMedications }) => {
       </TouchableOpacity>
 
       <Modal visible={isStockModalVisible} transparent={true} animationType="fade">
-        <StockModal closeModal={closeStockModal} userMedicationId={userMedication.id} />
+        <StockModal closeModal={handleStockAdded} userMedicationId={userMedication.id} />
       </Modal>
     </View>
   );

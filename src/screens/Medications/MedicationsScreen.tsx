@@ -20,7 +20,6 @@ const MedicationScreen = () => {
       const response = await api.get(BASE_URL, {
         params: { page: 0, size: 10 },
       });
-      console.log(response.data.content[0].medication.name)
       setMedications(response.data.content);
     } catch (error) {
       showErrorToast("Error loading medications.");

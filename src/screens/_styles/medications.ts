@@ -61,6 +61,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
+  picker: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15,
+    color: '#000',
+},
   modalContainer: {
     flex: 1,
     justifyContent: "center",

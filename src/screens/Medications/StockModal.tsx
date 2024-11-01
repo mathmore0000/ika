@@ -1,6 +1,6 @@
-// StockModal.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, DatePickerAndroid } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
@@ -9,6 +9,7 @@ const StockModal = ({ closeModal, userMedicationId }) => {
   const [quantityStocked, setQuantityStocked] = useState("");
   const [expirationDate, setExpirationDate] = useState(new Date());
   const [errors, setErrors] = useState({});
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleSaveStock = async () => {
     const newErrors = {};
@@ -21,15 +22,23 @@ const StockModal = ({ closeModal, userMedicationId }) => {
     }
 
     try {
-      await api.post("/v1/user-medication-stocks", {
+      await api.post("/user-medication-stocks", {
         userMedicationId: userMedicationId,
-        quantityStocked,
-        expirationDate,
+        quantityStocked: parseInt(quantityStocked),
+        expirationDate: expirationDate.toISOString(),
       });
       showSuccessToast("Stock added successfully.");
-      closeModal();
+      closeModal(); // Notifica o fechamento bem-sucedido
     } catch (error) {
       showErrorToast("Error adding stock.");
+    }
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setExpirationDate(selectedDate);
+      setErrors((prevErrors) => ({ ...prevErrors, expirationDate: undefined }));
     }
   };
 
@@ -40,14 +49,27 @@ const StockModal = ({ closeModal, userMedicationId }) => {
       <TextInput
         style={[styles.input, errors.quantityStocked && styles.inputError]}
         placeholder="Quantity"
+        keyboardType="numeric"
         value={quantityStocked}
         onChangeText={setQuantityStocked}
       />
       {errors.quantityStocked && <Text style={styles.errorText}>{errors.quantityStocked}</Text>}
 
-      <TouchableOpacity onPress={() => DatePickerAndroid.open({ date: expirationDate })}>
-        <Text style={styles.datePickerText}>{expirationDate.toLocaleDateString()}</Text>
+      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        <Text style={[styles.datePickerText, errors.expirationDate && styles.inputError]}>
+          {expirationDate.toLocaleDateString()}
+        </Text>
       </TouchableOpacity>
+      {errors.expirationDate && <Text style={styles.errorText}>{errors.expirationDate}</Text>}
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={expirationDate}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSaveStock}>
         <Text style={styles.saveButtonText}>Save</Text>

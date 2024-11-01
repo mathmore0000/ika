@@ -56,7 +56,6 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
         username: email,
         password: password,
       });
-      console.log(response.data);
 
       await SecureStore.setItemAsync("jwt", response.data.jwt);
       await SecureStore.setItemAsync("refresh-token", response.data.refreshToken);

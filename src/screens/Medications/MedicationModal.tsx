@@ -1,6 +1,6 @@
-// MedicationModal.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Picker, Modal } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal } from "react-native";
+import RNPickerSelect from "react-native-picker-select/src/index.js";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { validateRequiredField } from "@/data/validations/fieldValidation";
@@ -10,8 +10,8 @@ const MedicationModal = ({ closeModal, fetchMedications }) => {
   const [medicationId, setMedicationId] = useState("");
   const [customMedication, setCustomMedication] = useState("");
   const [errors, setErrors] = useState({});
-  
-  // Add additional fields as necessary for custom medication details.
+  const [medications, setMedications] = useState([]); // Assume you fetch these from an API
+
   const handleSave = async () => {
     const validationErrors = {};
     if (!medicationId && !customMedication) validationErrors.medication = "Please select or enter a medication.";
@@ -24,7 +24,7 @@ const MedicationModal = ({ closeModal, fetchMedications }) => {
     try {
       await api.post("/v1/user-medications", {
         idMedication: medicationId || customMedication,
-        // include other fields like dosage, timeBetween, etc.
+        // Include other fields like dosage, timeBetween, etc.
       });
       showSuccessToast("Medication added successfully.");
       fetchMedications();
@@ -46,9 +46,16 @@ const MedicationModal = ({ closeModal, fetchMedications }) => {
       />
       {errors.medication && <Text style={styles.errorText}>{errors.medication}</Text>}
 
-      <Picker selectedValue={medicationId} onValueChange={setMedicationId}>
-        {/* Populate with medication options */}
-      </Picker>
+      {/* <RNPickerSelect
+        onValueChange={(value) => setMedicationId(value)}
+        items={medications.map(med => ({ label: med.name, value: med.id }))}
+        placeholder={{ label: "Select a medication", value: null }}
+        style={{
+          inputIOS: styles.picker,
+          inputAndroid: styles.picker,
+        }}
+        value={medicationId}
+      /> */}
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Save</Text>
