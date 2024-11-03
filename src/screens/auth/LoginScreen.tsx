@@ -14,7 +14,7 @@ import { validateEmail, validatePasswordLogin } from "@/data/validations/auth/au
 import api from "@/server/api";
 import { NavigationProps } from "@/constants/interfaces/props/DefaultNavigation";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
-import { navigate } from "@/navigation/RootNavigation"; // Configuração global de navegação, se ainda não tiver
+import { checkAuth } from "@/../App.js"
 
 const Login: React.FC<NavigationProps> = ({ navigation }) => {
   const [email, onChangeEmail] = React.useState("matheusmoreira2004@live.com");
@@ -76,7 +76,7 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
 
       clearFields();
       showSuccessToast("Usuário logado com sucesso");
-      navigation.navigate("Calendar");
+      checkAuth();
     } catch (_err) {
       console.log(_err);
       if (_err.response && _err.response.data) {

@@ -32,7 +32,9 @@ export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchRes
             if (error.response.data == "User not found") {
                 return showErrorToast("Usuário não encontrado")
             }
-            console.log()
+            if (error.response.data == "Responsible not found"){
+                return showErrorToast("Resnponsável não encontrado")
+            }
             if (error.response.status == 409) {
                 return showErrorToast("Convite já existe")
             }

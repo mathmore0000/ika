@@ -5,7 +5,7 @@ import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 
-const StockModal = ({ closeModal, userMedicationId }) => {
+const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
   const [quantityStocked, setQuantityStocked] = useState("");
   const [expirationDate, setExpirationDate] = useState(new Date());
   const [errors, setErrors] = useState({});
@@ -28,6 +28,7 @@ const StockModal = ({ closeModal, userMedicationId }) => {
         expirationDate: expirationDate.toISOString(),
       });
       showSuccessToast("Stock added successfully.");
+      fetchStock(userMedicationId);
       closeModal(); // Notifica o fechamento bem-sucedido
     } catch (error) {
       showErrorToast("Error adding stock.");

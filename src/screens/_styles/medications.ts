@@ -2,6 +2,9 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  medicationItemSelected: {
+    backgroundColor: "red"
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "#2596be",
   },
   modalContent: {
     width: "90%",

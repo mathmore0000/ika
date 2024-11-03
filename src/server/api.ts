@@ -44,6 +44,9 @@ const refreshAccessToken = async () => {
 export async function getToken() {
   let token = await SecureStore.getItemAsync("jwt");
 
+  if (token == null){
+    return null;
+  }
   if (isTokenExpired(token)) {
     console.log("token está expirado")
 
@@ -56,8 +59,9 @@ export async function getToken() {
 // Interceptor de requisição para adicionar o JWT e renovar se necessário
 api.interceptors.request.use(
   async (config) => {
-    // console.log("token", token)
-    // Verifique se o token está expirado
+    if (config.url?.startsWith("/auth")){
+      return config
+    }
     if (isCurrentScreenInAuth()) {
       return config;
     }

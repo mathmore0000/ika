@@ -1,9 +1,7 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as SecureStore from "expo-secure-store";
-import { getToken } from "@/server/api"
-import { jwtDecode } from "jwt-decode";
+import { getToken, setToken } from "@/server/api";
 import { navigationRef, setCurrentScreen } from "@/navigation/RootNavigation";
 
 import SettingsScreen from "@/screens/SettingsScreen";
@@ -15,43 +13,44 @@ import MedicationsScreen from "@/screens/Medications/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
-import "./src/assets/styles/global.css";
 
-export default function App() {
+let checkAuth = () => {
+  console.log("checkAuth antes")};
+function App() {
   const Stack = createNativeStackNavigator();
-  const [isAuthenticated, setIsAuthenticated] = React.useState(null); // null para indicar estado de carregamento
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
-  React.useEffect(() => {
-    const checkAuth = async () => {
-      const token = getToken()
+  checkAuth = async () => {
+    console.log("checkAuth")
+    const token = await getToken();
+    setIsAuthenticated(!!token);
+  };
 
-      if (token) {
-        return setIsAuthenticated(true);
-      }
-      setIsAuthenticated(false);
-
-    };
-
+  useEffect(() => {
     checkAuth();
   }, []);
 
   if (isAuthenticated === null) {
-    // Tela de carregamento enquanto verifica o token
     return <LoadingScreen />;
   }
 
+  const onLoginSuccess = async (token) => {
+    await setToken(token);
+    setIsAuthenticated(true);
+  };
+
   function AuthStack() {
-    setCurrentScreen("Login");
     return (
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="Login">
+          {(props) => <LoginScreen {...props} onLoginSuccess={onLoginSuccess} />}
+        </Stack.Screen>
+        <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     );
   }
 
   function MainStack() {
-    setCurrentScreen("Calendar");
     return (
       <Stack.Navigator>
         <Stack.Screen name="Calendar" component={CalendarScreen} />
@@ -65,15 +64,11 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      onStateChange={() => {
-        const currentRoute = navigationRef.getCurrentRoute();
-        if (currentRoute) {
-          setCurrentScreen(currentRoute.name);
-        }
-      }}>
+    <NavigationContainer ref={navigationRef}>
       {isAuthenticated ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );
 }
+
+export { checkAuth }
+export default App;
