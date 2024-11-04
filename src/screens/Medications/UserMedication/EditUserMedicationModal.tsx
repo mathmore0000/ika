@@ -73,7 +73,6 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
         <Picker.Item label="8 horas" value="8" />
         <Picker.Item label="12 horas" value="12" />
         <Picker.Item label="24 horas" value="24" />
-        <Picker.Item label="48 horas" value="48" />
       </Picker>
       {errors.timeBetween && <Text style={styles.errorText}>{errors.timeBetween}</Text>}
 
