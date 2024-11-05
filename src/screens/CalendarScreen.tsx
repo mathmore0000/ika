@@ -18,8 +18,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
 
   useEffect(() => {
-    fetchUserMedications();
-    fetchUsages(selectedDay);
+    loadDay();
   }, [selectedDay]);
 
   useEffect(() => {
@@ -27,6 +26,11 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       fetchDailyDoses();
     }
   }, [userMedications, usages]);
+
+  const loadDay = async () => {
+    fetchUserMedications();
+    fetchUsages(selectedDay);
+  }
 
   const fetchDailyDoses = async () => {
     const dailyDosesArray = userMedications.flatMap((userMedication) => calculateDoseTimes(userMedication));
@@ -234,7 +238,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         isVisible={showModal}
         closeModal={() => setShowModal(false)}
         medicationId={selectedMedicationId}
-        fetchUserMedications={fetchUserMedications}
+        fetchUserMedications={loadDay}
       />
     </View>
   );
