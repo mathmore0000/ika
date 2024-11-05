@@ -27,6 +27,7 @@ const MedicationCard = ({ userMedication, fetchUserMedications }) => {
   const calculateDoseTimes = () => {
     const doseTimes = [];
     let doseTime = dayjs(userMedication.firstDosageTime);
+    console.log()
     const initialDoseTimePlus1 = doseTime.add(1, "day");
     const interval = userMedication.timeBetween;
 

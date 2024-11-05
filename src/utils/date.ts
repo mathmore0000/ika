@@ -49,3 +49,8 @@ const getFormattedDate = (date: Date) => {
 };
 
 export const todayFormatted = getFormattedDate(today);
+
+export function convertDateToLocalTimezone(date: Date) {
+  const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return date.toLocaleString("en-US", { timeZone: localTimezone });
+}

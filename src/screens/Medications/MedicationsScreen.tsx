@@ -22,7 +22,7 @@ const MedicationScreen = () => {
   };
 
    const fetchUserMedications = async (page = currentPage) => {
-    if (loading || page >= totalPages) return;
+     if (loading || page >= totalPages) return;
 
     setLoading(true);
     try {
@@ -38,6 +38,7 @@ const MedicationScreen = () => {
       setTotalPages(response.data.totalPages);
       setCurrentPage(page + 1);
     } catch (error) {
+      console.log(error)
       showErrorToast("Error loading medications.");
     } finally {
       setLoading(false);

@@ -1,34 +1,46 @@
+// CalendarScreen.js
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import styles from "../assets/_public/styles";
 import api from "@/server/api";
 import AppLayout from "@/components/shared/AppLayout";
 import { getDaysArray, today, todayFormatted } from "@/utils/date";
-import dayjs from "dayjs";
+import TakeMedicationModal from "./Usage/TakeMedicationModal"; // Import the modal
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const weekDays = getDaysArray(today);
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]);
   const [userMedications, setUserMedications] = useState([]);
   const [usages, setUsages] = useState([]);
-  const [dailyDoses, setDailyDoses] = useState([])
+  const [dailyDoses, setDailyDoses] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMedicationId, setSelectedMedicationId] = useState(null);
+
+  const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
 
   useEffect(() => {
     fetchUserMedications();
-    fetchUsages(dayjs(selectedDay).format("YYYY-MM-DDTHH:mm:ss"));
-    fetchDailyDoses();
+    fetchUsages(selectedDay);
   }, [selectedDay]);
 
+  useEffect(() => {
+    if (userMedications.length > 0) {
+      fetchDailyDoses();
+    }
+  }, [userMedications, usages]);
+
   const fetchDailyDoses = async () => {
-    // Combina e ordena todos os horários de dose
-    const dailyDoses = userMedications
-      .flatMap((userMedication) => calculateDoseTimes(userMedication))
-      .sort((a, b) => (a.time > b.time ? 1 : -1))
+    const dailyDosesArray = userMedications.flatMap((userMedication) => calculateDoseTimes(userMedication));
+    const dailyDosesWithExpirationDate = await mountAllCards(dailyDosesArray);
 
-    const dailyDosesWithExpirationDate = await mountAllCards(dailyDoses)
+    const dailyDosesOrdered = dailyDosesWithExpirationDate.sort((a, b) => {
+      const aTime = a.datetime.getHours() * 60 + a.datetime.getMinutes();
+      const bTime = b.datetime.getHours() * 60 + b.datetime.getMinutes();
+      return aTime - bTime;
+    });
 
-    setDailyDoses(dailyDosesWithExpirationDate);
-  }
+    setDailyDoses(dailyDosesOrdered);
+  };
+
   const fetchUserMedications = async () => {
     try {
       const response = await api.get("/user-medications", { params: { page: 0, size: 50 } });
@@ -40,66 +52,114 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
   const fetchUsages = async (date) => {
     try {
-      const response = await api.get("/usages/user", { params: { fromDate: date, toDate: date } });
+      const dateObj = new Date(date);
+      const toDate = new Date(dateObj);
+      toDate.setDate(toDate.getDate() + 1);
+      const response = await api.get("/usages/user", {
+        params: { fromDate: dateObj.toISOString(), toDate: toDate.toISOString() },
+      });
       setUsages(response.data.content);
     } catch (error) {
+      console.log(error.response?.data);
       console.error("Erro ao carregar usos:", error);
     }
   };
 
   const fetchNextExpirationStock = async (medicationId) => {
     try {
-      const response = await api.get(`/user-medication-stocks/next-expiration/${medicationId}`)
-      return response.data
+      const response = await api.get(`/user-medication-stocks/next-expiration/${medicationId}`);
+      return response.data;
     } catch (error) {
+      console.error("Erro ao obter data de expiração:", error);
     }
-  }
+  };
 
   const calculateDoseTimes = (userMedication) => {
     const doseTimes = [];
-    let doseTime = dayjs(userMedication.firstDosageTime);
+    const firstDoseTime = new Date(userMedication.firstDosageTime);
     const interval = userMedication.timeBetween;
-    const initialDoseTimePlus1 = doseTime.add(1, "day");
+    const initialDoseTimePlus1 = new Date(firstDoseTime);
+    initialDoseTimePlus1.setDate(initialDoseTimePlus1.getDate() + 1);
+
+    let doseTime = new Date(firstDoseTime);
 
     do {
       doseTimes.push({
         medication: userMedication.medication,
-        time: doseTime.format("HH:mm"),
+        datetime: new Date(doseTime),
+        time: formatTime(doseTime),
         isTaken: userMedication.isTaken,
         isExpiringSoon: userMedication.isExpiringSoon,
-        type: "dose"
+        maxTakingTime: userMedication.maxTakingTime,
+        disabled: userMedication.disabled,
+        type: "dose",
       });
-      doseTime = doseTime.add(interval, "hour");
-    } while (!doseTime.isSame(initialDoseTimePlus1, "minute"));
+      doseTime.setHours(doseTime.getHours() + interval);
+    } while (doseTime < initialDoseTimePlus1);
 
     return doseTimes;
   };
 
-  const mountAllCards = async (dailyDoses) => {
-    const allMedicationIds = new Set(dailyDoses.map((dose) => dose.medication.id));
+  const mountAllCards = async (dailyDosesArray) => {
+    const allMedicationIds = new Set(dailyDosesArray.map((dose) => dose.medication.id));
     const medicationIdNextExpirationRelation = new Map();
 
     for (const id of allMedicationIds) {
       const expirationDate = await fetchNextExpirationStock(id);
       medicationIdNextExpirationRelation.set(id, expirationDate);
     }
-    let i = 0
-    while (i < dailyDoses.length) {
-      dailyDoses[i].nextExpirationDate = medicationIdNextExpirationRelation.get(dailyDoses[i].medication.id);
-      i++;
+
+    dailyDosesArray.forEach((dose) => {
+      dose.nextExpirationDate = medicationIdNextExpirationRelation.get(dose.medication.id);
+      dose.isTaken = false;
+    });
+
+    for (const usage of usages) {
+      const medicationId = usage.userMedicationStockResponses[0].medicationResponse.id;
+      const doses = dailyDosesArray.filter((dose) => dose.medication.id === medicationId);
+      const usageTime = new Date(usage.actionTmstamp);
+      let foundMatch = false;
+
+      for (const dose of doses) {
+        const doseTime = new Date(dose.datetime);
+        doseTime.setFullYear(usageTime.getFullYear(), usageTime.getMonth(), usageTime.getDate());
+        const timeDiff = Math.abs(usageTime - doseTime) / (1000 * 60); // Diferença em minutos
+
+        if (timeDiff <= minutesTimeBetweenRelation[dose.maxTakingTime]) {
+          dose.isTaken = true;
+          foundMatch = true;
+          break;
+        }
+      }
+      if (!foundMatch) {
+        const newCard = { ...doses[0] };
+        const actionTmstampDate = new Date(usage.actionTmstamp);
+        newCard.time = formatTime(actionTmstampDate);
+        newCard.datetime = actionTmstampDate;
+        newCard.type = "tomação";
+        dailyDosesArray.push(newCard);
+      }
     }
-    return dailyDoses;
+
+    return dailyDosesArray;
+  };
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const openTakeMedicationModal = (medicationId) => {
+    setSelectedMedicationId(medicationId);
+    setShowModal(true);
   };
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Seção de cabeçalho */}
       <View style={{ padding: 16, marginBottom: 16 }}>
         <Text style={{ fontSize: 24, fontWeight: "bold" }}>Hoje</Text>
         <Text>{todayFormatted}</Text>
       </View>
 
-      {/* Cabeçalho dos dias da semana */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 16, paddingHorizontal: 16 }}>
         {weekDays.map((day, index) => (
           <TouchableOpacity
@@ -117,33 +177,49 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         ))}
       </View>
 
-      {/* Conteúdo de rolagem para os cartões de medicamentos */}
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80, flexGrow: 1 }}>
         {dailyDoses.length > 0 ? (
           dailyDoses.map((dose, index) => (
-            <View
-              key={`${dose.medication.id}-${dose.time}-${index}`}
-              style={{
-                padding: 12,
-                marginVertical: 8,
-                borderWidth: 1,
-                borderColor: "grey",
-                borderRadius: 8,
-                backgroundColor: dose.isExpiringSoon ? "rgba(255, 100, 100, 0.1)" : "white",
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
-              <Text style={{ fontSize: 14 }}>Hora: {dose.time}</Text>
-              <Text>Próxima expiração -> {dose.nextExpirationDate}</Text>
-              <Text style={{ fontSize: 14, color: dose.isTaken ? "green" : "orange" }}>
-                {dose.isTaken ? "Tomado" : "A tomar"}
-              </Text>
-              <Text>
-                {dose.type}
-              </Text>
-              <TouchableOpacity onPress={() => console.log("tomando...")}>
-                <Text style={{ color: "blue" }}>{dose.isTaken ? "Tomado" : "Tomar"}</Text>
-              </TouchableOpacity>
+            <View key={`${dose.medication.id}-${dose.time}-${index}`}>
+              {dose.type === "dose" ? (
+                <View
+                  style={{
+                    padding: 12,
+                    marginVertical: 8,
+                    borderWidth: 1,
+                    borderColor: "grey",
+                    borderRadius: 8,
+                    backgroundColor: dose.isExpiringSoon ? "rgba(255, 100, 100, 0.1)" : "white",
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
+                  <Text style={{ fontSize: 14 }}>Hora: {dose.time}</Text>
+                  <Text>Próxima expiração: {dose.nextExpirationDate}</Text>
+                  <Text style={{ fontSize: 14, color: dose.isTaken ? "green" : "orange" }}>
+                    {dose.isTaken ? "Tomado" : "A tomar"}
+                  </Text>
+                  {!dose.isTaken && (
+                    <TouchableOpacity onPress={() => openTakeMedicationModal(dose.medication.id)}>
+                      <Text style={{ color: "blue" }}>Tomar</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : (
+                <View
+                  style={{
+                    padding: 12,
+                    marginVertical: 8,
+                    borderWidth: 1,
+                    borderColor: "grey",
+                    borderRadius: 8,
+                    backgroundColor: dose.isExpiringSoon ? "rgba(255, 100, 100, 0.1)" : "white",
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
+                  <Text style={{ fontSize: 14 }}>Hora: {dose.time}</Text>
+                  <Text>{dose.type}</Text>
+                </View>
+              )}
             </View>
           ))
         ) : (
@@ -151,8 +227,15 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         )}
       </ScrollView>
 
-      {/* Layout do rodapé fixo */}
       <AppLayout navigation={navigation} local={local} />
+
+      {/* Modal para tomar medicamento */}
+      <TakeMedicationModal
+        isVisible={showModal}
+        closeModal={() => setShowModal(false)}
+        medicationId={selectedMedicationId}
+        fetchUserMedications={fetchUserMedications}
+      />
     </View>
   );
 };

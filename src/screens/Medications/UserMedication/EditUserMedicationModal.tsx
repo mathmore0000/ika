@@ -1,12 +1,11 @@
 // EditUserMedicationModal.js
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
-import dayjs from "dayjs";
 
 const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedications }) => {
   const [timeBetween, setTimeBetween] = useState(userMedication.timeBetween?.toString() || "8");
@@ -14,6 +13,13 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
   const [firstDosageTime, setFirstDosageTime] = useState(new Date(userMedication.firstDosageTime));
   const [errors, setErrors] = useState({});
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const padZero = (num) => num.toString().padStart(2, '0');
+  const formatTime = (date) => {
+    const hours = padZero(date.getHours());
+    const minutes = padZero(date.getMinutes());
+    return `${hours}:${minutes}`;
+  };
 
   const handleSave = async () => {
     const validationErrors = {};
@@ -27,12 +33,15 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
     }
 
     try {
+      const firstDosageTimeISO = firstDosageTime.toISOString();
+
+      console.log(firstDosageTimeISO)
       await api.put(`/user-medications/${userMedication.medication.id}`, {
         idMedication: userMedication.medication.id,
         quantityInt: userMedication.quantityInt?.toString() || "0",
         quantityMl: userMedication.quantityMl?.toString() || "0",
         timeBetween: parseFloat(timeBetween),
-        firstDosageTime: dayjs(firstDosageTime).format("YYYY-MM-DDTHH:mm:ss"),
+        firstDosageTime: firstDosageTimeISO,
         maxTakingTime: parseFloat(maxTakingTime),
       });
 
@@ -48,10 +57,11 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
-      const newDateTime = dayjs(firstDosageTime)
-        .hour(selectedTime.getHours())
-        .minute(selectedTime.getMinutes())
-        .toDate();
+      const newDateTime = new Date(firstDosageTime);
+      newDateTime.setHours(selectedTime.getHours());
+      newDateTime.setMinutes(selectedTime.getMinutes());
+      newDateTime.setSeconds(0);
+      newDateTime.setMilliseconds(0);
       setFirstDosageTime(newDateTime);
       setErrors((prevErrors) => ({ ...prevErrors, firstDosageTime: undefined }));
     }
@@ -78,7 +88,7 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
 
       <TouchableOpacity onPress={() => setShowTimePicker(true)}>
         <Text style={[styles.datePickerText, errors.firstDosageTime && styles.inputError]}>
-          Primeira Dose: {dayjs(firstDosageTime).format("HH:mm")}
+          Primeira Dose: {formatTime(firstDosageTime)}
         </Text>
       </TouchableOpacity>
 

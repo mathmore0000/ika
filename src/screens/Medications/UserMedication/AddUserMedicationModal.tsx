@@ -6,17 +6,25 @@ import { Picker } from "@react-native-picker/picker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
-import dayjs from "dayjs"; // For date formatting
+import { convertDateToLocalTimezone } from "@/utils/date"
 
-const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicationCreated, closeMedicationSelectionModal }) => {
-  const [quantityInt, setQuantityInt] = useState(selectedMedication.quantityInt ? selectedMedication.quantityInt.toString() : "0");
-  const [quantityMl, setQuantityMl] = useState(selectedMedication.quantityMl ? selectedMedication.quantityMl.toString() : "0");
+const AddUserMedicationModal = ({
+  closeModal,
+  selectedMedication,
+  onUserMedicationCreated,
+  closeMedicationSelectionModal,
+}) => {
+  const [quantityInt, setQuantityInt] = useState(
+    selectedMedication.quantityInt ? selectedMedication.quantityInt.toString() : "0"
+  );
+  const [quantityMl, setQuantityMl] = useState(
+    selectedMedication.quantityMl ? selectedMedication.quantityMl.toString() : "0"
+  );
   const [timeBetween, setTimeBetween] = useState("8"); // Default to 8 hours
   const [maxTakingTime, setMaxTakingTime] = useState("0.5"); // Default to 30 minutes
-  const [firstDosageTime, setFirstDosageTime] = useState(new Date()); // Stores full datetime
+  const [firstDosageTime, setFirstDosageTime] = useState(new Date());
   const [errors, setErrors] = useState({});
   const [showTimePicker, setShowTimePicker] = useState(false); // Controls time picker visibility
-
   const handleSave = async () => {
     const validationErrors = {};
     if (!timeBetween) validationErrors.timeBetween = "Tempo entre doses é obrigatório.";
@@ -29,12 +37,17 @@ const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicati
     }
 
     try {
+      // Converter firstDosageTime para ISO string
+      const firstDosageTimeISO = firstDosageTime.toISOString();
+      console.log(convertDateToLocalTimezone(firstDosageTime))
+
+      // Enviar os dados para o backend
       await api.post("/user-medications", {
         idMedication: selectedMedication.id,
         quantityInt: quantityInt,
         quantityMl: quantityMl,
         timeBetween: parseFloat(timeBetween),
-        firstDosageTime: dayjs(firstDosageTime).format("YYYY-MM-DDTHH:mm:ss"),
+        firstDosageTime: firstDosageTimeISO,
         maxTakingTime: parseFloat(maxTakingTime),
       });
 
@@ -43,7 +56,7 @@ const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicati
       closeMedicationSelectionModal();
       closeModal();
     } catch (error) {
-      console.log(error.response.data)
+      console.log(error.response.data);
       showErrorToast("Erro ao adicionar medicamento ao usuário.");
     }
   };
@@ -51,11 +64,14 @@ const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicati
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
-      const newDateTime = dayjs(firstDosageTime) // Get current date
-        .hour(selectedTime.getHours()) // Set hours
-        .minute(selectedTime.getMinutes()) // Set minutes
-        .toDate();
-      setFirstDosageTime(newDateTime);
+      // Atualizar a hora de firstDosageTime com a hora selecionada
+      const updatedFirstDosageTime = new Date(firstDosageTime);
+      updatedFirstDosageTime.setHours(selectedTime.getHours());
+      updatedFirstDosageTime.setMinutes(selectedTime.getMinutes());
+      updatedFirstDosageTime.setSeconds(0);
+      updatedFirstDosageTime.setMilliseconds(0);
+
+      setFirstDosageTime(updatedFirstDosageTime);
       setErrors((prevErrors) => ({ ...prevErrors, firstDosageTime: undefined }));
     }
   };
@@ -68,6 +84,14 @@ const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicati
   const handleQuantityMlChange = (value) => {
     setQuantityMl(value);
     setQuantityInt("0"); // Reset quantityInt to 0 when quantityMl is set
+  };
+
+  // Função para formatar a hora para exibição
+  const formatTimeForDisplay = (date) => {
+    // Obter as horas e minutos
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
   };
 
   return (
@@ -111,7 +135,7 @@ const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicati
 
       <TouchableOpacity onPress={() => setShowTimePicker(true)}>
         <Text style={[styles.datePickerText, errors.firstDosageTime && styles.inputError]}>
-          Primeira Dose: {dayjs(firstDosageTime).format("HH:mm")}
+          Primeira Dose: {formatTimeForDisplay(firstDosageTime)}
         </Text>
       </TouchableOpacity>
       {errors.firstDosageTime && <Text style={styles.errorText}>{errors.firstDosageTime}</Text>}
@@ -119,7 +143,7 @@ const AddUserMedicationModal = ({ closeModal, selectedMedication, onUserMedicati
       {showTimePicker && (
         <DateTimePicker
           value={firstDosageTime}
-          mode="time" // Show only time picker
+          mode="time" // Mostrar apenas o seletor de hora
           display="default"
           onChange={handleTimeChange}
         />
