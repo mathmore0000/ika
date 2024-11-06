@@ -13,6 +13,7 @@ import MedicationsScreen from "@/screens/Medications/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
+import VideoFilterScreen from "@/screens/VideoFilterScreen"
 
 let checkAuth = () => {
   console.log("checkAuth antes")};
@@ -59,6 +60,7 @@ function App() {
         <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
         <Stack.Screen name="Responsibles" component={ResponsiblesScreen} />
         <Stack.Screen name="Medications" component={MedicationsScreen} />
+        <Stack.Screen name="Videos" component={VideoFilterScreen} />
       </Stack.Navigator>
     );
   }

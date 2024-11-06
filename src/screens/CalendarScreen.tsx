@@ -4,7 +4,7 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import api from "@/server/api";
 import AppLayout from "@/components/shared/AppLayout";
 import { getDaysArray, today, todayFormatted } from "@/utils/date";
-import TakeMedicationModal from "./Usage/TakeMedicationModal"; // Import the modal
+import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Import the modal
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const weekDays = getDaysArray(today);
