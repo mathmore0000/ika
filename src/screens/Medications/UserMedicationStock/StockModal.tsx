@@ -1,11 +1,14 @@
+// StockModal.js
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
+import { useTranslation } from 'react-i18next';
 
 const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
+  const { t } = useTranslation();
   const [quantityStocked, setQuantityStocked] = useState("");
   const [expirationDate, setExpirationDate] = useState(new Date());
   const [errors, setErrors] = useState({});
@@ -13,8 +16,8 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
 
   const handleSaveStock = async () => {
     const newErrors = {};
-    if (!quantityStocked) newErrors.quantityStocked = "Stock quantity is required.";
-    if (!expirationDate) newErrors.expirationDate = "Expiration date is required.";
+    if (!quantityStocked) newErrors.quantityStocked = t("medications.validationErrors.stockQuantityRequired");
+    if (!expirationDate) newErrors.expirationDate = t("medications.validationErrors.expirationDateRequired");
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -27,11 +30,11 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
         quantityStocked: parseInt(quantityStocked),
         expirationDate: expirationDate.toISOString(),
       });
-      showSuccessToast("Stock added successfully.");
+      showSuccessToast(t("medications.stockAddedSuccessfully"));
       fetchStock(userMedicationId);
-      closeModal(); // Notifica o fechamento bem-sucedido
+      closeModal();
     } catch (error) {
-      showErrorToast("Error adding stock.");
+      showErrorToast(t("medications.errorAddingStock"));
     }
   };
 
@@ -45,11 +48,11 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.title}>Add Stock</Text>
+      <Text style={styles.title}>{t("medications.addStock")}</Text>
 
       <TextInput
         style={[styles.input, errors.quantityStocked && styles.inputError]}
-        placeholder="Quantity"
+        placeholder={t("medications.quantity")}
         keyboardType="numeric"
         value={quantityStocked}
         onChangeText={setQuantityStocked}
@@ -73,11 +76,11 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
       )}
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSaveStock}>
-        <Text style={styles.saveButtonText}>Save</Text>
+        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancel</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );

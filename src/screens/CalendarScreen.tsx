@@ -5,8 +5,10 @@ import api from "@/server/api";
 import AppLayout from "@/components/shared/AppLayout";
 import { getDaysArray, today, todayFormatted } from "@/utils/date";
 import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Import the modal
+import { useTranslation } from "react-i18next";
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
+  const { t } = useTranslation();
   const weekDays = getDaysArray(today);
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]);
   const [userMedications, setUserMedications] = useState([]);
@@ -160,7 +162,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ padding: 16, marginBottom: 16 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Hoje</Text>
+        <Text style={{ fontSize: 24, fontWeight: "bold" }}>{t("calendar.today")}</Text>
         <Text>{todayFormatted}</Text>
       </View>
 

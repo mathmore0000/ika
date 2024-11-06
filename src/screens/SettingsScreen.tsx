@@ -1,20 +1,33 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import AppLayout from "@/components/shared/AppLayout"; // Footer ou layout do app
-import { SettingsProps } from "@/constants/interfaces/props/Settings";
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import AppLayout from '@/components/shared/AppLayout';
+import LanguageModal from './Settings/LanguageModal';
+import { SettingsProps } from '@/constants/interfaces/props/Settings';
+import i18n from '@/i18n';
+import { useTranslation } from 'react-i18next';
 
-const settingsOptions = [
-  { title: "Cor Do Aplicativo", destination: "AppColor" },
-  { title: "Permissões", destination: "Permissions" },
-  { title: "Relatórios", destination: "Reports" },
-  { title: "Contas", destination: "Accounts" },
-  { title: "Idioma", destination: "Language" },
-];
+const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) => {
+  const { t } = useTranslation();
+  const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
 
-const Settings: React.FC<SettingsProps> = ({ navigation, local = "Settings" }) => {
+  const settingsOptions = [
+    { title: t('settings.reports'), destination: 'Reports' },
+    { title: t('settings.account'), destination: 'Account' },
+    { title: t('settings.language'), destination: 'Language' },
+  ];
 
   const handleNavigation = (destination: string) => {
-    navigation.navigate(destination); // Navega para a tela correspondente
+    if (destination === 'Language') {
+      setLanguageModalVisible(true);
+    } else {
+      navigation.navigate(destination);
+    }
+  };
+
+  const handleSelectLanguage = (language: string) => {
+    setSelectedLanguage(language);
+    i18n.changeLanguage(language);
   };
 
   return (
@@ -27,10 +40,20 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = "Settings" }) =
             onPress={() => handleNavigation(option.destination)}
           >
             <Text style={styles.settingText}>{option.title}</Text>
+            {option.destination === 'Language' && (
+              <Text style={styles.languageText}>{selectedLanguage}</Text>
+            )}
           </TouchableOpacity>
         ))}
       </View>
       <AppLayout navigation={navigation} local={local} />
+
+      {/* Language Modal */}
+      <LanguageModal
+        visible={isLanguageModalVisible}
+        onClose={() => setLanguageModalVisible(false)}
+        onSelectLanguage={handleSelectLanguage}
+      />
     </View>
   );
 };
@@ -39,20 +62,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F2EDE9",
-    justifyContent: "center", // Centraliza os elementos verticalmente
-    alignItems: "center", // Centraliza os elementos horizontalmente
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   settingsList: {
-    width: '100%', // Ocupa a largura total
-    alignItems: "center", // Alinha o conteúdo no centro horizontalmente
+    width: "100%",
+    alignItems: "center",
   },
   settingItem: {
-    backgroundColor: "#483DF7", // Azul claro
+    backgroundColor: "#483DF7",
     padding: 20,
     borderRadius: 10,
     marginBottom: 15,
-    width: "90%", // Ocupa 90% da largura da tela
+    width: "90%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -61,6 +84,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  languageText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    opacity: 0.8,
   },
   icon: {
     color: "#FFFFFF",

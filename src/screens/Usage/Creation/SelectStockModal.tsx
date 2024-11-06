@@ -1,7 +1,9 @@
+// SelectStockModal.js
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, ActivityIndicator } from "react-native";
 import styles from "@/screens/_styles/medications";
 import { showErrorToast } from "@/utils/toast";
+import { useTranslation } from 'react-i18next';
 
 const SelectStockModal = ({
   isVisible,
@@ -14,16 +16,17 @@ const SelectStockModal = ({
   totalPages,
   loading,
 }) => {
+  const { t } = useTranslation();
   const [selectedStock, setSelectedStock] = useState(null);
   const [quantity, setQuantity] = useState<number>(0);
 
   const handleAdd = () => {
     if (!selectedStock || !Number.isInteger(Number(quantity)) || !quantity || quantity <= 0) {
-      showErrorToast("Selecione um estoque e defina a quantidade.");
+      showErrorToast(t("medications.selectStockAndSetQuantity"));
       return;
     }
-    if (quantity > selectedStock.availableQuantity){
-      showErrorToast("Quantidade maior do que disponível no estoque.");
+    if (quantity > selectedStock.availableQuantity) {
+      showErrorToast(t("medications.quantityExceedsStock"));
       return;
     }
     onAddStock(selectedStock, quantity);
@@ -42,7 +45,7 @@ const SelectStockModal = ({
   return (
     <Modal visible={isVisible} transparent animationType="slide">
       <View style={styles.modalContainer}>
-        <Text style={styles.title}>Selecionar Estoque</Text>
+        <Text style={styles.title}>{t("medications.selectStock")}</Text>
 
         <FlatList
           data={stocks}
@@ -56,7 +59,7 @@ const SelectStockModal = ({
               onPress={() => setSelectedStock(item)}
             >
               <Text>
-                Expira em: {item.expirationDate} | Quantidade: {item.availableQuantity}
+                {t("medications.expiresOn", { date: item.expirationDate })} | {t("medications.quantity")}: {item.availableQuantity}
               </Text>
             </TouchableOpacity>
           )}
@@ -65,7 +68,7 @@ const SelectStockModal = ({
         {selectedStock && (
           <TextInput
             style={styles.input}
-            placeholder={`Quantidade (${selectedStock.quantityMl ? "ml" : "unidades"})`}
+            placeholder={`${t("medications.quantity")} (${selectedStock.quantityMl ? t("medications.ml") : t("medications.units")})`}
             keyboardType="numeric"
             value={quantity}
             onChangeText={setQuantity}
@@ -73,11 +76,11 @@ const SelectStockModal = ({
         )}
 
         <TouchableOpacity onPress={handleAdd}>
-          <Text style={styles.addButtonText}>Adicionar</Text>
+          <Text style={styles.addButtonText}>{t("common.add")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-          <Text style={styles.cancelButtonText}>Cancelar</Text>
+          <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
         </TouchableOpacity>
       </View>
     </Modal>

@@ -1,14 +1,17 @@
+// ResponsiblesScreen.js
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, Modal } from "react-native";
-import styles from "@/screens/_styles/responsibles"
+import styles from "@/screens/_styles/responsibles";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { ResponsiblesProps } from "@/constants/interfaces/props/Responsibles";
 import RemoteImage from "@/components/shared/RemoteImage";
 import AddNewResponsibleScreen from './AddNewResponsibleScreen';
+import { useTranslation } from 'react-i18next';
 
 const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
-  const BASE_URL = "/responsibles"
+  const { t } = useTranslation();
+  const BASE_URL = "/responsibles";
   const [pendingResponsibles, setPendingResponsibles] = useState([]);
   const [supervisedUsers, setSupervisedUsers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -16,26 +19,22 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
 
-  // Fetch Responsibles Data
   useEffect(() => {
     fetchResponsibles();
     fetchSupervisedUsers();
   }, []);
 
-  // Função para buscar responsáveis pendentes
   const fetchSupervisedUsers = async () => {
     try {
       const response = await api.get(`${BASE_URL}/responsible`, {
         params: { page: 0, size: 10 }
       });
       setSupervisedUsers(response.data.content);
-
     } catch (error) {
-      showErrorToast("Erro ao buscar responsáveis pendentes.");
+      showErrorToast(t("responsibles.errorFetchingPendingResponsibles"));
     }
   };
 
-  // Função para buscar supervisionados aceitos
   const fetchResponsibles = async () => {
     try {
       const response = await api.get(`${BASE_URL}/user`, {
@@ -43,38 +42,36 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
       });
       setPendingResponsibles(response.data.content);
     } catch (error) {
-      console.log(Object.keys(error))
-      showErrorToast("Erro ao buscar supervisionados.");
+      console.log(Object.keys(error));
+      showErrorToast(t("responsibles.errorFetchingSupervisedUsers"));
     }
   };
 
-  // Função para aceitar uma solicitação de responsabilidade
   const handleAcceptRequest = async (userId: string) => {
     try {
       await api.put(`${BASE_URL}/accept`, null, {
         params: { idUser: userId },
       });
-      showSuccessToast("Responsável aceito.");
+      showSuccessToast(t("responsibles.responsibleAccepted"));
       fetchResponsibles();
       fetchSupervisedUsers();
     } catch (error) {
-      showErrorToast("Erro ao aceitar o responsável.");
+      showErrorToast(t("responsibles.errorAcceptingResponsible"));
     }
   };
 
-  // Função para remover um responsável ou supervisionado
   const handleRemoveUser = async (id: string, type: "responsible" | "user") => {
     try {
-      console.log(type, id)
+      console.log(type, id);
       await api.delete(`${BASE_URL}/by-${type}`, {
         params: { [type === "responsible" ? "idResponsible" : "idUser"]: id },
       });
-      showSuccessToast("Usuário removido.");
+      showSuccessToast(t("responsibles.userRemoved"));
       fetchResponsibles();
       fetchSupervisedUsers();
     } catch (error) {
-      console.log(error.response.data)
-      showErrorToast("Erro ao remover o usuário.");
+      console.log(error.response.data);
+      showErrorToast(t("responsibles.errorRemovingUser"));
     }
   };
 
@@ -88,11 +85,16 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <AddNewResponsibleScreen BASE_URL={BASE_URL} fetchResponsibles={fetchResponsibles} fetchSupervisedUsers={fetchSupervisedUsers} closeModal={closeModal} />
+            <AddNewResponsibleScreen
+              BASE_URL={BASE_URL}
+              fetchResponsibles={fetchResponsibles}
+              fetchSupervisedUsers={fetchSupervisedUsers}
+              closeModal={closeModal}
+            />
           </View>
         </View>
       </Modal>
-      <Text style={styles.header}>Supervisionados</Text>
+      <Text style={styles.header}>{t("responsibles.supervisedUsers")}</Text>
       <TouchableOpacity
         style={styles.addButton}
         onPress={openModal}
@@ -101,12 +103,12 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
       </TouchableOpacity>
       <FlatList
         data={supervisedUsers}
-        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum supervisionado encontrado.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>{t("responsibles.noSupervisedUsersFound")}</Text>}
         keyExtractor={(user) => user.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <RemoteImage
-              uri={item.user.avatar_url} // Ou uma URL válida
+              uri={item.user.avatar_url}
               style={styles.profileImage}
             />
             <Text style={styles.nameText}>{item.user.displayName}</Text>
@@ -115,36 +117,39 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
                 style={styles.acceptButton}
                 onPress={() => handleAcceptRequest(item.user.id)}
               >
-                <Text style={styles.buttonText}>Aceitar</Text>
-              </TouchableOpacity>)}
+                <Text style={styles.buttonText}>{t("common.accept")}</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => handleRemoveUser(item.user.id, "user")}
             >
-              <Text style={styles.buttonText}>Remover</Text>
+              <Text style={styles.buttonText}>{t("common.remove")}</Text>
             </TouchableOpacity>
           </View>
         )}
       />
 
-      <Text style={styles.header}>Responsáveis</Text>
+      <Text style={styles.header}>{t("responsibles.responsibles")}</Text>
       <FlatList
         data={pendingResponsibles}
-        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum responsável encontrado.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>{t("responsibles.noResponsiblesFound")}</Text>}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <RemoteImage
-              uri={item.responsible.avatar_url} // Ou uma URL válida
+              uri={item.responsible.avatar_url}
               style={styles.profileImage}
             />
             <Text style={styles.nameText}>{item.responsible.displayName}</Text>
-            <Text style={styles.nameText}>{item.accepted == false ? "não aceito" : "aceito"}</Text>
+            <Text style={styles.nameText}>
+              {item.accepted == false ? t("responsibles.notAccepted") : t("responsibles.accepted")}
+            </Text>
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => handleRemoveUser(item.responsible.id, "responsible")}
             >
-              <Text style={styles.buttonText}>Remover</Text>
+              <Text style={styles.buttonText}>{t("common.remove")}</Text>
             </TouchableOpacity>
           </View>
         )}
