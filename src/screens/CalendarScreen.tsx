@@ -90,9 +90,12 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     let doseTime = new Date(firstDoseTime);
 
     do {
+      const datetimeForDose = new Date(new Date(selectedDay).setHours(new Date(doseTime).getHours()))
+      datetimeForDose.setDate(datetimeForDose.getDate() + 1)
       doseTimes.push({
         medication: userMedication.medication,
         datetime: new Date(doseTime),
+        trueDateTime: datetimeForDose,
         time: formatTime(doseTime),
         isTaken: userMedication.isTaken,
         isExpiringSoon: userMedication.isExpiringSoon,
@@ -201,13 +204,22 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
                   <Text style={{ fontSize: 14 }}>Hora: {dose.time}</Text>
                   <Text>Próxima expiração: {dose.nextExpirationDate}</Text>
-                  <Text style={{ fontSize: 14, color: dose.isTaken ? "green" : "orange" }}>
-                    {dose.isTaken ? "Tomado" : "A tomar"}
-                  </Text>
-                  {!dose.isTaken && Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime] && (
+                  {dose.isTaken ? (
+                    <Text style={{ fontSize: 14, color: "green" }}>
+                      Tomado
+                    </Text>
+                  ) : Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime] ? (
                     <TouchableOpacity onPress={() => openTakeMedicationModal(dose.medication.id)}>
                       <Text style={{ color: "blue" }}>Tomar</Text>
                     </TouchableOpacity>
+                  ) : Date.now() > Number(dose.trueDateTime) ? (
+                    <Text style={{ fontSize: 14, color: "red" }}>
+                      Esquecido
+                    </Text>
+                  ) : (
+                    <Text style={{ fontSize: 14, color: "orange" }}>
+                      A tomar
+                    </Text>
                   )}
                 </View>
               ) : (
