@@ -245,6 +245,9 @@
     "false": "False",
     "true": "True"
   },
+  "user": {
+    "localeAlterSuccess": "Language updated"
+  },
   "settings": {
     "reports": "Reports",
     "account": "Account",

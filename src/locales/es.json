@@ -9,6 +9,9 @@
         "loginError": "Error al iniciar sesión. Por favor, inténtalo de nuevo.",
         "invalidCredentials": "Usuario o contraseña inválidos"
       },
+      "user": {
+        "localeAlterSuccess": "Idioma actualizado"
+      },
       "signup": {
         "name": "Nombre",
         "email": "Correo electrónico",

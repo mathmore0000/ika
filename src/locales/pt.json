@@ -157,6 +157,9 @@
     "notAccepted": "Não aceito",
     "accepted": "Aceito"
   },
+  "user": {
+    "localeAlterSuccess": "Linguagem atualizada"
+  },
   "videos": {
     "myVideos": "Meus Vídeos",
     "supervisedVideos": "Vídeos Supervisionados",

@@ -4,7 +4,9 @@ import AppLayout from '@/components/shared/AppLayout';
 import LanguageModal from './Settings/LanguageModal';
 import { SettingsProps } from '@/constants/interfaces/props/Settings';
 import i18n from '@/i18n';
+import api from "@/server/api";
 import { useTranslation } from 'react-i18next';
+import { showSuccessToast } from "@/utils/toast";
 
 const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) => {
   const { t } = useTranslation();
@@ -25,10 +27,20 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
     }
   };
 
-  const handleSelectLanguage = (language: string) => {
-    setSelectedLanguage(language);
-    i18n.changeLanguage(language);
+  const handleSelectLanguage = async (language: string) => {
+
+    try {
+      await api.patch('/user/locale', { locale: language });
+      setSelectedLanguage(language);
+      i18n.changeLanguage(language);
+      showSuccessToast(t('user.localeAlterSuccess'))
+      showScu
+    } catch (error) {
+      // Aqui você pode lidar com o erro, por exemplo, mostrando uma mensagem ao usuário
+      console.error('Error updating locale:', error);
+    }
   };
+
 
   return (
     <View style={styles.container}>
