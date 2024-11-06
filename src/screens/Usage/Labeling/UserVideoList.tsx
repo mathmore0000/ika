@@ -112,7 +112,7 @@ const UserVideoList = () => {
             {selectedVideo && (
                 <Modal visible={true} transparent={true} animationType="slide">
                     <VideoModal
-                        videoUri={selectedVideo.url} // Substitua pela URL do vídeo real
+                        url={selectedVideo.url} // Substitua pela URL do vídeo real
                         onClose={() => setSelectedVideo(null)}
                     />
                 </Modal>

@@ -1,18 +1,20 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Video } from 'expo-av';
+import { showErrorToast } from "@/utils/toast";
 
-const VideoModal = ({ videoUri, onClose }) => {
+const VideoModal = ({ url, onClose }) => {
     return (
         <View style={styles.modalContainer}>
             <View style={styles.header}>
+
                 <Text style={styles.title}>Video Viewer</Text>
                 <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                     <Text style={styles.closeButtonText}>X</Text>
                 </TouchableOpacity>
             </View>
             <Video
-                source={{ uri: videoUri }}
+                source={{ uri: url }}
                 rate={1.0}
                 volume={1.0}
                 isMuted={false}
@@ -20,6 +22,8 @@ const VideoModal = ({ videoUri, onClose }) => {
                 shouldPlay
                 style={styles.video}
                 useNativeControls
+                onError={(error) => { showErrorToast("Erro carregando o vídeo, tente novamente mais tarde"); console.log("Video Load Error:", error) }}
+
             />
         </View>
     );

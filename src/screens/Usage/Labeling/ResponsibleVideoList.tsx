@@ -17,6 +17,11 @@ const ResponsibleVideoList = () => {
         fetchVideos(0, true); // Carrega a primeira página ao montar o componente
     }, [filterStatus]); // Atualiza ao mudar o filtro
 
+
+    useEffect(() => {
+        console.log("url", selectedVideo?.url); // Carrega a primeira página ao montar o componente
+    }, [selectedVideo]); // Atualiza ao mudar o filtro
+
     const fetchVideos = async (page = currentPage, reset = false) => {
         if (loading || page >= totalPages) return;
         setLoading(true);
@@ -89,9 +94,9 @@ const ResponsibleVideoList = () => {
 
             {/* Modal para visualização e ações de aprovação/rejeição */}
             {selectedVideo && (
-                <Modal visible={true} transparent={true} animationType="slide">
+                <Modal transparent={true} animationType="slide">
                     <View style={styles.modalBackground}>
-                        <VideoModal videoUri={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
+                        <VideoModal url={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
                         <VideoActionsModal
                             closeModal={() => setSelectedVideo(null)}
                             video={selectedVideo}
