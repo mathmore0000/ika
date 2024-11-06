@@ -202,7 +202,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                   <Text style={{ fontSize: 14, color: dose.isTaken ? "green" : "orange" }}>
                     {dose.isTaken ? "Tomado" : "A tomar"}
                   </Text>
-                  {!dose.isTaken && (
+                  {!dose.isTaken && Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime] && (
                     <TouchableOpacity onPress={() => openTakeMedicationModal(dose.medication.id)}>
                       <Text style={{ color: "blue" }}>Tomar</Text>
                     </TouchableOpacity>
