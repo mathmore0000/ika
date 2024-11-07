@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect, useState  } from "react";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getToken, setToken } from "@/server/api";
-import { navigationRef, setCurrentScreen } from "@/navigation/RootNavigation";
-
+import { navigationRef, setCurrentScreen, currentScreen } from "@/navigation/RootNavigation";
+import "./src/assets/styles/global.css";
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
 import NotificationsScreen from "@/screens/Notifications/NotificationsScreen";
@@ -13,10 +13,11 @@ import MedicationsScreen from "@/screens/Medications/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
-import VideoFilterScreen from "@/screens/VideoFilterScreen"
+import VideoFilterScreen from "@/screens/VideoFilterScreen" 
 
 let checkAuth = () => {
-  console.log("checkAuth antes")};
+  console.log("checkAuth antes")
+};
 function App() {
   const Stack = createNativeStackNavigator();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -43,7 +44,7 @@ function App() {
   function AuthStack() {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="Login">
+        <Stack.Screen name="Login" options={{ headerShown: false }}>
           {(props) => <LoginScreen {...props} onLoginSuccess={onLoginSuccess} />}
         </Stack.Screen>
         <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
@@ -66,7 +67,14 @@ function App() {
   }
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      onStateChange={() => {
+        const currentRoute = navigationRef.getCurrentRoute();
+        if (currentRoute) {
+          setCurrentScreen(currentRoute.name);
+        }
+      }}>
       {isAuthenticated ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );

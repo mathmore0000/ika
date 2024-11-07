@@ -54,3 +54,7 @@ export function convertDateToLocalTimezone(date: Date) {
   const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return date.toLocaleString("en-US", { timeZone: localTimezone });
 }
+
+export function getDateAndHour(date: Date) {
+  return date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+}
