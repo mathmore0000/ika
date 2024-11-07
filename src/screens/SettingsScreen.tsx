@@ -58,16 +58,12 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
               <View className="flex flex-row items-center">
                 <Icon name={option.icon} style={styles.icon} />
                 <View className="flex flex-col">
-                  <Text className="text-black font-bold">{option.title}</Text>
+                  <Text className="text-black font-bold">{option.title}{option.destination === 'Language' && " - "+selectedLanguage.toLocaleUpperCase()}</Text>                 
                   <Text className="text-black text-sm">{option.subtitle}</Text>
                 </View>
               </View>
               <Icon name="keyboard-arrow-right" style={styles.icon} />
-            </View>
-            <Text style={styles.settingText}>{option.title}</Text>
-            {option.destination === 'Language' && (
-              <Text style={styles.languageText}>{selectedLanguage}</Text>
-            )}
+            </View>            
           </TouchableOpacity>
         ))}
       </View>
@@ -100,12 +96,12 @@ const styles = StyleSheet.create({
     borderColor: "#000",
   },
   settingText: {
-    color: "#FFFFFF",
+    color: "#000",
     fontSize: 16,
     fontWeight: "bold",
   },
   languageText: {
-    color: "#FFFFFF",
+    color: "#000",
     fontSize: 16,
     fontWeight: "bold",
     opacity: 0.8,
