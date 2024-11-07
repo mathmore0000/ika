@@ -265,7 +265,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                         size={20}
                       />
                     </View>
-                    <Text className="text-sm">{t('calenda.time')}: {dose.time}</Text>
+                    <Text className="text-sm">{t('calendar.time')}: {dose.time}</Text>
                     <Text className="">{t('calendar.nextExpiration', { date: getDateAndHour(new Date(dose.nextExpirationDate)) })}</Text>
                     <DoseStatusButton dose={dose} />
                   </View>
@@ -282,7 +282,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                   }}
                 >
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
-                  <Text style={{ fontSize: 14 }}>{t('calenda.time')}: {dose.time}</Text>
+                  <Text style={{ fontSize: 14 }}>{t('calendar.time')}: {dose.time}</Text>
                   <Text>{dose.type}</Text>
                 </View>
               )}
