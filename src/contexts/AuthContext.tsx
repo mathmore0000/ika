@@ -26,6 +26,7 @@ export function getUser() {
         displayName: user?.displayName,
         phoneNumber: user?.phoneNumber,
         dateOfBirth: user?.dateOfBirth,
+        avatarUrl: user?.avatarUrl,
         role: user?.roles[0].authority,
         locale: user?.locale,
         email: user?.sub

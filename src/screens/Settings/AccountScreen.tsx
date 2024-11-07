@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { AccountProps } from "@/constants/interfaces/props/Account";
 import api from '@/server/api';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 import { getUser, updateUser } from '@/contexts/AuthContext';
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import ChangePasswordModal from './ChangePasswordModal'; // Importar o modal
@@ -34,12 +35,11 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     const [dateOfBirthFormatted, setDateOfBirthFormatted] = useState('')
     const [isEditingDOB, setIsEditingDOB] = useState(false);
 
-    const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '');
+    const [profilePicture, setProfilePicture] = useState(user?.avatarUrl || '');
 
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
 
     useEffect(() => {
-        console.log("dateOfBirth vrau", formatDate(dateOfBirth))
         setDateOfBirthFormatted(formatDate(dateOfBirth))
     }, [dateOfBirth]);
 
@@ -50,7 +50,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
 
             setDisplayName(currentUser.displayName || '');
             setPhoneNumber(currentUser.phoneNumber || '');
-            setProfilePicture(currentUser.profilePicture || '');
+            setProfilePicture(currentUser.avatarUrl || '');
 
             if (!currentUser.dateOfBirth) {
                 return setDateOfBirth('');
@@ -70,14 +70,14 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         fetchUser();
     }, []);
 
-    useEffect(() => {
-        console.log("mudança", dateOfBirth)
-    }, [dateOfBirth]);
-
     const formatDate = (dateString) => {
-        const dateStringSplit = dateString.split("-");
-        if (dateStringSplit.length != 3) { return dateString }
-        return `${dateStringSplit[2]}/${dateStringSplit[1]}/${dateStringSplit[0]}`
+        if (!dateString) return dateString
+        try {
+            const dateStringSplit = dateString.split("-");
+            if (dateStringSplit.length != 3) { return dateString }
+            return `${dateStringSplit[2]}/${dateStringSplit[1]}/${dateStringSplit[0]}`
+        } catch (error) { }
+        return dateString
     }
 
     // Função para salvar o nome atualizado
@@ -153,56 +153,87 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     };
 
     // Função para escolher foto da galeria
-    const handleChoosePhoto = () => {
-        launchImageLibrary({ mediaType: 'photo' }, async (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.errorMessage) {
-                console.error('ImagePicker Error: ', response.errorMessage);
-            } else if (response.assets && response.assets.length > 0) {
-                const uri = response.assets[0].uri;
+    const handleChoosePhoto = async () => {
+        console.log("handleChoosePhoto");
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const asset = result.assets[0];
+                const uri = asset.uri;
                 setProfilePicture(uri);
                 await uploadProfilePicture(uri);
+            } else {
+                console.log('Usuário cancelou a seleção da imagem');
             }
-        });
+        } catch (error) {
+            console.log("Erro ao escolher foto: ", error);
+        }
     };
 
     // Função para tirar foto com a câmera
-    const handleTakePhoto = () => {
-        launchCamera({ mediaType: 'photo' }, async (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled camera');
-            } else if (response.errorMessage) {
-                console.error('Camera Error: ', response.errorMessage);
-            } else if (response.assets && response.assets.length > 0) {
-                const uri = response.assets[0].uri;
+    const handleTakePhoto = async () => {
+        console.log("handleTakePhoto");
+        try {
+            let result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const asset = result.assets[0];
+                const uri = asset.uri;
                 setProfilePicture(uri);
-                await uploadProfilePicture(uri);
+                await uploadProfilePicture(asset.uri);
+                console.log("handleTakePhoto 6");
+            } else {
+                console.log('Usuário cancelou a captura da foto');
             }
-        });
+        } catch (error) {
+            console.log("Erro ao tirar foto: ", error);
+        }
     };
 
     // Função para fazer upload da foto de perfil
     const uploadProfilePicture = async (uri: string) => {
         try {
+            console.log("uploadProfilePicture");
             const formData = new FormData();
-            formData.append('profilePicture', {
+            console.log("uploadProfilePicture 2", uri);
+            const filename = uri.split('/').pop();
+            console.log("uploadProfilePicture 3");
+            const match = /\.(\w+)$/.exec(filename || '');
+            console.log("uploadProfilePicture 4");
+            const type = match ? `image/${match[1]}` : `image`;
+            console.log("uploadProfilePicture 5");
+
+            formData.append('image', {
                 uri,
-                name: 'profile.jpg',
-                type: 'image/jpeg',
+                name: filename || 'profile.jpg',
+                type,
             });
-            await api.patch('/v1/user/profile-picture', formData, {
+
+            const response = await api.patch('/user/change-image', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            updateUser({ profilePicture: uri });
+            console.log('response', response)
+
+            const newUrl = response.data; // Certifique-se de que o backend retorna a URL correta
+            await updateUser({ avatarUrl: newUrl });
             showSuccessToast(t('account.photoUpdateSuccess'));
         } catch (error) {
-            console.error('Error uploading profile picture:', error);
+            console.error('Erro ao enviar foto de perfil:', error.response.data);
             showErrorToast(t('account.photoUpdateError'));
         }
     };
+
 
     // Função para abrir o modal de troca de senha
     const openChangePasswordModal = () => {
