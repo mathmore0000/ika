@@ -108,7 +108,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <RemoteImage
-              uri={item.user.avatar_url}
+              uri={item.user.avatarUrl}
               style={styles.profileImage}
             />
             <Text style={styles.nameText}>{item.user.displayName}</Text>
@@ -138,7 +138,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <RemoteImage
-              uri={item.responsible.avatar_url}
+              uri={item.responsible.avatarUrl}
               style={styles.profileImage}
             />
             <Text style={styles.nameText}>{item.responsible.displayName}</Text>

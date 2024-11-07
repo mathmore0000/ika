@@ -6,6 +6,8 @@ import { navigationRef, setCurrentScreen, currentScreen } from "@/navigation/Roo
 import "./src/assets/styles/global.css";
 import { user, setToken } from "@/contexts/AuthContext"
 import i18n from '@/i18n';
+import Toast from 'react-native-toast-message';
+
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
 import NotificationsScreen from "@/screens/Notifications/NotificationsScreen";
@@ -82,6 +84,7 @@ function App() {
           setCurrentScreen(currentRoute.name);
         }
       }}>
+      <Toast />
       {isAuthenticated ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );

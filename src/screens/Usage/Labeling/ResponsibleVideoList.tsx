@@ -20,10 +20,6 @@ const ResponsibleVideoList = () => {
     fetchVideos(0, true);
   }, [filterStatus]);
 
-  useEffect(() => {
-    console.log("url", selectedVideo?.url);
-  }, [selectedVideo]);
-
   const fetchVideos = async (page = currentPage, reset = false) => {
     if (loading || page >= totalPages) return;
     setLoading(true);
@@ -82,7 +78,7 @@ const ResponsibleVideoList = () => {
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => (
           <View style={styles.videoItem}>
-            <RemoteImage uri={item.user.avatar_url} style={styles.profileImage} />
+            <RemoteImage uri={item.user.avatarUrl} style={styles.profileImage} />
             <Text style={styles.videoText}>{t("videos.user")}: {item.user.displayName}</Text>
             <Text style={styles.videoText}>{t("videos.email")}: {item.user.email}</Text>
             <Text style={styles.videoText}>{t("videos.videoId")}: {item.id}</Text>

@@ -47,7 +47,6 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         const fetchUser = async () => {
             const currentUser = await getUser();
             if (!currentUser) return
-
             setDisplayName(currentUser.displayName || '');
             setPhoneNumber(currentUser.phoneNumber || '');
             setProfilePicture(currentUser.avatarUrl || '');
@@ -68,6 +67,22 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         };
 
         fetchUser();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            // Solicitar permissões de câmera
+            const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+            if (cameraStatus !== 'granted') {
+                showErrorToast('Permissão para acessar a câmera é necessária.');
+            }
+
+            // Solicitar permissões de biblioteca de mídia
+            const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (mediaStatus !== 'granted') {
+                showErrorToast('Permissão para acessar a biblioteca de fotos é necessária.');
+            }
+        })();
     }, []);
 
     const formatDate = (dateString) => {
@@ -195,7 +210,12 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                 console.log('Usuário cancelou a captura da foto');
             }
         } catch (error) {
-            console.log("Erro ao tirar foto: ", error);
+            console.log(error)
+            console.log(error == "Error: Missing camera or camera roll permission")
+            if (error == "Error: Missing camera or camera roll permission"){
+                return showErrorToast("Erro")
+            }
+            console.log("Erro ao tirar foto:"+ error);
         }
     };
 
