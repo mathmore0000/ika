@@ -1,7 +1,7 @@
 // Login.tsx
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import * as SecureStore from "expo-secure-store";
+import { setToken } from "@/contexts/AuthContext"
 import {
   Image,
   Text,
@@ -86,11 +86,9 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
         password: password,
       });
 
-      await SecureStore.setItemAsync("jwt", response.data.jwt);
-      await SecureStore.setItemAsync(
-        "refresh-token",
-        response.data.refreshToken
-      );
+      await setToken(response.data.jwt, response.data.refreshToken)
+
+      
 
       clearFields();
       showSuccessToast(t("auth.login.loginSuccess"));

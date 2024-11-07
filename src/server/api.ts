@@ -44,7 +44,7 @@ const refreshAccessToken = async () => {
 export async function getToken() {
   let token = await SecureStore.getItemAsync("jwt");
 
-  if (token == null){
+  if (token == "" || token == null){
     return null;
   }
   if (isTokenExpired(token)) {

@@ -207,6 +207,16 @@
     "selectLabels": "Selecionar Labels",
     "saveSelection": "Salvar Seleção"
   },
+  "account": {
+    "addPhoto": "Adicionar Foto",
+    "takePhoto": "Tirar Foto",
+    "choosePhoto": "Escolher Foto",
+    "nameUpdateSuccess": "Nome atualizado com sucesso.",
+    "nameUpdateError": "Erro ao atualizar o nome.",
+    "photoUpdateSuccess": "Foto de perfil atualizada com sucesso.",
+    "photoUpdateError": "Erro ao atualizar a foto de perfil.",
+    "logout": "Sair"
+  },
   "calendar": {
     "today": "Hoje",
     "noMedicationForDay": "Nenhum medicamento para este dia",

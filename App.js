@@ -1,10 +1,10 @@
-import React, { useEffect, useState  } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { getToken, setToken } from "@/server/api";
+import { getToken } from "@/server/api";
 import { navigationRef, setCurrentScreen, currentScreen } from "@/navigation/RootNavigation";
 import "./src/assets/styles/global.css";
-import { decode as atob } from 'base-64';
+import { user, setToken } from "@/contexts/AuthContext"
 import i18n from '@/i18n';
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
@@ -15,20 +15,10 @@ import MedicationsScreen from "@/screens/Medications/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
-import VideoFilterScreen from "@/screens/VideoFilterScreen" 
+import VideoFilterScreen from "@/screens/VideoFilterScreen"
+import AccountScreen from "@/screens/Settings/AccountScreen"
 
 let checkAuth = () => { };
-
-function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  // Adiciona padding se necessário
-  while (base64.length % 4) {
-    base64 += '=';
-  }
-  const jsonPayload = atob(base64);
-  return JSON.parse(jsonPayload); null;
-}
 
 function App() {
   const Stack = createNativeStackNavigator();
@@ -38,7 +28,7 @@ function App() {
     const token = await getToken();
     setIsAuthenticated(!!token);
     if (!!token == true) {
-      const language = parseJwt(token).locale
+      const language = user.locale
 
       i18n.changeLanguage(language);
     }
@@ -78,6 +68,7 @@ function App() {
         <Stack.Screen name="Responsibles" component={ResponsiblesScreen} />
         <Stack.Screen name="Medications" component={MedicationsScreen} />
         <Stack.Screen name="Videos" component={VideoFilterScreen} />
+        <Stack.Screen name="Account" component={AccountScreen} />
       </Stack.Navigator>
     );
   }

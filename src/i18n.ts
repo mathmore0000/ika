@@ -9,6 +9,7 @@ import es from './locales/es.json';
 i18n
   .use(initReactI18next)
   .init({
+    compatibilityJSON: 'v3',
     resources: {
       en: { translation: en },
       pt: { translation: pt },
