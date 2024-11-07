@@ -165,7 +165,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
   const DoseStatusButton = ({ dose }) => {
     const isWithinTimeRange =
-      Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime];
+      new Date().getDate() == dose.trueDateTime.getDate() && Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime];
     const isTaken = dose.isTaken;
     const isPastDue = Date.now() > Number(dose.trueDateTime);
 
@@ -194,10 +194,10 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       const r = (bigint >> 16) & 255;
       const g = (bigint >> 8) & 255;
       const b = bigint & 255;
-    
+
       return `${r}, ${g}, ${b}`;
     };
-    
+
 
     return (
       <TouchableOpacity
@@ -265,8 +265,8 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                         size={20}
                       />
                     </View>
-                    <Text className="text-sm">Hora: {dose.time}</Text>
-                    <Text className="">Próxima expiração: {getDateAndHour(new Date(dose.nextExpirationDate))}</Text>
+                    <Text className="text-sm">{t('calenda.time')}: {dose.time}</Text>
+                    <Text className="">{t('calendar.nextExpiration', { date: getDateAndHour(new Date(dose.nextExpirationDate)) })}</Text>
                     <DoseStatusButton dose={dose} />
                   </View>
                 </View>
@@ -282,14 +282,14 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                   }}
                 >
                   <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
-                  <Text style={{ fontSize: 14 }}>Hora: {dose.time}</Text>
+                  <Text style={{ fontSize: 14 }}>{t('calenda.time')}: {dose.time}</Text>
                   <Text>{dose.type}</Text>
                 </View>
               )}
             </View>
           ))
         ) : (
-          <Text style={{ textAlign: "center", marginVertical: 20 }}>Nenhum medicamento para este dia</Text>
+          <Text style={{ textAlign: "center", marginVertical: 20 }}>{t('medications.noMedicationForDay')}</Text>
         )}
       </ScrollView>
 

@@ -15,11 +15,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
 
   const settingsOptions = [
-  { title: "Cor Do Aplicativo", subtitle: "Personalize a aparência", destination: "AppColor", icon: "palette" },
-  { title: "Permissões", subtitle: "Gerencie permissões de acesso", destination: "Permissions", icon: "lock" },
-  { title: "Relatórios", subtitle: "Visualize e exporte relatórios", destination: "Reports", icon: "insert-drive-file" },
-  { title: "Idioma", subtitle: "Selecione o idioma preferido", destination: "Language", icon: "language" },
-  { title: "Contas", subtitle: "Gerencie suas contas e usuários", destination: "Accounts", icon: "supervisor-account" },
+  { title: t('settings.reports'), subtitle: "Visualize e exporte relatórios", destination: "Reports", icon: "insert-drive-file" },
+  { title:t('settings.language'), subtitle: "Selecione o idioma preferido", destination: "Language", icon: "language" },
+  { title: t('settings.account'), subtitle: "Gerencie suas contas e usuários", destination: "Accounts", icon: "supervisor-account" },
 ];
 
   const handleNavigation = (destination: string) => {
