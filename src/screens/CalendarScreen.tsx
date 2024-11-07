@@ -1,10 +1,11 @@
 // CalendarScreen.js
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Button } from "react-native";
 import api from "@/server/api";
 import AppLayout from "@/components/shared/AppLayout";
-import { getDaysArray, today, todayFormatted } from "@/utils/date";
+import { getDaysArray, today, todayFormatted, getDateAndHour } from "@/utils/date";
 import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Import the modal
+import Icon from "react-native-vector-icons/AntDesign";
 import { useTranslation } from "react-i18next";
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
@@ -162,28 +163,87 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     setShowModal(true);
   };
 
+  const DoseStatusButton = ({ dose }) => {
+    const isWithinTimeRange =
+      Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime];
+    const isTaken = dose.isTaken;
+    const isPastDue = Date.now() > Number(dose.trueDateTime);
+
+    let buttonText, buttonColor, isDisabled;
+
+    if (isTaken) {
+      buttonText = "Tomado";
+      buttonColor = "#001F3F"; // Verde suave
+      isDisabled = true;
+    } else if (isWithinTimeRange) {
+      buttonText = "Tomar";
+      buttonColor = "#001F3F"; // Azul vibrante
+    } else if (isPastDue) {
+      buttonText = "Esquecido";
+      buttonColor = "#F44336"; // Vermelho vibrante
+      isDisabled = true;
+    } else {
+      buttonText = "A tomar";
+      buttonColor = "#FF9800"; // Laranja vibrante
+      isDisabled = true;
+    }
+    const hexToRgb = (hex) => {
+      // Remove o "#" se estiver presente
+      hex = hex.replace("#", "");
+      const bigint = parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+    
+      return `${r}, ${g}, ${b}`;
+    };
+    
+
+    return (
+      <TouchableOpacity
+        style={{
+          marginTop: 16,
+          padding: 5,
+          backgroundColor: !isTaken ? buttonColor : `rgba(${hexToRgb(buttonColor)}, 0.5)`, // Usando RGBA para opacidade apenas no fundo
+          height: 32,
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 5,
+        }}
+        onPress={() => openTakeMedicationModal(dose.medication.id)}
+        disabled={isDisabled}
+      >
+        <Text style={{ fontSize: 14, color: "white", fontWeight: "bold" }}>{buttonText}</Text>
+      </TouchableOpacity>
+
+    );
+  };
+
+
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ padding: 16, marginBottom: 16 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>{t("calendar.today")}</Text>
-        <Text>{todayFormatted}</Text>
-      </View>
+      <View className="bg-primary flex flex-col">
+        <View className="p-6">
+          <Text className="font-bold text-2xl  text-white">{t("calendar.today")}</Text>
+          <Text className=" text-white">{todayFormatted}</Text>
+        </View>
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 16, paddingHorizontal: 16 }}>
-        {weekDays.map((day, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => setSelectedDay(day.fullDate)}
-            style={{
-              padding: 8,
-              borderBottomWidth: selectedDay === day.fullDate ? 2 : 0,
-              borderBottomColor: selectedDay === day.fullDate ? "blue" : "transparent",
-            }}
-          >
-            <Text>{day.name.split(".")[0]}</Text>
-            <Text>{day.number}</Text>
-          </TouchableOpacity>
-        ))}
+        <View className="flex flex-row justify-between mb-4 px-4">
+          {weekDays.map((day, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setSelectedDay(day.fullDate)}
+              className="flex items-center justify-center p-2"
+              style={{
+                borderBottomWidth: selectedDay === day.fullDate ? 2 : 0,
+                borderBottomColor: selectedDay === day.fullDate ? "white" : "transparent",
+              }}
+            >
+              <Text className="text-white">{day.name.split(".")[0]}</Text>
+              <Text className="text-white">{day.number}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80, flexGrow: 1 }}>
@@ -192,35 +252,23 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
             <View key={`${dose.medication.id}-${dose.time}-${index}`}>
               {dose.type === "dose" ? (
                 <View
+                  className="p-4 my-2 border border-gray-300 rounded-lg bg-white"
                   style={{
-                    padding: 12,
-                    marginVertical: 8,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 8,
                     backgroundColor: dose.isExpiringSoon ? "rgba(255, 100, 100, 0.1)" : "white",
                   }}
                 >
-                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
-                  <Text style={{ fontSize: 14 }}>Hora: {dose.time}</Text>
-                  <Text>Próxima expiração: {dose.nextExpirationDate}</Text>
-                  {dose.isTaken ? (
-                    <Text style={{ fontSize: 14, color: "green" }}>
-                      Tomado
-                    </Text>
-                  ) : Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime] ? (
-                    <TouchableOpacity onPress={() => openTakeMedicationModal(dose.medication.id)}>
-                      <Text style={{ color: "blue" }}>Tomar</Text>
-                    </TouchableOpacity>
-                  ) : Date.now() > Number(dose.trueDateTime) ? (
-                    <Text style={{ fontSize: 14, color: "red" }}>
-                      Esquecido
-                    </Text>
-                  ) : (
-                    <Text style={{ fontSize: 14, color: "orange" }}>
-                      A tomar
-                    </Text>
-                  )}
+                  <View className="flex flex-col justify-between">
+                    <View className="flex flex-row justify-between items-center">
+                      <Text className="font-bold text-lg">{dose.medication.name}</Text>
+                      <Icon
+                        name={dose.isTaken ? "checkcircleo" : !dose.isExpiringSoon ? "clockcircleo" : "warning"}
+                        size={20}
+                      />
+                    </View>
+                    <Text className="text-sm">Hora: {dose.time}</Text>
+                    <Text className="">Próxima expiração: {getDateAndHour(new Date(dose.nextExpirationDate))}</Text>
+                    <DoseStatusButton dose={dose} />
+                  </View>
                 </View>
               ) : (
                 <View

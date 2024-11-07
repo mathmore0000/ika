@@ -10,12 +10,10 @@ const borderRadius = buttonWidth / 2; // Raio circular baseado no tamanho do bot
 
 export default StyleSheet.create({
     medicineCardTaken: {
-        backgroundColor: "#483DF7", // Azul claro para os cartões
+        backgroundColor: "#fff", // Azul claro para os cartões
         width: "100%", // Faz o cartão ocupar a largura disponível
-        height: 170, // Altura fixa para os cartões
-        borderRadius: 15, // Bordas arredondadas
+        height: 130, // Altura fixa para os cartões
         padding: 20, // Espaçamento interno
-        marginVertical: 15, // Espaçamento entre os cartões
         justifyContent: "flex-start", // Iniciar o conteúdo do topo
         alignItems: "stretch", // Estica o conteúdo horizontalmente
     },
@@ -26,16 +24,16 @@ export default StyleSheet.create({
         marginVertical: 15, // Espaçamento entre os cartões
         width: "100%", // Faz o cartão ocupar a largura disponível
         height: 150, // Altura fixa para os cartões
-        justifyContent: "flex-start", // Iniciar o conteúdo do topo
+        justifyContent: "space-between", // Iniciar o conteúdo do topo
         alignItems: "stretch", // Estica o conteúdo horizontalmente
     },
     timeText: {
-        color: "#FFFFFF",
+        color: "#000",
         fontSize: 18,
         fontWeight: "bold",
     },
     medicineText: {
-        color: "#FFFFFF",
+        color: "#000",
         fontWeight: "bold",
         fontSize: 18,
         marginTop: 10,
@@ -69,7 +67,7 @@ export default StyleSheet.create({
         borderTopRightRadius: 0, // Deixar as partes de cima retas
         paddingVertical: 10,
         fontSize: 16,
-        width: "110%", // O botão ocupa toda a largura do cartão
+        width: "100%", // O botão ocupa toda a largura do cartão
         alignSelf: "stretch", // Garantir que o botão ocupe toda a largura
         position: "absolute", // Posiciona o botão
         bottom: 0, // Encosta o botão no final do cartão
