@@ -4,8 +4,10 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, M
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
+import { useTranslation } from 'react-i18next';
 
 const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -28,7 +30,7 @@ const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
       setFilteredCategories(filterCategories([...categories, ...response.data.content], searchText));
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      showErrorToast("Erro ao carregar categorias.");
+      showErrorToast(t("medications.errorLoadingCategories"));
     } finally {
       setLoading(false);
     }
@@ -57,11 +59,11 @@ const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.title}>Selecione uma Categoria</Text>
+      <Text style={styles.title}>{t("medications.selectCategory")}</Text>
 
       <TextInput
         style={styles.searchInput}
-        placeholder="Pesquisar categoria..."
+        placeholder={t("medications.searchCategory")}
         value={searchText}
         onChangeText={handleSearch}
       />
@@ -83,7 +85,7 @@ const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
       />
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancelar</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );

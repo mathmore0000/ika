@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getToken, setToken } from "@/server/api";
 import { navigationRef, setCurrentScreen, currentScreen } from "@/navigation/RootNavigation";
 import "./src/assets/styles/global.css";
+import { decode as atob } from 'base-64';
+import i18n from '@/i18n';
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
 import NotificationsScreen from "@/screens/Notifications/NotificationsScreen";
@@ -15,17 +17,31 @@ import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
 import VideoFilterScreen from "@/screens/VideoFilterScreen" 
 
-let checkAuth = () => {
-  console.log("checkAuth antes")
-};
+let checkAuth = () => { };
+
+function parseJwt(token) {
+  const base64Url = token.split('.')[1];
+  let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  // Adiciona padding se necessário
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+  const jsonPayload = atob(base64);
+  return JSON.parse(jsonPayload); null;
+}
+
 function App() {
   const Stack = createNativeStackNavigator();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   checkAuth = async () => {
-    console.log("checkAuth")
     const token = await getToken();
     setIsAuthenticated(!!token);
+    if (!!token == true) {
+      const language = parseJwt(token).locale
+
+      i18n.changeLanguage(language);
+    }
   };
 
   useEffect(() => {

@@ -1,13 +1,16 @@
+// MedicationSelectionModal.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Dimensions, Modal } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal } from "react-native";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 import NewMedicationModal from "./Medication/NewMedicationModal";
-import UserMedicationModal from "./AddUserMedicationModal"
+import UserMedicationModal from "./AddUserMedicationModal";
 import { medicationType } from "@/constants/interfaces/Entities";
+import { useTranslation } from "react-i18next";
 
 const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicationCreated }) => {
+  const { t } = useTranslation();
   const [medications, setMedications] = useState<medicationType[]>([]);
   const [filteredMedications, setFilteredMedications] = useState([]);
   const [selectedMedication, setSelectedMedication] = useState<medicationType>([]);
@@ -42,12 +45,12 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
       const response = await api.get("/medications", { params: { page, size } });
       const newMedications = filterOutUserMedications(response.data.content);
       const updatedMedications: medicationType[] = page === 0 ? newMedications : [...medications, ...newMedications];
-      
+
       setMedications(updatedMedications);
-      setFilteredMedications(filterMedications(updatedMedications, searchText)); // Filtra imediatamente após carregar mais itens
+      setFilteredMedications(filterMedications(updatedMedications, searchText));
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      showErrorToast("Erro ao carregar medicamentos.");
+      showErrorToast(t("medications.errorLoadingMedications"));
     } finally {
       setLoading(false);
     }
@@ -66,18 +69,17 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
 
   const handleNewUserMedicationModal = async () => {
     if (selectedMedication.id == null) {
-      return showErrorToast("Escolha um medicamento!");
+      return showErrorToast(t("medications.chooseMedication"));
     }
     openNewUserMedicationModal();
   };
 
   const handleSearch = (text) => {
     setSearchText(text);
-    setFilteredMedications(filterMedications(medications, text)); // Atualiza a lista filtrada
+    setFilteredMedications(filterMedications(medications, text));
   };
 
   const handleSelect = (medication) => {
-    console.log(medication)
     setSelectedMedication(medication);
   };
 
@@ -89,11 +91,11 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.title}>Selecione um Medicamento</Text>
+      <Text style={styles.title}>{t("medications.selectMedication")}</Text>
 
       <TextInput
         style={styles.searchInput}
-        placeholder="Pesquisar medicamento..."
+        placeholder={t("medications.searchMedication")}
         value={searchText}
         onChangeText={handleSearch}
       />
@@ -101,15 +103,17 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
       <FlatList
         data={filteredMedications}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum medicamento encontrado.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>{t("medications.noMedicationsFound")}</Text>}
         renderItem={({ item }) => (
           <View style={item.id === selectedMedication.id ? styles.medicationItemSelected : styles.medicationItem}>
-            <Text style={styles.medicationName}>Nome: {item.name} | Dosagem: {item.dosage}</Text>
+            <Text style={styles.medicationName}>
+              {t("medications.medicationNameDosage", { name: item.name, dosage: item.dosage })}
+            </Text>
             <TouchableOpacity
               style={styles.selectButton}
               onPress={() => handleSelect(item)}
             >
-              <Text style={styles.selectButtonText}>Selecionar</Text>
+              <Text style={styles.selectButtonText}>{t("common.select")}</Text>
             </TouchableOpacity>
             <Text></Text>
           </View>
@@ -136,15 +140,15 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
       </Modal>
 
       <TouchableOpacity onPress={handleNewUserMedicationModal}>
-        <Text style={styles.toggleText}>Adicionar Medicamento Ao Inventário</Text>
+        <Text style={styles.toggleText}>{t("medications.addToInventory")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={openIsNewMedicationModal}>
-        <Text style={styles.toggleText}>Adicionar Medicamento</Text>
+        <Text style={styles.toggleText}>{t("medications.addMedicationButton")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancelar</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -6,8 +6,10 @@ import { Picker } from "@react-native-picker/picker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
+import { useTranslation } from "react-i18next";
 
 const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedications }) => {
+  const { t } = useTranslation();
   const [timeBetween, setTimeBetween] = useState(userMedication.timeBetween?.toString() || "8");
   const [maxTakingTime, setMaxTakingTime] = useState(userMedication.maxTakingTime?.toString() || "0.5");
   const [firstDosageTime, setFirstDosageTime] = useState(new Date(userMedication.firstDosageTime));
@@ -23,9 +25,9 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
 
   const handleSave = async () => {
     const validationErrors = {};
-    if (!timeBetween) validationErrors.timeBetween = "Tempo entre doses é obrigatório.";
-    if (!firstDosageTime) validationErrors.firstDosageTime = "Horário da primeira dose é obrigatório.";
-    if (!maxTakingTime) validationErrors.maxTakingTime = "Tempo máximo de validação é obrigatório.";
+    if (!timeBetween) validationErrors.timeBetween = t("medications.validationErrors.timeBetweenRequired");
+    if (!firstDosageTime) validationErrors.firstDosageTime = t("medications.validationErrors.firstDosageTimeRequired");
+    if (!maxTakingTime) validationErrors.maxTakingTime = t("medications.validationErrors.maxTakingTimeRequired");
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -34,8 +36,6 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
 
     try {
       const firstDosageTimeISO = firstDosageTime.toISOString();
-
-      console.log(firstDosageTimeISO)
       await api.put(`/user-medications/${userMedication.medication.id}`, {
         idMedication: userMedication.medication.id,
         quantityInt: userMedication.quantityInt?.toString() || "0",
@@ -45,12 +45,12 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
         maxTakingTime: parseFloat(maxTakingTime),
       });
 
-      showSuccessToast("Medicamento atualizado com sucesso.");
+      showSuccessToast(t("medications.medicationUpdated"));
       fetchUserMedications();
       closeModal();
     } catch (error) {
       console.log(error.response.data);
-      showErrorToast("Erro ao atualizar medicamento.");
+      showErrorToast(t("medications.errorUpdatingMedication"));
     }
   };
 
@@ -69,10 +69,10 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.title}>Editar Medicamento do Usuário</Text>
+      <Text style={styles.title}>{t("medications.editUserMedication")}</Text>
       <Text style={styles.subTitle}>{userMedication.medication.name}</Text>
 
-      <Text style={styles.label}>Tempo entre doses: {timeBetween} horas</Text>
+      <Text style={styles.label}>{t("medications.timeBetweenDoses", { hours: timeBetween })}</Text>
       <Picker
         selectedValue={timeBetween}
         onValueChange={(itemValue) => setTimeBetween(itemValue)}
@@ -88,7 +88,7 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
 
       <TouchableOpacity onPress={() => setShowTimePicker(true)}>
         <Text style={[styles.datePickerText, errors.firstDosageTime && styles.inputError]}>
-          Primeira Dose: {formatTime(firstDosageTime)}
+          {t("medications.firstDose")}: {formatTime(firstDosageTime)}
         </Text>
       </TouchableOpacity>
 
@@ -101,7 +101,7 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
         />
       )}
 
-      <Text style={styles.label}>Tempo Máximo de Tomação: {maxTakingTime} hora(s)</Text>
+      <Text style={styles.label}>{t("medications.maxTakingTime", { time: maxTakingTime })}</Text>
       <Picker
         selectedValue={maxTakingTime}
         onValueChange={(itemValue) => setMaxTakingTime(itemValue)}
@@ -113,11 +113,11 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
       {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Salvar</Text>
+        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancelar</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );

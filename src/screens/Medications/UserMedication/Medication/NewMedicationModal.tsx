@@ -1,28 +1,32 @@
+// NewMedicationModal.js
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from "react-native";
-import { medicationType, medicationErrorType, activeIngredientType, categoryType } from "@/constants/interfaces/Entities"
+import { medicationType, medicationErrorType, activeIngredientType, categoryType } from "@/constants/interfaces/Entities";
 import api from "@/server/api";
 import { Picker } from "@react-native-picker/picker";
-import ActiveIngredientSelectionModal from "./ActiveIngredient/ActiveIngredientSelectionModal"
-import CategorySelectionModal from "./Category/CategorySelectionModal"
+import ActiveIngredientSelectionModal from "./ActiveIngredient/ActiveIngredientSelectionModal";
+import CategorySelectionModal from "./Category/CategorySelectionModal";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
+import { useTranslation } from 'react-i18next';
 
 interface NewMedicationModalProps {
   closeModal: () => void;
-  onMedicationCreated: () => void; // Assume que recebe uma string e retorna void
+  onMedicationCreated: () => void;
 }
 
-const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onMedicationCreated }) => {// Dentro do NewMedicationModal.js
+const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onMedicationCreated }) => {
+  const { t } = useTranslation();
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [isIngredientModalVisible, setIsIngredientModalVisible] = useState(false);
-  const [bands] = useState<string[]>([
-    "Sem tarja",
-    "Tarja vermelha (sem retenção)",
-    "Tarja vermelha (com retenção)",
-    "Tarja preta",
-    "Tarja amarela"]
-  );
+
+  const bands = [
+    t("medications.bandNone"),
+    t("medications.bandRedNoRetention"),
+    t("medications.bandRedWithRetention"),
+    t("medications.bandBlack"),
+    t("medications.bandYellow")
+  ];
 
   const openCategoryModal = () => setIsCategoryModalVisible(true);
   const closeCategoryModal = () => setIsCategoryModalVisible(false);
@@ -71,20 +75,19 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
 
   const updateCustomMedication = (updatedFields: Partial<medicationType>) => {
     setCustomMedication((prev) => ({ ...prev, ...updatedFields }));
-    setErrors((prevErrors) => ({ ...prevErrors, [Object.keys(updatedFields)[0]]: null })); // Define o erro do campo específico como null
+    setErrors((prevErrors) => ({ ...prevErrors, [Object.keys(updatedFields)[0]]: null }));
   };
-
 
   const handleSave = async () => {
     let validationErrors: medicationErrorType = {};
-    if (!customMedication.name) validationErrors.name = "Nome é obrigatório.";
-    if (!customMedication.category.id) validationErrors.category = "Categoria é obrigatória.";
-    if (!customMedication.dosage) validationErrors.dosage = "Dosagem é obrigatória.";
-    if (!customMedication.activeIngredient.id) validationErrors.activeIngredient = "Ingrediente ativo é obrigatório.";
-    if (!customMedication.maxTakingTime) validationErrors.maxTakingTime = "Tempo máximo de validação é obrigatório.";
-    if (!customMedication.timeBetween) validationErrors.timeBetween = "Tempo entre doses é obrigatório.";
-    if (!customMedication.band) validationErrors.band = "Tarja é obrigatória.";
-    if (!customMedication.quantityInt && !customMedication.quantityMl) validationErrors.quantityInt = "Quantidade inteira ou ml é obrigatório";
+    if (!customMedication.name) validationErrors.name = "auth.validationErrors.nameRequired";
+    if (!customMedication.category.id) validationErrors.category = "medications.validationErrors.categoryRequired";
+    if (!customMedication.dosage) validationErrors.dosage = "medications.validationErrors.dosageRequired";
+    if (!customMedication.activeIngredient.id) validationErrors.activeIngredient = "medications.validationErrors.activeIngredientRequired";
+    if (!customMedication.maxTakingTime) validationErrors.maxTakingTime = "medications.validationErrors.maxTakingTimeRequired";
+    if (!customMedication.timeBetween) validationErrors.timeBetween = "medications.validationErrors.timeBetweenRequired";
+    if (!customMedication.band) validationErrors.band = "medications.validationErrors.bandRequired";
+    if (!customMedication.quantityInt && !customMedication.quantityMl) validationErrors.quantityInt = "medications.validationErrors.quantityRequired";
 
     console.log(validationErrors)
     if (Object.keys(validationErrors).length > 0) {
@@ -94,118 +97,114 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
 
     try {
       await api.post("/medications", { ...customMedication, categoryId: customMedication.category.id, activeIngredientId: customMedication.activeIngredient.id });
-      showSuccessToast("Medicamento criado com sucesso.");
+      showSuccessToast(t("medications.medicationCreated"));
       await onMedicationCreated();
       closeModal();
     } catch (error) {
       console.log(error.response.data)
-      showErrorToast("Erro ao criar medicamento.");
+      showErrorToast(t("medications.errorCreatingMedication"));
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.modalContainer}>
-      <Text style={styles.title}>Novo Medicamento</Text>
+      <Text style={styles.title}>{t("medications.newMedication")}</Text>
 
       <TextInput
         style={[styles.input, errors.name && styles.inputError]}
-        placeholder="Nome do medicamento"
+        placeholder={t("medications.medicationName")}
         value={customMedication.name}
         onChangeText={(value) => updateCustomMedication({ name: value })}
       />
-      {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+      {errors.name && <Text style={styles.errorText}>{t(errors.name)}</Text>}
 
-      <Text style={styles.buttonText}>Categoria selecionada: {customMedication.category.description} </Text>
+      <Text style={styles.buttonText}>{t("medications.selectedCategory", { category: customMedication.category.description })}</Text>
       <TouchableOpacity onPress={openCategoryModal}>
-        <Text style={styles.buttonText}>Selecionar Categoria {customMedication.category.description}</Text>
+        <Text style={styles.buttonText}>{t("medications.selectCategoryButton")}</Text>
       </TouchableOpacity>
-      {errors.category && <Text style={styles.errorText}>{errors.category}</Text>}
+      {errors.category && <Text style={styles.errorText}>{t(errors.category)}</Text>}
 
       <Text></Text>
-      <Text style={styles.buttonText}>Quantidade de pilulas </Text>
+      <Text style={styles.buttonText}>{t("medications.quantityPills")}</Text>
       <TextInput
         style={[styles.input, errors.quantityInt && styles.inputError]}
-        placeholder="Quantidade (unidades inteiras)"
+        placeholder={t("medications.quantityInt")}
         keyboardType="numeric"
         editable={customMedication.quantityMl === 0 || customMedication.quantityMl === null}
         value={customMedication.quantityInt.toString()}
         onChangeText={(value) => handleQuantityIntChange(parseInt(value, 10))}
       />
 
-      <Text style={styles.buttonText}>Quantidade em ML </Text>
+      <Text style={styles.buttonText}>{t("medications.quantityMl")}</Text>
       <TextInput
         style={[styles.input, errors.quantityMl && styles.inputError]}
-        placeholder="Quantidade (ml)"
+        placeholder={t("medications.quantityMlPlaceholder")}
         keyboardType="numeric"
         editable={customMedication.quantityInt === 0 || customMedication.quantityInt === null}
         value={customMedication.quantityMl.toString()}
         onChangeText={(value) => handleQuantityMlChange(parseInt(value, 10))}
       />
-      {errors.quantityInt && <Text style={styles.errorText}>{errors.quantityInt}</Text>}
+      {errors.quantityInt && <Text style={styles.errorText}>{t(errors.quantityInt)}</Text>}
 
-      <Text>Dosagem (em mg): </Text>
+      <Text>{t("medications.dosageMg")}</Text>
       <TextInput
         style={[styles.input, errors.dosage && styles.inputError]}
-        placeholder="Dosagem"
+        placeholder={t("medications.dosage")}
         keyboardType="numeric"
         value={customMedication.dosage}
         onChangeText={(value) => updateCustomMedication({ dosage: value })}
       />
-      {errors.dosage && <Text style={styles.errorText}>{errors.dosage}</Text>}
+      {errors.dosage && <Text style={styles.errorText}>{t(errors.dosage)}</Text>}
 
-      <Text style={styles.buttonText}>Ingrediente ativo selecionado: {customMedication.activeIngredient.description} </Text>
+      <Text style={styles.buttonText}>{t("medications.selectedActiveIngredient", { ingredient: customMedication.activeIngredient.description })}</Text>
       <TouchableOpacity onPress={openIngredientModal}>
-        <Text style={styles.buttonText}>Selecionar Ingrediente Ativo</Text>
+        <Text style={styles.buttonText}>{t("medications.selectActiveIngredientButton")}</Text>
       </TouchableOpacity>
-      {errors.activeIngredient && <Text style={styles.errorText}>{errors.activeIngredient}</Text>}
+      {errors.activeIngredient && <Text style={styles.errorText}>{t(errors.activeIngredient)}</Text>}
 
-      <Text style={styles.label}>Tempo Máximo de Tomação: {customMedication.maxTakingTime} hora(s)</Text>
+      <Text style={styles.label}>{t("medications.maxTakingTime", { time: customMedication.maxTakingTime })}</Text>
       <Picker
         selectedValue={customMedication.maxTakingTime}
         onValueChange={(value) => updateCustomMedication({ maxTakingTime: value })}
         style={[styles.picker, errors.maxTakingTime && styles.inputError]}
       >
-        <Picker.Item label="0.5 hora (30 minutos)" value="0.5" />
-        <Picker.Item label="1 hora" value="1" />
+        <Picker.Item label={t("medications.halfHour")} value="0.5" />
+        <Picker.Item label={t("medications.oneHour")} value="1" />
       </Picker>
-      {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
+      {errors.maxTakingTime && <Text style={styles.errorText}>{t(errors.maxTakingTime)}</Text>}
 
-      <Text style={styles.label}>Tempo entre doses: {customMedication.timeBetween} horas</Text>
+      <Text style={styles.label}>{t("medications.timeBetweenDoses", { hours: customMedication.timeBetween })}</Text>
       <Picker
         selectedValue={customMedication.timeBetween}
         onValueChange={(value: number) => { updateCustomMedication({ timeBetween: value }) }}
         style={[styles.picker, errors.timeBetween && styles.inputError]}
       >
-        <Picker.Item label="4 horas" value="4" />
-        <Picker.Item label="6 horas" value="6" />
-        <Picker.Item label="8 horas" value="8" />
-        <Picker.Item label="12 horas" value="12" />
-        <Picker.Item label="24 horas" value="24" />
+        <Picker.Item label={t("medications.fourHours")} value="4" />
+        <Picker.Item label={t("medications.sixHours")} value="6" />
+        <Picker.Item label={t("medications.eightHours")} value="8" />
+        <Picker.Item label={t("medications.twelveHours")} value="12" />
+        <Picker.Item label={t("medications.twentyFourHours")} value="24" />
       </Picker>
-      {errors.timeBetween && <Text style={styles.errorText}>{errors.timeBetween}</Text>}
+      {errors.timeBetween && <Text style={styles.errorText}>{t(errors.timeBetween)}</Text>}
 
-
-      <Text>Tarja: {bands[customMedication.band - 1]}</Text>
+      <Text>{t("medications.band", { band: bands[customMedication.band - 1] })}</Text>
       <Picker
         selectedValue={customMedication.band}
         onValueChange={(value) => { console.log(value); updateCustomMedication({ band: value }) }}
         style={[styles.picker, errors.band && styles.inputError]}
       >
-        {bands.map((band: string, i: number) => {
-          return (
-            <Picker.Item label={band} value={String(i + 1)} key={i} />
-          )
-        }
-        )}
+        {bands.map((band: string, i: number) => (
+          <Picker.Item label={band} value={String(i + 1)} key={i} />
+        ))}
       </Picker>
-      {errors.band && <Text style={styles.errorText}>{errors.band}</Text>}
+      {errors.band && <Text style={styles.errorText}>{t(errors.band)}</Text>}
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Salvar</Text>
+        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancelar</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
 
       <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
@@ -215,10 +214,7 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
       <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
         <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
       </Modal>
-
     </ScrollView>
-
-
   );
 };
 

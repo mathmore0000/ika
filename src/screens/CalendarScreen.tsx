@@ -6,8 +6,10 @@ import AppLayout from "@/components/shared/AppLayout";
 import { getDaysArray, today, todayFormatted, getDateAndHour } from "@/utils/date";
 import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Import the modal
 import Icon from "react-native-vector-icons/AntDesign";
+import { useTranslation } from "react-i18next";
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
+  const { t } = useTranslation();
   const weekDays = getDaysArray(today);
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]);
   const [userMedications, setUserMedications] = useState([]);
@@ -222,7 +224,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     <View style={{ flex: 1 }}>
       <View className="bg-primary flex flex-col">
         <View className="p-6">
-          <Text className="font-bold text-2xl  text-white">Hoje</Text>
+          <Text className="font-bold text-2xl  text-white">{t("calendar.today")}</Text>
           <Text className=" text-white">{todayFormatted}</Text>
         </View>
 

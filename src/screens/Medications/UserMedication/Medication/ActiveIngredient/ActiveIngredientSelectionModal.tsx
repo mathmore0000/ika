@@ -4,8 +4,10 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, M
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
+import { useTranslation } from 'react-i18next';
 
 const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected }) => {
+  const { t } = useTranslation();
   const [activeIngredients, setActiveIngredients] = useState([]);
   const [filteredActiveIngredients, setFilteredActiveIngredients] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -29,7 +31,7 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.log(error)
-      showErrorToast("Erro ao carregar ingredientes.");
+      showErrorToast(t("medications.errorLoadingIngredients"));
     } finally {
       setLoading(false);
     }
@@ -58,11 +60,11 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.title}>Selecione um Ingrediente Ativo</Text>
+      <Text style={styles.title}>{t("medications.selectActiveIngredient")}</Text>
 
       <TextInput
         style={styles.searchInput}
-        placeholder="Pesquisar ingrediente..."
+        placeholder={t("medications.searchIngredient")}
         value={searchText}
         onChangeText={handleSearch}
       />
@@ -84,7 +86,7 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
       />
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancelar</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );

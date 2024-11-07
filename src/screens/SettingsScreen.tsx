@@ -1,10 +1,20 @@
-import React from "react";
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import AppLayout from "@/components/shared/AppLayout"; // Footer ou layout do app
 import { SettingsProps } from "@/constants/interfaces/props/Settings";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import LanguageModal from './Settings/LanguageModal';
+import i18n from '@/i18n';
+import api from "@/server/api";
+import { useTranslation } from 'react-i18next';
+import { showSuccessToast } from "@/utils/toast";
 
-const settingsOptions = [
+const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) => {
+  const { t } = useTranslation();
+  const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+
+  const settingsOptions = [
   { title: "Cor Do Aplicativo", subtitle: "Personalize a aparência", destination: "AppColor", icon: "palette" },
   { title: "Permissões", subtitle: "Gerencie permissões de acesso", destination: "Permissions", icon: "lock" },
   { title: "Relatórios", subtitle: "Visualize e exporte relatórios", destination: "Reports", icon: "insert-drive-file" },
@@ -12,12 +22,28 @@ const settingsOptions = [
   { title: "Contas", subtitle: "Gerencie suas contas e usuários", destination: "Accounts", icon: "supervisor-account" },
 ];
 
-
-const Settings: React.FC<SettingsProps> = ({ navigation, local = "Settings" }) => {
-
   const handleNavigation = (destination: string) => {
-    navigation.navigate(destination); // Navega para a tela correspondente
+    if (destination === 'Language') {
+      setLanguageModalVisible(true);
+    } else {
+      navigation.navigate(destination);
+    }
   };
+
+  const handleSelectLanguage = async (language: string) => {
+
+    try {
+      await api.patch('/user/locale', { locale: language });
+      setSelectedLanguage(language);
+      i18n.changeLanguage(language);
+      showSuccessToast(t('user.localeAlterSuccess'))
+      showScu
+    } catch (error) {
+      // Aqui você pode lidar com o erro, por exemplo, mostrando uma mensagem ao usuário
+      console.error('Error updating locale:', error);
+    }
+  };
+
 
   return (
     <View className="flex-1 p-4">
@@ -38,10 +64,21 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = "Settings" }) =
               </View>
               <Icon name="keyboard-arrow-right" style={styles.icon} />
             </View>
+            <Text style={styles.settingText}>{option.title}</Text>
+            {option.destination === 'Language' && (
+              <Text style={styles.languageText}>{selectedLanguage}</Text>
+            )}
           </TouchableOpacity>
         ))}
       </View>
       <AppLayout navigation={navigation} local={local} />
+
+      {/* Language Modal */}
+      <LanguageModal
+        visible={isLanguageModalVisible}
+        onClose={() => setLanguageModalVisible(false)}
+        onSelectLanguage={handleSelectLanguage}
+      />
     </View>
   );
 };
@@ -54,8 +91,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   settingsList: {
-    width: '100%', // Ocupa a largura total
-    alignItems: "center", // Alinha o conteúdo no centro horizontalmente
+    width: "100%",
+    alignItems: "center",
   },
   settingItem: {
     width: "100%",
@@ -66,6 +103,12 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  languageText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    opacity: 0.8,
   },
   icon: {
     color: "#000",

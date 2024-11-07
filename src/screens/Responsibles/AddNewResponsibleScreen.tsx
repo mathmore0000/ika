@@ -1,10 +1,13 @@
+// AddNewResponsibleScreen.js
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { validateEmail } from "@/data/validations/auth/auth";
+import { useTranslation } from 'react-i18next';
 
 export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchResponsibles, fetchSupervisedUsers }) {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
@@ -23,36 +26,36 @@ export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchRes
             await api.post(BASE_URL, null, {
                 params: { emailResponsible: email },
             });
-            showSuccessToast("Usuário convidado.");
+            showSuccessToast(t("responsibles.userInvited"));
             fetchResponsibles();
             fetchSupervisedUsers();
-            closeModal(); // Close the modal after successful invite
+            closeModal();
         } catch (error) {
             console.log(error.response?.data || error.message);
             if (error.response.data == "User not found") {
-                return showErrorToast("Usuário não encontrado")
+                return showErrorToast(t("responsibles.userNotFound"));
             }
-            if (error.response.data == "Responsible not found"){
-                return showErrorToast("Resnponsável não encontrado")
+            if (error.response.data == "Responsible not found") {
+                return showErrorToast(t("responsibles.responsibleNotFound"));
             }
             if (error.response.status == 409) {
-                return showErrorToast("Convite já existe")
+                return showErrorToast(t("responsibles.inviteAlreadyExists"));
             }
-            console.log(error.response.data)
-            showErrorToast("Erro ao convidar o usuário.");
+            console.log(error.response.data);
+            showErrorToast(t("responsibles.errorInvitingUser"));
         }
     };
 
     return (
         <View style={styles.modalContainer}>
-            <Text style={styles.title}>Invite Responsible</Text>
+            <Text style={styles.title}>{t("responsibles.inviteResponsible")}</Text>
 
             <TextInput
                 style={[
                     styles.input,
                     errors.email && styles.inputError,
                 ]}
-                placeholder="Enter email"
+                placeholder={t("responsibles.enterEmail")}
                 placeholderTextColor="#aaa"
                 value={email}
                 onChangeText={setEmail}
@@ -60,11 +63,11 @@ export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchRes
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
             <TouchableOpacity style={styles.sendButton} onPress={handleInvite}>
-                <Text style={styles.sendButtonText}>Send Invite</Text>
+                <Text style={styles.sendButtonText}>{t("responsibles.sendInvite")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>Cancel</Text>
+                <Text style={styles.closeButtonText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
         </View>
     );

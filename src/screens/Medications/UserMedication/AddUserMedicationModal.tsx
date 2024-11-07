@@ -6,7 +6,8 @@ import { Picker } from "@react-native-picker/picker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
-import { convertDateToLocalTimezone } from "@/utils/date"
+import { convertDateToLocalTimezone } from "@/utils/date";
+import { useTranslation } from "react-i18next";
 
 const AddUserMedicationModal = ({
   closeModal,
@@ -14,22 +15,24 @@ const AddUserMedicationModal = ({
   onUserMedicationCreated,
   closeMedicationSelectionModal,
 }) => {
+  const { t } = useTranslation();
   const [quantityInt, setQuantityInt] = useState(
     selectedMedication.quantityInt ? selectedMedication.quantityInt.toString() : "0"
   );
   const [quantityMl, setQuantityMl] = useState(
     selectedMedication.quantityMl ? selectedMedication.quantityMl.toString() : "0"
   );
-  const [timeBetween, setTimeBetween] = useState("8"); // Default to 8 hours
-  const [maxTakingTime, setMaxTakingTime] = useState("0.5"); // Default to 30 minutes
+  const [timeBetween, setTimeBetween] = useState("8");
+  const [maxTakingTime, setMaxTakingTime] = useState("0.5");
   const [firstDosageTime, setFirstDosageTime] = useState(new Date());
   const [errors, setErrors] = useState({});
-  const [showTimePicker, setShowTimePicker] = useState(false); // Controls time picker visibility
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
   const handleSave = async () => {
     const validationErrors = {};
-    if (!timeBetween) validationErrors.timeBetween = "Tempo entre doses é obrigatório.";
-    if (!firstDosageTime) validationErrors.firstDosageTime = "Horário da primeira dose é obrigatório.";
-    if (!maxTakingTime) validationErrors.maxTakingTime = "Tempo máximo de validação é obrigatório.";
+    if (!timeBetween) validationErrors.timeBetween = t("medications.validationErrors.timeBetweenRequired");
+    if (!firstDosageTime) validationErrors.firstDosageTime = t("medications.validationErrors.firstDosageTimeRequired");
+    if (!maxTakingTime) validationErrors.maxTakingTime = t("medications.validationErrors.maxTakingTimeRequired");
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -37,11 +40,7 @@ const AddUserMedicationModal = ({
     }
 
     try {
-      // Converter firstDosageTime para ISO string
       const firstDosageTimeISO = firstDosageTime.toISOString();
-      console.log(convertDateToLocalTimezone(firstDosageTime))
-
-      // Enviar os dados para o backend
       await api.post("/user-medications", {
         idMedication: selectedMedication.id,
         quantityInt: quantityInt,
@@ -51,20 +50,19 @@ const AddUserMedicationModal = ({
         maxTakingTime: parseFloat(maxTakingTime),
       });
 
-      showSuccessToast("Medicamento adicionado com sucesso.");
+      showSuccessToast(t("medications.medicationAddedToUserSuccess"));
       onUserMedicationCreated();
       closeMedicationSelectionModal();
       closeModal();
     } catch (error) {
       console.log(error.response.data);
-      showErrorToast("Erro ao adicionar medicamento ao usuário.");
+      showErrorToast(t("medications.errorAddingMedicationToUser"));
     }
   };
 
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
-      // Atualizar a hora de firstDosageTime com a hora selecionada
       const updatedFirstDosageTime = new Date(firstDosageTime);
       updatedFirstDosageTime.setHours(selectedTime.getHours());
       updatedFirstDosageTime.setMinutes(selectedTime.getMinutes());
@@ -78,17 +76,15 @@ const AddUserMedicationModal = ({
 
   const handleQuantityIntChange = (value) => {
     setQuantityInt(value);
-    setQuantityMl("0"); // Reset quantityMl to 0 when quantityInt is set
+    setQuantityMl("0");
   };
 
   const handleQuantityMlChange = (value) => {
     setQuantityMl(value);
-    setQuantityInt("0"); // Reset quantityInt to 0 when quantityMl is set
+    setQuantityInt("0");
   };
 
-  // Função para formatar a hora para exibição
   const formatTimeForDisplay = (date) => {
-    // Obter as horas e minutos
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
@@ -96,30 +92,30 @@ const AddUserMedicationModal = ({
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.title}>Adicionar Medicamento ao Usuário</Text>
+      <Text style={styles.title}>{t("medications.addToInventory")}</Text>
       <Text style={styles.subTitle}>{selectedMedication.name}</Text>
 
       <TextInput
         style={[styles.input, errors.quantityInt && styles.inputError]}
-        placeholder="Quantidade de pilulas"
+        placeholder={t("medications.quantityPills")}
         keyboardType="numeric"
         value={quantityInt}
         onChangeText={handleQuantityIntChange}
-        editable={quantityMl === "0" || quantityMl === ""} // Disable if quantityMl is not zero
+        editable={quantityMl === "0" || quantityMl === ""}
       />
       {errors.quantityInt && <Text style={styles.errorText}>{errors.quantityInt}</Text>}
 
       <TextInput
         style={[styles.input, errors.quantityMl && styles.inputError]}
-        placeholder="Quantidade de Ml"
+        placeholder={t("medications.quantityMl")}
         keyboardType="numeric"
         value={quantityMl}
         onChangeText={handleQuantityMlChange}
-        editable={quantityInt === "0" || quantityInt === ""} // Disable if quantityInt is not zero
+        editable={quantityInt === "0" || quantityInt === ""}
       />
       {errors.quantityMl && <Text style={styles.errorText}>{errors.quantityMl}</Text>}
 
-      <Text style={styles.label}>Tempo entre doses: {timeBetween} horas</Text>
+      <Text style={styles.label}>{t("medications.timeBetweenDoses", { hours: timeBetween })}</Text>
       <Picker
         selectedValue={timeBetween}
         onValueChange={(itemValue) => setTimeBetween(itemValue)}
@@ -135,7 +131,7 @@ const AddUserMedicationModal = ({
 
       <TouchableOpacity onPress={() => setShowTimePicker(true)}>
         <Text style={[styles.datePickerText, errors.firstDosageTime && styles.inputError]}>
-          Primeira Dose: {formatTimeForDisplay(firstDosageTime)}
+          {t("medications.firstDose")}: {formatTimeForDisplay(firstDosageTime)}
         </Text>
       </TouchableOpacity>
       {errors.firstDosageTime && <Text style={styles.errorText}>{errors.firstDosageTime}</Text>}
@@ -143,13 +139,13 @@ const AddUserMedicationModal = ({
       {showTimePicker && (
         <DateTimePicker
           value={firstDosageTime}
-          mode="time" // Mostrar apenas o seletor de hora
+          mode="time"
           display="default"
           onChange={handleTimeChange}
         />
       )}
 
-      <Text style={styles.label}>Tempo Máximo de Tomação: {maxTakingTime} hora(s)</Text>
+      <Text style={styles.label}>{t("medications.maxTakingTime", { time: maxTakingTime })}</Text>
       <Picker
         selectedValue={maxTakingTime}
         onValueChange={(itemValue) => setMaxTakingTime(itemValue)}
@@ -161,11 +157,11 @@ const AddUserMedicationModal = ({
       {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Salvar</Text>
+        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>Cancelar</Text>
+        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     </View>
   );
