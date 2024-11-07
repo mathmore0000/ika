@@ -18,6 +18,7 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import ChangePasswordModal from './ChangePasswordModal'; // Importar o modal
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaskedTextInput } from 'react-native-mask-text';
+import RemoteImage from "@/components/shared/RemoteImage";
 
 const Account: React.FC<AccountProps> = ({ navigation }) => {
     const { t } = useTranslation();
@@ -30,11 +31,17 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     const [isEditingPhone, setIsEditingPhone] = useState(false);
 
     const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || '');
+    const [dateOfBirthFormatted, setDateOfBirthFormatted] = useState('')
     const [isEditingDOB, setIsEditingDOB] = useState(false);
 
     const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '');
 
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
+
+    useEffect(() => {
+        console.log("dateOfBirth vrau", formatDate(dateOfBirth))
+        setDateOfBirthFormatted(formatDate(dateOfBirth))
+    }, [dateOfBirth]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -67,6 +74,11 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         console.log("mudança", dateOfBirth)
     }, [dateOfBirth]);
 
+    const formatDate = (dateString) => {
+        const dateStringSplit = dateString.split("-");
+        if (dateStringSplit.length != 3) { return dateString }
+        return `${dateStringSplit[2]}/${dateStringSplit[1]}/${dateStringSplit[0]}`
+    }
 
     // Função para salvar o nome atualizado
     const handleSaveName = async () => {
@@ -219,13 +231,10 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         <View style={styles.container}>
             {/* Foto de Perfil */}
             <TouchableOpacity onPress={handleChoosePhoto}>
-                {profilePicture ? (
-                    <Image source={{ uri: profilePicture }} style={styles.profileImage} />
-                ) : (
-                    <View style={styles.placeholderImage}>
-                        <Text style={styles.placeholderText}>{t('account.addPhoto')}</Text>
-                    </View>
-                )}
+                <RemoteImage
+                    uri={profilePicture}
+                    style={styles.profileImage}
+                />
             </TouchableOpacity>
             <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={handleTakePhoto} style={styles.button}>
@@ -294,7 +303,6 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                 {isEditingDOB ? (
                     <>
                         <MaskedTextInput
-                            mask="9999-99-99"
                             style={styles.input}
                             value={dateOfBirth}
                             onChangeText={(text) => setDateOfBirth(text)}
@@ -304,7 +312,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                     </>
                 ) : (
                     <>
-                        <Text style={styles.value}>{dateOfBirth || t('account.notProvided')}</Text>
+                        <Text style={styles.value}>{dateOfBirthFormatted || t('account.notProvided')}</Text>
                         <TouchableOpacity onPress={() => setIsEditingDOB(true)} style={styles.editButton}>
                             <Text style={styles.editButtonText}>{t('common.edit')}</Text>
                         </TouchableOpacity>

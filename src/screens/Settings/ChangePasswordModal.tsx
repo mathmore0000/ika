@@ -11,6 +11,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import api from '@/server/api';
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
+import {
+  validatePassword,
+} from "@/data/validations/auth/auth";
 
 interface ChangePasswordModalProps {
   visible: boolean;
@@ -33,12 +36,13 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
       showErrorToast(t('account.passwordsDoNotMatch'));
       return;
     }
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) return showErrorToast(t('account.passwordsNotStrongEnough'));
 
     try {
-      await api.patch('/v1/user/change-password', {
-        currentPassword,
-        newPassword,
-        confirmPassword,
+      await api.patch('/user/change-password', {
+        oldPassword: currentPassword,
+        newPassword
       });
       showSuccessToast(t('account.passwordUpdateSuccess'));
       // Limpar os campos
@@ -47,6 +51,9 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
       setConfirmPassword('');
       onClose();
     } catch (error) {
+      if (error.response.status == 401){
+        return showErrorToast(t('account.passwordUpdateWrongPasswordError'));
+      }
       console.error('Error changing password:', error);
       showErrorToast(t('account.passwordUpdateError'));
     }
