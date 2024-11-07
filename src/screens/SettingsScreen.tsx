@@ -9,11 +9,13 @@ import api from "@/server/api";
 import { useTranslation } from 'react-i18next';
 import { showSuccessToast } from "@/utils/toast";
 import { logout } from '@/contexts/AuthContext';
+import ReportsModal from "@/screens/Settings/ReportsModal"; // Importe o ReportsModal
 
 const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) => {
   const { t } = useTranslation();
   const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+  const [isReportsModalVisible, setReportsModalVisible] = useState(false);
 
   const settingsOptions = [
     { title: t('settings.reports'), subtitle: "Visualize e exporte relatórios", destination: "Reports", icon: "insert-drive-file" },
@@ -23,15 +25,18 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
 
   const handleNavigation = (destination: string) => {
     if (destination === 'Language') {
-      setLanguageModalVisible(true);
-    } else {
-      navigation.navigate(destination);
+      return setLanguageModalVisible(true);
     }
+    if (destination == 'Reports'){
+      return setReportsModalVisible(true)
+    }
+      navigation.navigate(destination);
+    
   };
 
   // Função para logout
   const handleLogout = async () => {
-      await logout();
+    await logout();
   };
 
   const handleSelectLanguage = async (language: string) => {
@@ -84,24 +89,30 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
         onClose={() => setLanguageModalVisible(false)}
         onSelectLanguage={handleSelectLanguage}
       />
+
+      {/* Reports Modal */}
+      <ReportsModal
+        visible={isReportsModalVisible}
+        onClose={() => setReportsModalVisible(false)}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    logoutButton: {
-        marginTop: 20,
-        backgroundColor: '#FF6347',
-        padding: 15,
-        borderRadius: 5,
-        width: '100%',
-        alignItems: 'center',
-    },
-    logoutButtonText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
+  logoutButton: {
+    marginTop: 20,
+    backgroundColor: '#FF6347',
+    padding: 15,
+    borderRadius: 5,
+    width: '100%',
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     justifyContent: "center", // Centraliza os elementos verticalmente
