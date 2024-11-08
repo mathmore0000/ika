@@ -222,15 +222,10 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     // Função para fazer upload da foto de perfil
     const uploadProfilePicture = async (uri: string) => {
         try {
-            console.log("uploadProfilePicture");
             const formData = new FormData();
-            console.log("uploadProfilePicture 2", uri);
             const filename = uri.split('/').pop();
-            console.log("uploadProfilePicture 3");
             const match = /\.(\w+)$/.exec(filename || '');
-            console.log("uploadProfilePicture 4");
             const type = match ? `image/${match[1]}` : `image`;
-            console.log("uploadProfilePicture 5");
 
             formData.append('image', {
                 uri,
