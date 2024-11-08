@@ -1,6 +1,6 @@
 // MedicationCard.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Switch } from "react-native";
 import styles from "@/screens/_styles/medications";
 import api from "@/server/api";
 import StockModal from "./StockModal";
@@ -63,48 +63,68 @@ const MedicationCard = ({ userMedication, fetchUserMedications }) => {
   }, []);
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.name}>{userMedication.medication.name}</Text>
-      <Text style={styles.dosageInfo}>
-        {t("medications.stockAvailable")} -> {stock}
-      </Text>
-      <Text style={styles.dosageInfo}>
-        {t("medications.active")} -> {userMedication.disabled == true ? t("common.false") : t("common.true")}
-      </Text>
-      <Text style={styles.dosageInfo}>{t("medications.doseTimes")}:</Text>
-      {doseTimes.map((time, index) => (
-        <Text key={index} style={styles.doseTime}>{time}</Text>
-      ))}
+    <View className="flex flex-col gap-4">
+      <View className="flex flex-row">
 
-      <TouchableOpacity style={styles.stockButton} onPress={() => setIsStockModalVisible(true)}>
-        <Text style={styles.stockButtonText}>{t("medications.addStock")}</Text>
-      </TouchableOpacity>
+      </View>
+      <View className="flex flex-col bg-white shadow-black rounded-lg border border-gray-300">
+        <View className="flex flex-row justify-between items-center h-14 bg-primary p-4 rounded-t-lg">
+          <Text className="font-bold text-lg text-white">{userMedication.medication.name}</Text>
+          <Switch
+            trackColor={{ false: '#767577', true: '#205892' }}
+            thumbColor={!userMedication.disabled ? '#81b0ff' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleMedicationStatus}
+            value={!userMedication.disabled}
+          />
+        </View>
+        <View className="p-4 flex flex-col gap-2">
+          <View className="flex flex-row">
+            <Text className="font-semibold mr-2">{t("medications.doseTimes")}</Text>
+            {doseTimes.map((time, index) => (
+              <Text key={index} style={styles.doseTime}> {index != 0 && "|"} {time}</Text>
+            ))}
+          </View>
+          <Text style={styles.dosageInfo}>
+            {t("medications.stockAvailable")}: {stock}
+          </Text>
+          {/* <Text style={styles.dosageInfo}>
+          {t("medications.active")} -> {userMedication.disabled == true ? t("common.false") : t("common.true")}
+        </Text> */}
 
-      <TouchableOpacity style={styles.editButton} onPress={() => setIsEditModalVisible(true)}>
-        <Text style={styles.editButtonText}>{t("common.edit")}</Text>
-      </TouchableOpacity>
+          <View className="flex flex-row gap-2 justify-between">
+            <TouchableOpacity style={styles.stockButton} onPress={() => setIsStockModalVisible(true)}>
+              <Text style={styles.stockButtonText}>{t("medications.addStock")}</Text>
+            </TouchableOpacity>
 
-      <TouchableOpacity style={styles.statusButton} onPress={toggleMedicationStatus}>
-        <Text style={styles.statusButtonText}>
-          {userMedication.disabled ? t("medications.activate") : t("medications.deactivate")}
-        </Text>
-      </TouchableOpacity>
+            <TouchableOpacity style={styles.editButton} onPress={() => setIsEditModalVisible(true)}>
+              <Text style={styles.editButtonText}>{t("common.edit")}</Text>
+            </TouchableOpacity>
 
-      <Modal visible={isStockModalVisible} transparent={true} animationType="fade">
-        <StockModal
-          closeModal={() => setIsStockModalVisible(false)}
-          fetchStock={fetchStock}
-          userMedicationId={userMedication.id}
-        />
-      </Modal>
+          </View>
+          {/* <TouchableOpacity style={styles.statusButton} onPress={toggleMedicationStatus}>
+          <Text style={styles.statusButtonText}>
+            {userMedication.disabled ? t("medications.activate") : t("medications.deactivate")}
+          </Text>
+        </TouchableOpacity> */}
 
-      <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
-        <EditUserMedicationModal
-          closeModal={() => setIsEditModalVisible(false)}
-          fetchUserMedications={fetchUserMedications}
-          userMedication={userMedication}
-        />
-      </Modal>
+          <Modal visible={isStockModalVisible} transparent={true} animationType="fade">
+            <StockModal
+              closeModal={() => setIsStockModalVisible(false)}
+              fetchStock={fetchStock}
+              userMedicationId={userMedication.id}
+            />
+          </Modal>
+
+          <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
+            <EditUserMedicationModal
+              closeModal={() => setIsEditModalVisible(false)}
+              fetchUserMedications={fetchUserMedications}
+              userMedication={userMedication}
+            />
+          </Modal>
+        </View>
+      </View>
     </View>
   );
 };

@@ -56,11 +56,13 @@ const MedicationScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>User Medications</Text>
+    <View className="flex-1 p-6">
+      <View className="flex flex-row items-center justify-between">
+      <Text style={styles.header}>Seus medicamentos</Text>
       <TouchableOpacity style={styles.addButton} onPress={openModal}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
+      </View>
 
       <FlatList
         data={userMedications}
