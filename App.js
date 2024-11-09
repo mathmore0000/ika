@@ -63,7 +63,7 @@ function App() {
   function MainStack() {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        <Stack.Screen name="Calendar" options={{ headerShown: false }} component={CalendarScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
