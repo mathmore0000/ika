@@ -173,11 +173,11 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
     if (isTaken) {
       buttonText = "Tomado";
-      buttonColor = "#001F3F"; // Verde suave
+      buttonColor = "#23527c"; // Verde suave
       isDisabled = true;
     } else if (isWithinTimeRange) {
       buttonText = "Tomar";
-      buttonColor = "#001F3F"; // Azul vibrante
+      buttonColor = "#23527c"; // Azul vibrante
     } else if (isPastDue) {
       buttonText = "Esquecido";
       buttonColor = "#F44336"; // Vermelho vibrante

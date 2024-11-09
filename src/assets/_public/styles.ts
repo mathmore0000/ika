@@ -144,7 +144,7 @@ export default StyleSheet.create({
     },
     header: {
         padding: 20, // Espaçamento maior
-        backgroundColor: "#001F3F"
+        backgroundColor: "#23527c"
     },
     headerText: {
         color: "#FFFFFF",
@@ -167,7 +167,7 @@ export default StyleSheet.create({
         fontWeight: "bold", // Deixa o texto em negrito
     },
     blueCirclecontainer: {
-        backgroundColor: "#001F3F", // Fundo azul escuro
+        backgroundColor: "#23527c", // Fundo azul escuro
         width: 450,
         height: 300,
         position: "absolute",

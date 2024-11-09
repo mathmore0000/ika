@@ -71,8 +71,8 @@ const MedicationCard = ({ userMedication, fetchUserMedications }) => {
         <View className="flex flex-row justify-between items-center h-14 bg-primary p-4 rounded-t-lg">
           <Text className="font-bold text-lg text-white">{userMedication.medication.name}</Text>
           <Switch
-            trackColor={{ false: '#767577', true: '#205892' }}
-            thumbColor={!userMedication.disabled ? '#81b0ff' : '#f4f3f4'}
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+            thumbColor={!userMedication.disabled ? '#f4f3f4' : '#f4f3f4'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleMedicationStatus}
             value={!userMedication.disabled}

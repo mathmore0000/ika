@@ -248,10 +248,24 @@
   },
   "user": {
     "localeAlterSuccess": "Language updated"
-  },
+  },  
   "settings": {
+    "medications": "Medications",
+    "calendar": "Calendar",
+    "responsibles": "Responsibles",
+    "notifications": "Notifications",
+    "videos": "Videos",
     "reports": "Reports",
     "account": "Account",
-    "language": "Language"
+    "language": "Language",
+    "settings": "More",
+    "medicationsDescription": "Manage your medications",
+    "calendarDescription": "View your alarms",
+    "responsiblesDescription": "Manage your responsibles",
+    "notificationsDescription": "Manage your notifications",
+    "videosDescription": "Watch your videos",
+    "reportsDescription": "View and export reports",
+    "accountDescription": "Manage your accounts and users",
+    "languageDescription": "Select your preferred language",
   }
 }

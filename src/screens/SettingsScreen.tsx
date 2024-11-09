@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import AppLayout from "@/components/shared/AppLayout"; // Footer ou layout do app
 import { SettingsProps } from "@/constants/interfaces/props/Settings";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/Ionicons";
 import LanguageModal from './Settings/LanguageModal';
 import i18n from '@/i18n';
 import api from "@/server/api";
@@ -16,22 +16,26 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
   const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
   const [isReportsModalVisible, setReportsModalVisible] = useState(false);
-
   const settingsOptions = [
-    { title: t('settings.reports'), subtitle: "Visualize e exporte relatórios", destination: "Reports", icon: "insert-drive-file" },
-    { title: t('settings.language'), subtitle: "Selecione o idioma preferido", destination: "Language", icon: "language" },
-    { title: t('settings.account'), subtitle: "Gerencie suas contas e usuários", destination: "Account", icon: "supervisor-account" },
+    { title: t('settings.medications'), subtitle: t('settings.medicationsDescription'), destination: "Medications", icon: "medkit-outline" },
+    { title: t('settings.calendar'), subtitle: t('settings.calendarDescription'), destination: "Calendar", icon: "calendar-outline" },
+    { title: t('settings.responsibles'), subtitle: t('settings.responsiblesDescription'), destination: "Responsibles", icon: "person-outline" },
+    { title: t('settings.notifications'), subtitle: t('settings.notificationsDescription'), destination: "Notifications", icon: "notifications-outline" },
+    { title: t('settings.videos'), subtitle: t('settings.videosDescription'), destination: "Videos", icon: "videocam-outline" },
+    { title: t('settings.reports'), subtitle: t('settings.reportsDescription'), destination: "Reports", icon: "reader-outline" },
+    { title: t('settings.language'), subtitle: t('settings.languageDescription'), destination: "Language", icon: "language-outline" },
+    { title: t('settings.account'), subtitle: t('settings.accountDescription'), destination: "Account", icon: "people-circle-outline" },
   ];
 
   const handleNavigation = (destination: string) => {
     if (destination === 'Language') {
       return setLanguageModalVisible(true);
     }
-    if (destination == 'Reports'){
+    if (destination == 'Reports') {
       return setReportsModalVisible(true)
     }
-      navigation.navigate(destination);
-    
+    navigation.navigate(destination);
+
   };
 
   // Função para logout
@@ -70,18 +74,23 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
                   <Text className="text-black text-sm">{option.subtitle}</Text>
                 </View>
               </View>
-              <Icon name="keyboard-arrow-right" style={styles.icon} />
+              <Icon name="chevron-forward-outline" style={styles.icon} />
             </View>
           </TouchableOpacity>
         ))}
+        {/* Botão de Logout */}
+        <View className="border-b border-gray-300" />
+        <TouchableOpacity onPress={handleLogout} style={styles.settingItem}>
+          <View className="flex flex-row items-center p-2 rounded-lg">
+            <Icon name="exit-outline" style={styles.icon} />
+            <Text className="text-black font-bold">{t('account.logout')}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
       <AppLayout navigation={navigation} local={local} />
 
 
-      {/* Botão de Logout */}
-      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-        <Text style={styles.logoutButtonText}>{t('account.logout')}</Text>
-      </TouchableOpacity>
+
 
       {/* Language Modal */}
       <LanguageModal
@@ -101,15 +110,13 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
 
 const styles = StyleSheet.create({
   logoutButton: {
-    marginTop: 20,
-    backgroundColor: '#FF6347',
-    padding: 15,
-    borderRadius: 5,
     width: '100%',
     alignItems: 'center',
+    gap: 5,
+    flexDirection: 'row',
   },
   logoutButtonText: {
-    color: '#FFF',
+    color: '#FF6347',
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -1,10 +1,12 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import IconFooterNode from "@/components/intermediate/IconFooterNode";
 import { IconNodeProps } from "@/constants/interfaces/props/IconNode";
 import buttonsArr from "@/assets/mock/IconFooterMock.json";
+import { useTranslation } from 'react-i18next';
 
 const Icons = (navigation: any, local: string) => {
+  const { t } = useTranslation();
   const placeDestnMiddle = (buttonsArr: IconNodeProps[], destination: string) => {
     const homeIndex = buttonsArr.findIndex(button => button.destination === destination);
     if (homeIndex === -1) {
@@ -15,22 +17,27 @@ const Icons = (navigation: any, local: string) => {
     buttonsArr.splice(middleIndex, 0, homeIcon);
     return buttonsArr;
   };
+  const getIcon = (destination: string) => {
+    const icon = buttonsArr.find(button => button.destination === local);
+    return icon
+  }
   const iconsArray = placeDestnMiddle(buttonsArr, local)
 
   return iconsArray.map((button: IconNodeProps, index: number) => {
-    const isCentralIcon = button.destination === local; // Verifica se é o ícone central
+    const isActiveIcon = button.destination === local; // Verifica se é o ícone central
 
     return (
       <View
         key={index}
-        style={isCentralIcon ? styles.centralIconContainer : styles.iconContainer}
+        style={styles.iconContainer}
       >
         <IconFooterNode
           destination={button.destination}
           icon={button.icon}
           navigation={navigation}
-          central={isCentralIcon} // Passa se é o ícone central ou não
+          central={isActiveIcon} // Passa se é o ícone central ou não
         />
+        <Text className="text-xs" style={isActiveIcon && {color: "#23527c"}}>{t(`settings.${button.text}`)}</Text>
       </View>
     );
   });
@@ -42,9 +49,12 @@ const Footer: React.FC<{ navigation: any, local: string }> = ({ navigation, loca
 
 const styles = StyleSheet.create({
   container: {
+    borderTopWidth: 1,
+    borderColor: "#d3d3d3",
     flexDirection: "row",
-    backgroundColor: "#001F3F", // Azul escuro para o fundo
+    backgroundColor: "#fff", // Azul escuro para o fundo
     padding: 10,
+    gap: 2,
     alignItems: "center",
     justifyContent: "space-around", // Ícones distribuídos
     position: "absolute",
@@ -65,7 +75,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: "#010B40", // Cor mais escura para o ícone central
+    backgroundColor: "#23527c", // Cor mais escura para o ícone central
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,

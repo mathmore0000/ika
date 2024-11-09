@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignSelf: "flex-end",
-    borderColor: "#001F3F",
+    borderColor: "#23527c",
     borderWidth: 1,
     borderRadius: 25,
     width: 50,
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addButtonText: {
-    color: "#001F3F",
+    color: "#23527c",
     fontSize: 24,
     fontWeight: "bold",
   },
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: "#001F3F",
+    backgroundColor: "#23527c",
     width: "49%",
     borderRadius: 5,
     alignItems: "center",
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     backgroundColor: "#fff",
-    borderColor: "#001F3F",
+    borderColor: "#23527c",
     borderWidth: 1,
     width: "48%",
     borderRadius: 5,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   editButtonText: {
-    color: "#001F3F",
+    color: "#23527c",
     fontSize: 16,
   },
   picker: {

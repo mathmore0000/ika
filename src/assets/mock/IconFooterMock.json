@@ -1,8 +1,7 @@
 [
-  { "text": "Medications", "destination": "Medications", "icon": "medication" },
-  { "text": "Settings", "destination": "Settings", "icon": "settings" },
-  { "text": "Calendar", "destination": "Calendar", "icon": "calendar-month" },
-  { "text": "Responsibles", "destination": "Responsibles", "icon": "person" },
-  { "text": "Notifications", "destination": "Notifications", "icon": "email" },
-  { "text": "Videos", "destination": "Videos", "icon": "video-label" }
+  { "text": "medications", "destination": "Medications", "icon": "medkit-outline" },
+  { "text": "calendar", "destination": "Calendar", "icon": "calendar-outline" },
+  { "text": "responsibles", "destination": "Responsibles", "icon": "person-outline" },
+  { "text": "notifications", "destination": "Notifications", "icon": "notifications-outline" },
+  { "text": "settings", "destination": "Settings", "icon": "menu-outline" }
 ]

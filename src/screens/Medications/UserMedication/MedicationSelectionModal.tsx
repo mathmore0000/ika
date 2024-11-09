@@ -165,7 +165,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
       </Modal>
       <View className="border-t h-12 pt-2 border-gray-300 flex-row gap-2 w-full flex items-center" >
         <TouchableOpacity onPress={openIsNewMedicationModal} className="w-1/2 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
-          <IconEnty name="add-to-list" size={20} color="#001F3F" />
+          <IconEnty name="add-to-list" size={20} color="#23527c" />
           <Text className="font-bold text-primary">{t("medications.addMedicationButton")}</Text>
         </TouchableOpacity>
 

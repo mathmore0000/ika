@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/Ionicons";
 import { IconNodeProps } from "@/constants/interfaces/props/IconNode";
 
 const IconNode: React.FC<IconNodeProps> = ({ navigation, destination, icon, central }) => {
@@ -11,8 +11,8 @@ const IconNode: React.FC<IconNodeProps> = ({ navigation, destination, icon, cent
     >
       <Icon
         name={icon}
-        size={central ? 40 : 30} // Ícone central maior
-        color="#FFFFFF" // Ícones brancos
+        size={24}
+        color={central ? "#23527c" : "#393939"}    
       />
     </TouchableOpacity>
   );

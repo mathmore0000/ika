@@ -29,7 +29,7 @@
       "passwordInvalid": "Senha inválida."
     }
   },
-  "medications": {
+  "medications": {    
     "selectMedication": "Selecione um medicamento",
     "selectActiveIngredient": "Selecione um Ingrediente Ativo",
     "searchIngredient": "Pesquisar ingrediente...",
@@ -216,7 +216,7 @@
     "nameUpdateError": "Erro ao atualizar o nome.",
     "photoUpdateSuccess": "Foto de perfil atualizada com sucesso.",
     "photoUpdateError": "Erro ao atualizar a foto de perfil.",
-    "logout": "Sair"
+    "logout": "Fechar sessão"
   },
   "calendar": {
     "today": "Hoje",
@@ -258,10 +258,24 @@
     "deleteVideo": "Excluir Vídeo",
     "false": "Falso",
     "true": "Verdadeiro"
-  },
+  },  
   "settings": {
     "reports": "Relatórios",
     "account": "Conta",
-    "language": "Idioma"
+    "language": "Idioma",
+    "medications": "Medicamentos",
+    "calendar": "Calendário",
+    "responsibles": "Responsáveis",
+    "notifications": "Notificações",
+    "videos": "Vídeos",
+    "settings": "Mais",
+    "reportsDescription": "Visualize e exporte relatórios",
+    "accountDescription": "Gerencie suas contas e usuários",
+    "languageDescription": "Selecione o idioma preferido",
+    "medicationsDescription": "Gerencie suas medicações",
+    "calendarDescription": "Visualize seus alarmes",
+    "responsiblesDescription": "Gerencie seus responsáveis",
+    "notificationsDescription": "Gerencie suas notificações",
+    "videosDescription": "Assista seus vídeos"
   }
 }
