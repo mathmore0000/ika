@@ -7,7 +7,7 @@ import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import AppLayout from "@/components/shared/AppLayout";
 
-const MedicationScreen = ({navigation, local = "Calendar" }) => {
+const MedicationScreen = ({navigation, local = "Medications" }) => {
   const [userMedications, setUserMedications] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
