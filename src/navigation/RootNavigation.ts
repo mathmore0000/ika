@@ -5,7 +5,6 @@ export const navigationRef = createNavigationContainerRef();
 export let currentScreen: string;
 
 export function setCurrentScreen(newCurrentScreen: string){
-  console.log("currentScreen setted", newCurrentScreen)
   return currentScreen = newCurrentScreen;
 }
 

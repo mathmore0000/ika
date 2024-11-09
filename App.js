@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { Platform } from "react-native"; // Adicione esta linha
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getToken } from "@/server/api";
 import { navigationRef, setCurrentScreen, currentScreen } from "@/navigation/RootNavigation";
 import "./src/assets/styles/global.css";
-import { user, setToken } from "@/contexts/AuthContext"
+import { getUser, setToken, updateUserNotificationToken } from "@/contexts/AuthContext"
 import i18n from '@/i18n';
 import Toast from 'react-native-toast-message';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
@@ -28,12 +32,13 @@ function App() {
 
   checkAuth = async () => {
     const token = await getToken();
-    setIsAuthenticated(!!token);
     if (!!token == true) {
+      const user = getUser();
       const language = user.locale
 
       i18n.changeLanguage(language);
     }
+    setIsAuthenticated(!!token);
   };
 
   useEffect(() => {
@@ -44,9 +49,38 @@ function App() {
     return <LoadingScreen />;
   }
 
-  const onLoginSuccess = async (token) => {
-    await setToken(token);
-    setIsAuthenticated(true);
+  // Função para registrar o dispositivo para notificações push
+  const registerForPushNotifications = async () => {
+    let token;
+    if (!Device.isDevice) {
+      return;
+    }
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig.extra.eas.projectId })).data;
+    await updateUserNotificationToken(token); // Exibir o token no console por enquanto
+
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        sound: true,
+      });
+    }
+  };
+
+  const onLoginSuccess = async (token, refreshToken) => {
+    await setToken(token, refreshToken);
+    await registerForPushNotifications();
+    await checkAuth()
   };
 
   function AuthStack() {
@@ -85,7 +119,7 @@ function App() {
         }
       }}>
       <Toast />
-      {isAuthenticated ? <MainStack/> : <AuthStack />}
+      {isAuthenticated ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );
 }

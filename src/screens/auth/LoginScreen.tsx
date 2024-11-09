@@ -16,12 +16,11 @@ import {
   validatePasswordLogin,
 } from "@/data/validations/auth/auth";
 import api from "@/server/api";
-import { NavigationProps } from "@/constants/interfaces/props/DefaultNavigation";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { checkAuth } from "@/../App.js";
 import { useTranslation } from "react-i18next";
 
-const Login: React.FC<NavigationProps> = ({ navigation }) => {
+const Login = ({ navigation, onLoginSuccess }) => {
   const { t } = useTranslation();
 
   const [email, onChangeEmail] = React.useState(
@@ -65,14 +64,9 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
         username: email,
         password: password,
       });
-
-      await setToken(response.data.jwt, response.data.refreshToken)
-
-      
-
+      await onLoginSuccess(response.data.jwt, response.data.refreshToken)
       clearFields();
       showSuccessToast(t("auth.login.loginSuccess"));
-      checkAuth();
     } catch (_err) {
       console.log(_err);
       if (_err.response && _err.response.data) {

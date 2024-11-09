@@ -2,6 +2,7 @@
 import { decode as atob } from 'base-64';
 import * as SecureStore from "expo-secure-store";
 import { checkAuth } from "@/../App"
+import api from '@/server/api';
 
 export async function logout() {
     await setToken("", "");
@@ -42,6 +43,13 @@ export async function setToken(jwt, refreshToken) {
         await SecureStore.setItem(
             "user", JSON.stringify(parseJwt(jwt))
         );
+    }
+}
+
+export async function updateUserNotificationToken(notificationToken: string) {
+    try {
+        await api.patch('/user/change-notification-token', { notificationToken });
+    } catch (error) {
     }
 }
 

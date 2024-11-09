@@ -17,17 +17,14 @@ const isTokenExpired = (token: string | null): boolean => {
 // Função para obter um novo JWT usando o refreshToken
 const refreshAccessToken = async () => {
   try {
-    console.log("getRefreshToken")
     const refreshToken = await SecureStore.getItemAsync("refresh-token");
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
 
-    console.log("pegando o novo token...");
     const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/refresh-token`, {
       refreshToken,
     });
-    console.log("recebi refresh-token", response)
     const { jwt, refreshToken: newRefreshToken } = response.data;
 
     // Armazena o novo JWT e o novo refreshToken
@@ -48,7 +45,6 @@ export async function getToken() {
     return null;
   }
   if (isTokenExpired(token)) {
-    console.log("token está expirado")
 
     return await refreshAccessToken();
   }
@@ -61,9 +57,6 @@ api.interceptors.request.use(
   async (config) => {
     if (config.url?.startsWith("/auth")){
       return config
-    }
-    if (isCurrentScreenInAuth()) {
-      return config;
     }
     const token = await getToken();
     // Se a renovação falhar, redirecione para o login
