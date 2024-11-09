@@ -1,35 +1,91 @@
-import React from "react";
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import AppLayout from "@/components/shared/AppLayout";
+import api from "@/server/api";
 import notificationsData from "@/assets/mock/NotificationsMock.json"; // Importa os dados mockados
+import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { NotificationsProps } from "@/constants/interfaces/props/Notifications";
 
 const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Notifications" }) => {
-  
+
+  const [notifications, setNotifications] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchNotifications(0);
+  }, []);
+
+  const loadMoreNotifications = () => {
+    if (currentPage < totalPages) {
+      fetchNotifications(currentPage);
+    }
+  };
+
+  const fetchNotifications = async (page = currentPage) => {
+    if (loading || page >= totalPages) return;
+
+    setLoading(true);
+    try {
+      const response = await api.get("/notifications", {
+        params: { page, size: 10 },
+      });
+      const newNotifications = response.data.content;
+
+      setNotifications((prevNotifications) =>
+        page === 0 ? newNotifications : [...prevNotifications, ...newNotifications]
+      );
+
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(page + 1);
+    } catch (error) {
+      console.log(error)
+      showErrorToast("Error loading medications.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const setNotificationAsSeen = (idNotification: string) => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((notification) =>
+        notification.id === idNotification ? { ...notification, seen: true } : notification
+      )
+    );
+  };
+
+
   const renderItem = ({ item }: any) => (
     <TouchableOpacity
       style={styles.notificationCard}
       onPress={() =>
         navigation.navigate("NotificationDetails", {
-          title: item.title,
-          description: item.description,
-          time: item.time,
+          createdAt: item.createdAt,
+          detailedMessage: JSON.parse(item.detailedMessage),
+          id: item.id,
+          seen: item.seen,
+          seenAt: item.seenAt,
+          message: item.message,
+          onSeen() { setNotificationAsSeen(item.id) }
         })
       }
     >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.time}>{item.time}</Text>
+      <Text style={styles.title}>{item.message} - {item.seen ? "Visualizado" : "Não visualizado"}</Text>
+      <Text style={styles.description}>{JSON.parse(item.detailedMessage)?.message}</Text>
+      <Text style={styles.time}>{item.createdAt}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={notificationsData}
+        onEndReached={loadMoreNotifications}
+        data={notifications}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
+        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null} // Indicador de carregamento
       />
       <AppLayout navigation={navigation} local={local} />
     </View>

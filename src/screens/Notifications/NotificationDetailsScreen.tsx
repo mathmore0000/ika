@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import api from "@/server/api";
 
 const NotificationDetails: React.FC<{ route: any }> = ({ route }) => {
-  const { title, description, time } = route.params;
+  const { id, createdAt, detailedMessage, message, onSeen } = route.params;
+
+  useEffect(() => {
+    setNotificationAsSeen(id);
+  }, []);
+
+  const setNotificationAsSeen = async (notificationId: string) => {
+    try {
+      await api.patch(`/notifications/${notificationId}/seen`);
+      onSeen();
+    } catch (error) { }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
-      <Text style={styles.time}>{time}</Text>
+      <Text style={styles.title}>{message}</Text>
+      <Text style={styles.description}>{detailedMessage?.message}</Text>
+      <Text style={styles.time}>{createdAt}</Text>
     </View>
   );
 };

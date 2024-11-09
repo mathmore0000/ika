@@ -48,14 +48,17 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
   };
 
   const handleAcceptRequest = async (userId: string) => {
+    console.log("aceitando..", userId)
     try {
       await api.put(`${BASE_URL}/accept`, null, {
         params: { idUser: userId },
       });
+      console.log("aceito")
       showSuccessToast(t("responsibles.responsibleAccepted"));
       fetchResponsibles();
       fetchSupervisedUsers();
     } catch (error) {
+      console.log("error", error.response)
       showErrorToast(t("responsibles.errorAcceptingResponsible"));
     }
   };
@@ -143,7 +146,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
             />
             <Text style={styles.nameText}>{item.responsible.displayName}</Text>
             <Text style={styles.nameText}>
-              {item.accepted == false ? t("responsibles.notAccepted") : t("responsibles.accepted")}
+              {item.accepted == true ? t("responsibles.accepted") : t("responsibles.notAccepted")}
             </Text>
             <TouchableOpacity
               style={styles.removeButton}
