@@ -5,8 +5,9 @@ import MedicationCard from "./UserMedicationStock/MedicationCard";
 import styles from "@/screens/_styles/medications";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
+import AppLayout from "@/components/shared/AppLayout";
 
-const MedicationScreen = () => {
+const MedicationScreen = ({navigation, local = "Calendar" }) => {
   const [userMedications, setUserMedications] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -56,7 +57,7 @@ const MedicationScreen = () => {
   };
 
   return (
-    <View className="flex-1 p-6">
+    <View className="flex-1 p-6 flex flex-col gap-2">
       <View className="flex flex-row items-center justify-between">
       <Text style={styles.header}>Seus medicamentos</Text>
       <TouchableOpacity style={styles.addButton} onPress={openModal}>
@@ -79,6 +80,7 @@ const MedicationScreen = () => {
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
         <MedicationSelectionModal closeModal={closeModal} userMedications={userMedications} onUserMedicationCreated={onUserMedicationCreated} />
       </Modal>
+      <AppLayout navigation={navigation} local={local} />
     </View>
   );
 };

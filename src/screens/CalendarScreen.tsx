@@ -222,7 +222,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View className="bg-primary flex flex-col">
+      <View className="bg-primary flex flex-col pt-8">
         <View className="p-6">
           <Text className="font-bold text-2xl  text-white">{t("calendar.today")}</Text>
           <Text className=" text-white">{todayFormatted}</Text>

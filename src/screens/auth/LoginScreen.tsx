@@ -29,26 +29,6 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
   );
   const [password, onChangePassword] = React.useState("password12345");
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   const clearFields = () => {
     onChangeEmail("");
@@ -176,10 +156,8 @@ const Login: React.FC<NavigationProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Condicional para exibir a View de rodapé apenas quando o teclado estiver fechado */}
-      {!isKeyboardVisible && (
-        <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
-      )}
+      {/* Condicional para exibir a View de rodapé apenas quando o teclado estiver fechado */}      
+      <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
     </View>
   );
 };

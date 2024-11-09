@@ -63,10 +63,7 @@ const MedicationCard = ({ userMedication, fetchUserMedications }) => {
   }, []);
 
   return (
-    <View className="flex flex-col gap-4">
-      <View className="flex flex-row">
-
-      </View>
+    <View className="flex-1 flex flex-col gap-4 py-3">
       <View className="flex flex-col bg-white shadow-black rounded-lg border border-gray-300">
         <View className="flex flex-row justify-between items-center h-14 bg-primary p-4 rounded-t-lg">
           <Text className="font-bold text-lg text-white">{userMedication.medication.name}</Text>

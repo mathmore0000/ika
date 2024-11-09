@@ -85,7 +85,7 @@ function App() {
         }
       }}>
       <Toast />
-      {isAuthenticated ? <MainStack /> : <AuthStack />}
+      {isAuthenticated ? <MainStack/> : <AuthStack />}
     </NavigationContainer>
   );
 }
