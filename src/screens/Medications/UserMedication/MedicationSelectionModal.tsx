@@ -1,6 +1,6 @@
 // MedicationSelectionModal.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal, CheckBox } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal} from "react-native";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
@@ -10,6 +10,7 @@ import { medicationType } from "@/constants/interfaces/Entities";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/AntDesign";
 import IconEnty from "react-native-vector-icons/Entypo";
+
 const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicationCreated }) => {
   const { t } = useTranslation();
   const [medications, setMedications] = useState<medicationType[]>([]);
@@ -91,7 +92,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
   };
 
   return (
-    <View className="flex-1 bg-white p-4 pt-[4.2rem]">
+    <View className="flex-1 px-5 pt-5">
       <View className="flex flex-row items-center justify-between pb-4">
         <Text className="font-bold text-xl">{t("medications.selectMedication")}</Text>
         <TouchableOpacity
@@ -163,7 +164,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
           selectedMedication={selectedMedication}
         />
       </Modal>
-      <View className="border-t h-auto py-5 border-gray-300 flex-row gap-2 w-full flex items-center" >
+      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" >
         <TouchableOpacity onPress={openIsNewMedicationModal} className="w-1/2 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
           <IconEnty name="add-to-list" size={20} color="#23527c" />
           <Text className="font-bold text-primary">{t("medications.addMedicationButton")}</Text>

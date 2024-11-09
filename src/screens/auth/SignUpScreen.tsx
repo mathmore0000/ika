@@ -27,26 +27,7 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
   const [name, onChangeName] = React.useState("");
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   const clearFields = () => {
     onChangeName("");
@@ -202,9 +183,7 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {!isKeyboardVisible && (
-        <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
-      )}
+      <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
     </View>
   );
 };

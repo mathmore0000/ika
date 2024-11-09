@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, Modal, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Modal, ActivityIndicator, Dimensions } from "react-native";
 import MedicationSelectionModal from "./UserMedication/MedicationSelectionModal";
 import MedicationCard from "./UserMedicationStock/MedicationCard";
 import styles from "@/screens/_styles/medications";
@@ -7,7 +7,9 @@ import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import AppLayout from "@/components/shared/AppLayout";
 
-const MedicationScreen = ({navigation, local = "Medications" }) => {
+const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
+
+const MedicationScreen = ({ navigation, local = "Medications" }) => {
   const [userMedications, setUserMedications] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -22,13 +24,13 @@ const MedicationScreen = ({navigation, local = "Medications" }) => {
     fetchUserMedications(0); // Recarrega a lista do início
   };
 
-   const fetchUserMedications = async (page = currentPage) => {
-     if (loading || page >= totalPages) return;
+  const fetchUserMedications = async (page = currentPage) => {
+    if (loading || page >= totalPages) return;
 
     setLoading(true);
     try {
       const response = await api.get("/user-medications", {
-        params: { page, size: 20, sortBy: "medication.name"},
+        params: { page, size: 20, sortBy: "medication.name" },
       });
       const newUserMedications = response.data.content;
 
@@ -39,7 +41,7 @@ const MedicationScreen = ({navigation, local = "Medications" }) => {
       setTotalPages(response.data.totalPages);
       setCurrentPage(page + 1);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       showErrorToast("Error loading medications.");
     } finally {
       setLoading(false);
@@ -59,10 +61,10 @@ const MedicationScreen = ({navigation, local = "Medications" }) => {
   return (
     <View className="flex-1 p-6 flex flex-col gap-2">
       <View className="flex flex-row items-center justify-between">
-      <Text style={styles.header}>Seus medicamentos</Text>
-      <TouchableOpacity style={styles.addButton} onPress={openModal}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
+        <Text style={styles.header}>Seus medicamentos</Text>
+        <TouchableOpacity style={styles.addButton} onPress={openModal}>
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -78,11 +80,19 @@ const MedicationScreen = ({navigation, local = "Medications" }) => {
       />
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
-        <MedicationSelectionModal closeModal={closeModal} userMedications={userMedications} onUserMedicationCreated={onUserMedicationCreated} />
+        <View className="flex-1 flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+          <View className="bg-white rounded-t-lg flex items-center justify-center" style={{
+            width: width, // 80% da largura da tela
+            height: height * 0.9, // 80% da altura da tela
+          }}>
+            <MedicationSelectionModal closeModal={closeModal} userMedications={userMedications} onUserMedicationCreated={onUserMedicationCreated} />
+          </View>
+        </View>
       </Modal>
       <AppLayout navigation={navigation} local={local} />
     </View>
   );
 };
+
 
 export default MedicationScreen;
