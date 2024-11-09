@@ -79,6 +79,12 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             showSuccessToast(t('reports.downloadSuccess'));
             onClose();
         } catch (error) {
+            if (error.response.data == "No data found on user") {
+                return showErrorToast(t('reports.NoDataOnUser'))
+            }
+            if (error.response.data == "Wrong year or month value") {
+                return showErrorToast(t('reports.WrongDate'))
+            }
             console.log("Erro: ", error)
         }
         finally {
@@ -118,6 +124,12 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             showSuccessToast(t('reports.downloadSuccess'));
             onClose();
         } catch (error) {
+            if (error.response.data == "No data found on responsible") {
+                return showErrorToast(t('reports.NoDataOnResponsible'))
+            }
+            if (error.response.data == "Wrong year or month value") {
+                return showErrorToast(t('reports.WrongDate'))
+            }
             console.log("Erro: ", error)
         }
         finally {
