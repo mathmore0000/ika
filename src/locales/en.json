@@ -217,6 +217,10 @@
     "saveSelection": "Save Selection"
   },
   "account": {
+    "displayName": "Display Name",
+    "phoneNumber": "Phone Number",
+    "dateOfBirth": "Date of Birth",
+    "notProvided": "Not provided",
     "addPhoto": "Add Photo",
     "takePhoto": "Take Photo",
     "choosePhoto": "Choose Photo",

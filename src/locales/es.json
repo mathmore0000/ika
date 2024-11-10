@@ -217,6 +217,10 @@
     "saveSelection": "Guardar Selección"
   },
   "account": {
+    "displayName": "Nombre de exhibición",
+    "phoneNumber": "Número de teléfono",
+    "dateOfBirth": "Fecha de nacimiento",
+    "notProvided": "No proporcionado",
     "addPhoto": "Agregar Foto",
     "takePhoto": "Tomar Foto",
     "choosePhoto": "Elegir Foto",
