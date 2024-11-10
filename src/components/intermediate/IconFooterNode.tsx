@@ -11,7 +11,7 @@ const IconNode: React.FC<IconNodeProps> = ({ navigation, destination, icon, cent
     >
       <Icon
         name={icon}
-        size={24}
+        size={23}
         color={central ? "#23527c" : "#393939"}    
       />
     </TouchableOpacity>

@@ -1,7 +1,7 @@
 [
   { "text": "medications", "destination": "Medications", "icon": "medkit-outline" },
+  { "text": "videos", "destination": "Videos", "icon": "videocam-outline"},
   { "text": "calendar", "destination": "Calendar", "icon": "calendar-outline" },
-  { "text": "responsibles", "destination": "Responsibles", "icon": "person-outline" },
   { "text": "notifications", "destination": "Notifications", "icon": "notifications-outline" },
   { "text": "settings", "destination": "Settings", "icon": "menu-outline" }
 ]

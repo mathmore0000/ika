@@ -1,5 +1,5 @@
 // NewMedicationModal.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from "react-native";
 import { medicationType, medicationErrorType, activeIngredientType, categoryType } from "@/constants/interfaces/Entities";
 import api from "@/server/api";
@@ -9,6 +9,11 @@ import CategorySelectionModal from "./Category/CategorySelectionModal";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 import { useTranslation } from 'react-i18next';
+import Icon from "react-native-vector-icons/Ionicons";
+//import DropDownPicker from "react-native-dropdown-picker";
+import DropdownComponent from '@/components/forms/Dropdown';
+import TextInputComponent from '@/components/forms/TextInput';
+import InputButtonComponent from '@/components/forms/InputButton';
 
 interface NewMedicationModalProps {
   closeModal: () => void;
@@ -20,13 +25,6 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [isIngredientModalVisible, setIsIngredientModalVisible] = useState(false);
 
-  const bands = [
-    t("medications.bandNone"),
-    t("medications.bandRedNoRetention"),
-    t("medications.bandRedWithRetention"),
-    t("medications.bandBlack"),
-    t("medications.bandYellow")
-  ];
 
   const openCategoryModal = () => setIsCategoryModalVisible(true);
   const closeCategoryModal = () => setIsCategoryModalVisible(false);
@@ -78,6 +76,30 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
     setErrors((prevErrors) => ({ ...prevErrors, [Object.keys(updatedFields)[0]]: null }));
   };
 
+  // Configurações do Dropdown para "Tarja"
+  const itemsBands = [
+    { label: t("medications.bandNone"), value: 1 },
+    { label: t("medications.bandRedNoRetention"), value: 2 },
+    { label: t("medications.bandRedWithRetention"), value: 3 },
+    { label: t("medications.bandBlack"), value: 4 },
+    { label: t("medications.bandYellow"), value: 5 }
+  ];
+
+  // Configurações do Dropdown para "maxTakingTime"
+  const itemsMaxTakingTime = [
+    { label: t("medications.halfHour"), value: 0.5 },
+    { label: t("medications.oneHour"), value: 1 },
+  ];
+
+  // Configurações do Dropdown para "timeBetween"
+  const itemsTimeBetween = [
+    { label: t("medications.fourHours"), value: 4 },
+    { label: t("medications.sixHours"), value: 6 },
+    { label: t("medications.eightHours"), value: 8 },
+    { label: t("medications.twelveHours"), value: 12 },
+    { label: t("medications.twentyFourHours"), value: 24 },
+  ];
+
   const handleSave = async () => {
     let validationErrors: medicationErrorType = {};
     if (!customMedication.name) validationErrors.name = "auth.validationErrors.nameRequired";
@@ -106,115 +128,136 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
     }
   };
 
+  //teste
+
   return (
-    <ScrollView contentContainerStyle={styles.modalContainer}>
-      <Text style={styles.title}>{t("medications.newMedication")}</Text>
+    <View className="flex-1 px-5 pt-5 w-full">
+      <View className="flex flex-row items-center justify-between pb-4">
+        <Text className="font-bold text-xl">{t("medications.newMedication")}</Text>
+        <TouchableOpacity
+          onPress={closeModal}
+        >
+          <Icon name="return-up-back-outline" size={25} color="#000" />
+        </TouchableOpacity>
+      </View>
+      <ScrollView className="flex pt-5">
+        <View className="flex-1 flex flex-col gap-3 w-full">
+          <View className="contanier-input">
+            <TextInputComponent
+              label={t("medications.medicationName")}
+              isInvalid={!!errors.name}
+              navigation={null}
+              setValue={(value) => updateCustomMedication({ name: value })}
+              value={customMedication.name}
+            />
+            {errors.name && <Text style={styles.errorText}>{t(errors.name)}</Text>}
+          </View>
 
-      <TextInput
-        style={[styles.input, errors.name && styles.inputError]}
-        placeholder={t("medications.medicationName")}
-        value={customMedication.name}
-        onChangeText={(value) => updateCustomMedication({ name: value })}
-      />
-      {errors.name && <Text style={styles.errorText}>{t(errors.name)}</Text>}
+          <View className="contanier-input">
+            <InputButtonComponent 
+              onPress={openCategoryModal}
+              label="Categoria" //traduzir
+              value={customMedication.category.description/*traduzir*/}
+              isInvalid={!!errors.category}                           
+             />
+            {errors.category && <Text style={styles.errorText}>{t(errors.category)}</Text>}
+          </View>
+          <View className="contanier-input">
+            <TextInputComponent
+              navigation={null}
+              label={t("medications.quantityPills")}
+              isInvalid={!!errors.quantityInt}
+              placeholder={t("medications.quantityInt")}
+              keyboardType="numeric"
+              editable={customMedication.quantityMl === 0 || customMedication.quantityMl === null}
+              value={customMedication.quantityInt.toString()}
+              setValue={(value) => handleQuantityIntChange(parseInt(value, 10))}
+            />
+          </View>
+          <View className="contanier-input">
+            <TextInputComponent
+              navigation={null}
+              isInvalid={!!errors.quantityInt}
+              label={t("medications.quantityMl")}
+              placeholder={t("medications.quantityMlPlaceholder")}
+              keyboardType="numeric"
+              editable={customMedication.quantityInt === 0 || customMedication.quantityInt === null}
+              value={customMedication.quantityMl.toString()}
+              setValue={(value) => handleQuantityMlChange(parseInt(value, 10))}
+            />
+            {errors.quantityInt && <Text style={styles.errorText}>{t(errors.quantityInt)}</Text>}
+          </View>
 
-      <Text style={styles.buttonText}>{t("medications.selectedCategory", { category: customMedication.category.description })}</Text>
-      <TouchableOpacity onPress={openCategoryModal}>
-        <Text style={styles.buttonText}>{t("medications.selectCategoryButton")}</Text>
-      </TouchableOpacity>
-      {errors.category && <Text style={styles.errorText}>{t(errors.category)}</Text>}
+          <View className="contanier-input">
+            <TextInputComponent
+              navigation={null}
+              isInvalid={!!errors.dosage}
+              label={t("medications.dosageMg")}
+              setValue={(value) => updateCustomMedication({ dosage: value })}
+              keyboardType="numeric"
+              value={customMedication.dosage}
+            />
+            {errors.dosage && <Text style={styles.errorText}>{t(errors.dosage)}</Text>}
+          </View>
+          <View className="contanier-input">
+          <InputButtonComponent 
+              onPress={openIngredientModal}
+              label="Ingrediente ativo" //traduzir
+              value={customMedication.activeIngredient.description/*traduzir*/}
+              isInvalid={!!errors.activeIngredient}                           
+             />
+            {errors.activeIngredient && <Text style={styles.errorText}>{t(errors.activeIngredient)}</Text>}
+          </View>
+          <View className="container-input">
+            <DropdownComponent
+              navigation={null}
+              label={t("medications.maxTakingTime", { time: customMedication.maxTakingTime })}
+              value={customMedication.maxTakingTime}
+              data={itemsMaxTakingTime}
+              setValue={(value) => updateCustomMedication({ maxTakingTime: value })}
+              isInvalid={!!errors.maxTakingTime}
+            />
+            {errors.maxTakingTime && <Text style={styles.errorText}>{t(errors.maxTakingTime)}</Text>}
+          </View>
 
-      <Text></Text>
-      <Text style={styles.buttonText}>{t("medications.quantityPills")}</Text>
-      <TextInput
-        style={[styles.input, errors.quantityInt && styles.inputError]}
-        placeholder={t("medications.quantityInt")}
-        keyboardType="numeric"
-        editable={customMedication.quantityMl === 0 || customMedication.quantityMl === null}
-        value={customMedication.quantityInt.toString()}
-        onChangeText={(value) => handleQuantityIntChange(parseInt(value, 10))}
-      />
+          <View className="container-input">
+            <DropdownComponent
+              navigation={null}
+              label={t("medications.timeBetweenDoses", { hours: customMedication.timeBetween })}
+              value={customMedication.timeBetween}
+              data={itemsTimeBetween}
+              setValue={(value) => updateCustomMedication({ timeBetween: value })}
+              isInvalid={!!errors.timeBetween}
+            />
+            {errors.timeBetween && <Text style={styles.errorText}>{t(errors.timeBetween)}</Text>}
+          </View>
 
-      <Text style={styles.buttonText}>{t("medications.quantityMl")}</Text>
-      <TextInput
-        style={[styles.input, errors.quantityMl && styles.inputError]}
-        placeholder={t("medications.quantityMlPlaceholder")}
-        keyboardType="numeric"
-        editable={customMedication.quantityInt === 0 || customMedication.quantityInt === null}
-        value={customMedication.quantityMl.toString()}
-        onChangeText={(value) => handleQuantityMlChange(parseInt(value, 10))}
-      />
-      {errors.quantityInt && <Text style={styles.errorText}>{t(errors.quantityInt)}</Text>}
+          <View className={`container-input`}>
+            <DropdownComponent
+              navigation={null}
+              label="Tarja"
+              value={customMedication.band}
+              data={itemsBands}
+              setValue={(value) => updateCustomMedication({ band: value })}
+              isInvalid={!!errors.band}
+            />
+            {errors.band && <Text style={styles.errorText}>{t(errors.band)}</Text>}
+          </View>
 
-      <Text>{t("medications.dosageMg")}</Text>
-      <TextInput
-        style={[styles.input, errors.dosage && styles.inputError]}
-        placeholder={t("medications.dosage")}
-        keyboardType="numeric"
-        value={customMedication.dosage}
-        onChangeText={(value) => updateCustomMedication({ dosage: value })}
-      />
-      {errors.dosage && <Text style={styles.errorText}>{t(errors.dosage)}</Text>}
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>{t("common.save")}</Text>
+          </TouchableOpacity>
 
-      <Text style={styles.buttonText}>{t("medications.selectedActiveIngredient", { ingredient: customMedication.activeIngredient.description })}</Text>
-      <TouchableOpacity onPress={openIngredientModal}>
-        <Text style={styles.buttonText}>{t("medications.selectActiveIngredientButton")}</Text>
-      </TouchableOpacity>
-      {errors.activeIngredient && <Text style={styles.errorText}>{t(errors.activeIngredient)}</Text>}
+          <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
+            <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
+          </Modal>
 
-      <Text style={styles.label}>{t("medications.maxTakingTime", { time: customMedication.maxTakingTime })}</Text>
-      <Picker
-        selectedValue={customMedication.maxTakingTime}
-        onValueChange={(value) => updateCustomMedication({ maxTakingTime: value })}
-        style={[styles.picker, errors.maxTakingTime && styles.inputError]}
-      >
-        <Picker.Item label={t("medications.halfHour")} value="0.5" />
-        <Picker.Item label={t("medications.oneHour")} value="1" />
-      </Picker>
-      {errors.maxTakingTime && <Text style={styles.errorText}>{t(errors.maxTakingTime)}</Text>}
-
-      <Text style={styles.label}>{t("medications.timeBetweenDoses", { hours: customMedication.timeBetween })}</Text>
-      <Picker
-        selectedValue={customMedication.timeBetween}
-        onValueChange={(value: number) => { updateCustomMedication({ timeBetween: value }) }}
-        style={[styles.picker, errors.timeBetween && styles.inputError]}
-      >
-        <Picker.Item label={t("medications.fourHours")} value="4" />
-        <Picker.Item label={t("medications.sixHours")} value="6" />
-        <Picker.Item label={t("medications.eightHours")} value="8" />
-        <Picker.Item label={t("medications.twelveHours")} value="12" />
-        <Picker.Item label={t("medications.twentyFourHours")} value="24" />
-      </Picker>
-      {errors.timeBetween && <Text style={styles.errorText}>{t(errors.timeBetween)}</Text>}
-
-      <Text>{t("medications.band", { band: bands[customMedication.band - 1] })}</Text>
-      <Picker
-        selectedValue={customMedication.band}
-        onValueChange={(value) => { console.log(value); updateCustomMedication({ band: value }) }}
-        style={[styles.picker, errors.band && styles.inputError]}
-      >
-        {bands.map((band: string, i: number) => (
-          <Picker.Item label={band} value={String(i + 1)} key={i} />
-        ))}
-      </Picker>
-      {errors.band && <Text style={styles.errorText}>{t(errors.band)}</Text>}
-
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
-      </TouchableOpacity>
-
-      <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
-        <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
-      </Modal>
-
-      <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
-        <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
-      </Modal>
-    </ScrollView>
+          <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
+            <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
+          </Modal>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

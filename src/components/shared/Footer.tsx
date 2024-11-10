@@ -6,24 +6,9 @@ import buttonsArr from "@/assets/mock/IconFooterMock.json";
 import { useTranslation } from 'react-i18next';
 
 const Icons = (navigation: any, local: string) => {
-  const { t } = useTranslation();
-  const placeDestnMiddle = (buttonsArr: IconNodeProps[], destination: string) => {
-    const homeIndex = buttonsArr.findIndex(button => button.destination === destination);
-    if (homeIndex === -1) {
-      return buttonsArr;
-    }
-    const homeIcon = buttonsArr.splice(homeIndex, 1)[0];
-    const middleIndex = Math.floor(buttonsArr.length / 2);
-    buttonsArr.splice(middleIndex, 0, homeIcon);
-    return buttonsArr;
-  };
-  const getIcon = (destination: string) => {
-    const icon = buttonsArr.find(button => button.destination === local);
-    return icon
-  }
-  const iconsArray = placeDestnMiddle(buttonsArr, local)
+  const { t } = useTranslation(); 
 
-  return iconsArray.map((button: IconNodeProps, index: number) => {
+  return buttonsArr.map((button: IconNodeProps, index: number) => {
     const isActiveIcon = button.destination === local; // Verifica se é o ícone central
 
     return (
@@ -66,8 +51,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 10
+    justifyContent: "space-between",
+    marginBottom: 7
   },
   centralIconContainer: {
     alignItems: "center",
