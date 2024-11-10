@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, StyleSheet, RefreshControl } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, StyleSheet, RefreshControl, Button } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "@/server/api";
 import VideoModal from "./VideoModal";
 import VideoActionsModal from "./VideoActionsModal";
@@ -11,18 +12,24 @@ const ResponsibleVideoList = () => {
   const { t } = useTranslation();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // Estado para o refresh
+  const [refreshing, setRefreshing] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [filterStatus, setFilterStatus] = useState(null);
 
+  // Estados para filtros de data
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [showFromDatePicker, setShowFromDatePicker] = useState(false);
+  const [showToDatePicker, setShowToDatePicker] = useState(false);
+
   useEffect(() => {
     fetchVideos(0, true);
-  }, [filterStatus]);
+  }, [filterStatus, fromDate, toDate]);
 
   const fetchVideos = async (page = 0, reset = false, isRefreshing = false) => {
-    if (loading || page >= totalPages) return;
+    if (loading || (page >= totalPages && totalPages > 0)) return;
 
     isRefreshing ? setRefreshing(true) : setLoading(true);
     try {
@@ -31,6 +38,8 @@ const ResponsibleVideoList = () => {
           page,
           size: 10,
           isApproved: filterStatus,
+          fromDate: fromDate ? fromDate.toISOString() : null,
+          toDate: toDate ? toDate.toISOString() : null,
         },
       });
       const newVideos = response.data.content;
@@ -66,19 +75,58 @@ const ResponsibleVideoList = () => {
 
   return (
     <View style={styles.container}>
-      {/* Filtros */}
-      <TouchableOpacity onPress={() => applyFilter(true)}>
-        <Text style={styles.viewButton}>{t("videos.filterApproved")}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => applyFilter(false)}>
-        <Text style={styles.viewButton}>{t("videos.filterRejected")}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => applyFilter(null)}>
-        <Text style={styles.viewButton}>{t("videos.filterAll")}</Text>
-      </TouchableOpacity>
+      {/* Filtros de status */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity onPress={() => applyFilter(true)}>
+          <Text style={styles.viewButton}>{t("videos.filterApproved")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => applyFilter(false)}>
+          <Text style={styles.viewButton}>{t("videos.filterRejected")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => applyFilter(null)}>
+          <Text style={styles.viewButton}>{t("videos.filterAll")}</Text>
+        </TouchableOpacity>
+      </View>
 
+      {/* Filtros de data */}
+      <View style={styles.dateFilterContainer}>
+        <Button title={t("videos.fromDate")} onPress={() => setShowFromDatePicker(true)} />
+        <Button title={t("videos.toDate")} onPress={() => setShowToDatePicker(true)} />
+      </View>
+      <Text>
+        Filtro de data:
+        De: {fromDate && fromDate.toISOString()}
+        Até: {toDate && toDate.toISOString()}
+      </Text>
+
+      {/* Pickers de data */}
+      {showFromDatePicker && (
+        <DateTimePicker
+          value={fromDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowFromDatePicker(false);
+            if (selectedDate) setFromDate(selectedDate);
+          }}
+        />
+      )}
+      {showToDatePicker && (
+        <DateTimePicker
+          value={toDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowToDatePicker(false);
+            if (selectedDate) setToDate(selectedDate);
+          }}
+        />
+      )}
+
+      {/* Loader */}
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
+      {/* Lista de vídeos */}
       <FlatList
         data={videos}
         keyExtractor={(item) => item.id}
@@ -129,6 +177,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 10,
+  },
+  dateFilterContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 10,

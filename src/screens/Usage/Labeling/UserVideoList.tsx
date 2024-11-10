@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Modal, Alert, RefreshControl } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Modal, Alert, RefreshControl, Button } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "@/server/api";
 import VideoModal from "./VideoModal";
 import { useTranslation } from 'react-i18next';
@@ -10,26 +11,35 @@ const UserVideoList = () => {
   const { t } = useTranslation();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // Estado de refresh
+  const [refreshing, setRefreshing] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [filterStatus, setFilterStatus] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
+  // Novos estados para o filtro de datas
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [showFromDatePicker, setShowFromDatePicker] = useState(false);
+  const [showToDatePicker, setShowToDatePicker] = useState(false);
+
   useEffect(() => {
     fetchVideos(0, true);
-  }, [filterStatus]);
+  }, [filterStatus, fromDate, toDate]);
 
   const fetchVideos = async (page = 0, reset = false, isRefreshing = false) => {
-    if (loading || page >= totalPages) return;
+    if (loading || (page >= totalPages && totalPages > 0)) return;
 
     isRefreshing ? setRefreshing(true) : setLoading(true);
     try {
       const response = await api.get("/usages/user", {
         params: {
-          page, size: 10,
+          page,
+          size: 10,
           isApproved: filterStatus,
-        }
+          fromDate: fromDate ? fromDate.toISOString() : null,
+          toDate: toDate ? toDate.toISOString() : null,
+        },
       });
       const newVideos = response.data.content;
       setVideos(reset ? newVideos : [...videos, ...newVideos]);
@@ -59,7 +69,7 @@ const UserVideoList = () => {
 
   const onRefresh = () => {
     setCurrentPage(0);
-    fetchVideos(0, true, true); // Chama com reset e refreshing como true
+    fetchVideos(0, true, true);
   };
 
   const handleDeleteVideo = async (videoId) => {
@@ -88,16 +98,58 @@ const UserVideoList = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => applyFilter(true)}>
-        <Text style={styles.viewButton}>{t("videos.filterApproved")}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => applyFilter(false)}>
-        <Text style={styles.viewButton}>{t("videos.filterRejected")}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => applyFilter(null)}>
-        <Text style={styles.viewButton}>{t("videos.filterAll")}</Text>
-      </TouchableOpacity>
+      {/* Botões para filtro de status */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity onPress={() => applyFilter(true)}>
+          <Text style={styles.viewButton}>{t("videos.filterApproved")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => applyFilter(false)}>
+          <Text style={styles.viewButton}>{t("videos.filterRejected")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => applyFilter(null)}>
+          <Text style={styles.viewButton}>{t("videos.filterAll")}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Botões para filtro de datas */}
+      <View style={styles.dateFilterContainer}>
+        <Button title={t("videos.fromDate")} onPress={() => setShowFromDatePicker(true)} />
+        <Button title={t("videos.toDate")} onPress={() => setShowToDatePicker(true)} />
+      </View>
+      <Text>
+        Filtro de data:
+        De: {fromDate && fromDate.toISOString()}
+        Até: {toDate && toDate.toISOString()}
+      </Text>
+
+      {/* Pickers de data */}
+      {showFromDatePicker && (
+        <DateTimePicker
+          value={fromDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowFromDatePicker(false);
+            if (selectedDate) setFromDate(selectedDate);
+          }}
+        />
+      )}
+      {showToDatePicker && (
+        <DateTimePicker
+          value={toDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowToDatePicker(false);
+            if (selectedDate) setToDate(selectedDate);
+          }}
+        />
+      )}
+
+      {/* Loader */}
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
+
+      {/* Lista de vídeos */}
       <FlatList
         data={videos}
         keyExtractor={(item) => item.id}
@@ -111,26 +163,21 @@ const UserVideoList = () => {
             <TouchableOpacity onPress={() => setSelectedVideo(item)}>
               <Text style={styles.viewButton}>{t("videos.viewVideo")}</Text>
             </TouchableOpacity>
-            {
-              !item.isApproved &&
+            {!item.isApproved && (
               <TouchableOpacity onPress={() => handleDeleteVideo(item.id)}>
                 <Text style={styles.deleteButton}>{t("common.deleteVideo")}</Text>
               </TouchableOpacity>
-            }
+            )}
           </View>
         )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
 
+      {/* Modal de vídeo */}
       {selectedVideo && (
         <Modal visible={true} transparent={true} animationType="slide">
-          <VideoModal
-            url={selectedVideo.url}
-            onClose={() => setSelectedVideo(null)}
-          />
-        <Toast />
+          <VideoModal url={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
+          <Toast />
         </Modal>
       )}
     </View>
@@ -141,6 +188,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 10,
+  },
+  dateFilterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 10,
   },
   videoItem: {
     padding: 15,
