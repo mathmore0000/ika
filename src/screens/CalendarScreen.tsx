@@ -8,6 +8,7 @@ import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Impor
 import Icon from "react-native-vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import ExpandableDatePicker from "@/screens/Calendar/ExpandableDatePicker";
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const { t } = useTranslation();
@@ -16,7 +17,8 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const [dailyDoses, setDailyDoses] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedDose, setSelectedDose] = useState(null);
-  const [refreshing, setRefreshing] = useState(false); // Novo estado
+  const [refreshing, setRefreshing] = useState(false);
+  const [expirationDates, setExpirationDates] = useState([]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -27,7 +29,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("entrando...")
       loadDay();
     }, [])
   );
@@ -52,6 +53,12 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     });
 
     setDailyDoses(dailyDosesOrdered);
+
+    const dates = dailyDosesOrdered
+      .map(dose => dose.nextExpirationDate)
+      .filter(date => date) // Remove valores nulos ou indefinidos
+      .map(date => new Date(date).toISOString().split("T")[0]); // Formata as datas para strings ISO
+    setExpirationDates(dates);
   };
 
   const fetchUserMedications = async () => {
@@ -72,7 +79,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       const response = await api.get("/usages/user", {
         params: { fromDate: dateObj.toISOString(), toDate: toDate.toISOString() },
       });
-      console.log("response.data.content", response.data.content);
       return response.data.content;
     } catch (error) {
       console.error("Erro ao carregar usos:", error);
@@ -132,7 +138,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       dose.isTaken = false;
     });
 
-    console.log("dailyDosesArray", dailyDosesArray); // Usa usagesData diretamente
     for (const usage of usagesData) {
       const medicationId = usage.userMedicationStockResponses[0].medicationResponse.id;
       const doses = dailyDosesArray.filter((dose) => dose.medication.id === medicationId);
@@ -144,8 +149,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         doseTime.setFullYear(usageTime.getFullYear(), usageTime.getMonth(), usageTime.getDate());
         const timeDiff = Math.abs(usageTime - doseTime) / (1000 * 60);
 
-        console.log(timeDiff, minutesTimeBetweenRelation[dose.maxTakingTime]);
-        console.log(timeDiff <= minutesTimeBetweenRelation[dose.maxTakingTime]);
         if (timeDiff <= minutesTimeBetweenRelation[dose.maxTakingTime]) {
           dose.isTaken = true;
           foundMatch = true;
@@ -240,32 +243,13 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     );
   };
 
-
   return (
     <View style={{ flex: 1 }}>
-      <View className="bg-primary flex flex-col pt-8">
-        <View className="p-6">
-          <Text className="font-bold text-2xl  text-white">{t("calendar.today")}</Text>
-          <Text className=" text-white">{todayFormatted}</Text>
-        </View>
-
-        <View className="flex flex-row justify-between mb-4 px-4">
-          {weekDays.map((day, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedDay(day.fullDate)}
-              className="flex items-center justify-center p-2"
-              style={{
-                borderBottomWidth: selectedDay === day.fullDate ? 2 : 0,
-                borderBottomColor: selectedDay === day.fullDate ? "white" : "transparent",
-              }}
-            >
-              <Text className="text-white">{day.name.split(".")[0]}</Text>
-              <Text className="text-white">{day.number}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+      <ExpandableDatePicker
+        selectedDate={new Date(selectedDay)}
+        onDateSelect={(date) => setSelectedDay(date.toISOString().split("T")[0])}
+        expirationDates={expirationDates} 
+      />
 
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

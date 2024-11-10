@@ -19,11 +19,13 @@ export const getDaysArray = (startDate: Date) => {
   const days = [];
   const startOfWeek = new Date(startDate); // Criar uma cópia de startDate
   startOfWeek.setDate(startDate.getDate() - startDate.getDay()); // Começa no domingo
+  const todayDayNumber = startDate.getDate() + 1;
 
   for (let i = 0; i < 7; i++) {
     const date = new Date(startOfWeek); // Criar uma cópia para cada dia
-    date.setDate(startOfWeek.getDate() + i);
+    date.setDate(startOfWeek.getDate() + 1 + i);
     days.push({
+      isSameDate: date.getDate() == todayDayNumber,
       name: date.toLocaleDateString("pt-BR", { weekday: "short" }), // Nome do dia (Seg, Ter, Qua)
       number: date.getDate(), // Número do dia
       fullDate: date.toISOString().split("T")[0], // Data completa no formato YYYY-MM-DD
