@@ -7,6 +7,7 @@ import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import AppLayout from "@/components/shared/AppLayout";
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
 
@@ -108,6 +109,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
             <MedicationSelectionModal closeModal={closeModal} userMedications={userMedications} onUserMedicationCreated={onUserMedicationCreated} />
           </View>
         </View>
+        <Toast />
       </Modal>
       <AppLayout navigation={navigation} local={local} />
     </View>

@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Modal, FlatList, ActivityIndicator, Style
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 const LabelSelectionModal = ({ isVisible, closeModal, onLabelSelect, initialSelectedLabels = [] }) => {
   const { t } = useTranslation();
@@ -77,6 +78,7 @@ const LabelSelectionModal = ({ isVisible, closeModal, onLabelSelect, initialSele
           <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
         </TouchableOpacity>
       </View>
+      <Toast />
     </Modal>
   );
 };

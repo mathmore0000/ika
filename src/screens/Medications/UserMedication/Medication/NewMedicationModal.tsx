@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import DropdownComponent from '@/components/forms/Dropdown';
 import TextInputComponent from '@/components/forms/TextInput';
 import InputButtonComponent from '@/components/forms/InputButton';
+import Toast from "react-native-toast-message";
 
 interface NewMedicationModalProps {
   closeModal: () => void;
@@ -250,10 +251,12 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
 
           <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
             <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
+            <Toast />
           </Modal>
 
           <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
             <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
+            <Toast />
           </Modal>
         </View>
       </ScrollView>

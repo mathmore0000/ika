@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 interface LanguageModalProps {
     visible: boolean;
@@ -47,6 +48,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({ visible, onClose, onSelec
           </TouchableOpacity>
         </View>
       </View>
+      <Toast />
     </Modal>
   );
 };

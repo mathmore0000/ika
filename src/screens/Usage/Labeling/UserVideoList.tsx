@@ -4,6 +4,7 @@ import api from "@/server/api";
 import VideoModal from "./VideoModal";
 import { useTranslation } from 'react-i18next';
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
+import Toast from "react-native-toast-message";
 
 const UserVideoList = () => {
   const { t } = useTranslation();
@@ -129,6 +130,7 @@ const UserVideoList = () => {
             url={selectedVideo.url}
             onClose={() => setSelectedVideo(null)}
           />
+        <Toast />
         </Modal>
       )}
     </View>

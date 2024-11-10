@@ -8,6 +8,7 @@ import { ResponsiblesProps } from "@/constants/interfaces/props/Responsibles";
 import RemoteImage from "@/components/shared/RemoteImage";
 import AddNewResponsibleScreen from './AddNewResponsibleScreen';
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
   const { t } = useTranslation();
@@ -96,6 +97,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
             />
           </View>
         </View>
+        <Toast />
       </Modal>
       <Text style={styles.header}>{t("responsibles.supervisedUsers")}</Text>
       <TouchableOpacity

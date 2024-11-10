@@ -8,6 +8,7 @@ import EditUserMedicationModal from "../UserMedication/EditUserMedicationModal";
 import dayjs from "dayjs";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
   const { t } = useTranslation();
@@ -111,6 +112,7 @@ const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
               fetchStock={fetchStock}
               userMedicationId={userMedication.id}
             />
+        <Toast />
           </Modal>
 
           <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
@@ -119,6 +121,7 @@ const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
               onUserMedicationEdited={onUserMedicationCreated}
               userMedication={userMedication}
             />
+        <Toast />
           </Modal>
         </View>
       </View>

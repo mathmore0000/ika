@@ -14,6 +14,7 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import {
   validatePassword,
 } from "@/data/validations/auth/auth";
+import Toast from "react-native-toast-message";
 
 interface ChangePasswordModalProps {
   visible: boolean;
@@ -97,6 +98,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
           </View>
         </View>
       </View>
+      <Toast />
     </Modal>
   );
 };

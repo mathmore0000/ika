@@ -7,6 +7,7 @@ import SelectStockModal from "./SelectStockModal"; // Import the new modal compo
 import styles from "@/screens/_styles/medications";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import Toast from "react-native-toast-message";
 
 const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTaken }) => {
   const { t } = useTranslation();
@@ -192,6 +193,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
           onRefresh={onRefresh} // Adicionado
         />
       </View>
+      <Toast />
     </Modal>
   );
 };

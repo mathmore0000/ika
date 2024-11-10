@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, ActivityIndic
 import styles from "@/screens/_styles/medications";
 import { showErrorToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 const SelectStockModal = ({
   isVisible,
@@ -89,6 +90,7 @@ const SelectStockModal = ({
           <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
         </TouchableOpacity>
       </View>
+      <Toast />
     </Modal>
   );
 };

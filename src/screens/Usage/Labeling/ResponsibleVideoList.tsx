@@ -5,6 +5,7 @@ import VideoModal from "./VideoModal";
 import VideoActionsModal from "./VideoActionsModal";
 import RemoteImage from "@/components/shared/RemoteImage";
 import { useTranslation } from 'react-i18next';
+import Toast from "react-native-toast-message";
 
 const ResponsibleVideoList = () => {
   const { t } = useTranslation();
@@ -115,6 +116,7 @@ const ResponsibleVideoList = () => {
               }}
             />
           </View>
+          <Toast />
         </Modal>
       )}
     </View>

@@ -26,7 +26,7 @@ import VideoFilterScreen from "@/screens/VideoFilterScreen";
 import AccountScreen from "@/screens/Settings/AccountScreen";
 import NoInternetScreen from "@/screens/NoInternetScreen";
 
-let checkAuth = () => {};
+let checkAuth = () => { };
 
 function App() {
   const Stack = createNativeStackNavigator();
@@ -118,26 +118,28 @@ function App() {
   }
 
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      onStateChange={() => {
-        const currentRoute = navigationRef.getCurrentRoute();
-        if (currentRoute) {
-          setCurrentScreen(currentRoute.name);
-        }
-      }}
-    >
+    <>
+      <NavigationContainer
+        ref={navigationRef}
+        onStateChange={() => {
+          const currentRoute = navigationRef.getCurrentRoute();
+          if (currentRoute) {
+            setCurrentScreen(currentRoute.name);
+          }
+        }}
+      >
+        {!isConnected ? (
+          <NoInternetScreen />
+        ) : isAuthenticated === null ? (
+          <LoadingScreen />
+        ) : isAuthenticated ? (
+          <MainStack />
+        ) : (
+          <AuthStack />
+        )}
+      </NavigationContainer>
       <Toast />
-      {!isConnected ? (
-        <NoInternetScreen />
-      ) : isAuthenticated === null ? (
-        <LoadingScreen />
-      ) : isAuthenticated ? (
-        <MainStack />
-      ) : (
-        <AuthStack />
-      )}
-    </NavigationContainer>
+    </>
   );
 }
 

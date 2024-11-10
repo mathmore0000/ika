@@ -9,6 +9,7 @@ import { medicationType } from "@/constants/interfaces/Entities";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/AntDesign";
 import IconEnty from "react-native-vector-icons/Entypo";
+import Toast from "react-native-toast-message";
 
 const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicationCreated }) => {
   const { width, height } = Dimensions.get("window");
@@ -170,6 +171,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
             <NewMedicationModal closeModal={closeIsNewMedicationModal} onMedicationCreated={onMedicationCreated} />
           </View>
         </View>
+        <Toast />
       </Modal>
 
       <Modal visible={isNewUserMedicationModal} transparent={true} animationType="fade">
@@ -179,6 +181,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
           onUserMedicationCreated={onUserMedicationCreated}
           selectedMedication={selectedMedication}
         />
+        <Toast />
       </Modal>
 
       <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center">

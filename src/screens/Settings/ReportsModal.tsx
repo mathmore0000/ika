@@ -8,6 +8,7 @@ import * as Sharing from 'expo-sharing';
 import { useTranslation } from 'react-i18next';
 import { encode as btoa } from 'base-64';
 import { Picker } from '@react-native-picker/picker';
+import Toast from "react-native-toast-message";
 
 interface ReportsModalProps {
     visible: boolean;
@@ -197,6 +198,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <Toast />
         </Modal>
     );
 };
