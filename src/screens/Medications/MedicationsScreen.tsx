@@ -94,6 +94,9 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
       newUserMedications.push(...userMedications);
       newUserMedications.push(userMedication)
     }
+    newUserMedications = newUserMedications.filter((med) =>
+      !med.disabled
+    );
 
     // Itera pelos medicamentos e agenda os alarmes para cada dose
     for (const med of newUserMedications) {

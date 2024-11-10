@@ -38,7 +38,8 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
           status: disabled ? t("medications.activated") : t("medications.deactivated"),
         })
       );
-      onUserMedicationEdited(userMedication); // Refresh list
+      console.log(disabled ? "desabilitado" : "habilitado")
+      onUserMedicationEdited({...userMedication, disabled }); // Refresh list
     } catch (error) {
       showErrorToast(t("medications.errorUpdatingMedicationStatus"));
     }
@@ -52,7 +53,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
     <View className="flex-1 flex flex-col gap-4 py-3">
       <View className="flex flex-col bg-white shadow-black rounded-lg border border-gray-300">
         <View className="flex flex-row justify-between items-center h-14 bg-primary p-4 rounded-t-lg">
-          <Text className="font-bold text-lg text-white">{userMedication.medication.name}</Text>
+          <Text className="font-bold text-lg text-white">{userMedication.medication.name} - {userMedication.disabled ? "true" : "false"}</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#81b0ff' }}
             thumbColor={!userMedication.disabled ? '#f4f3f4' : '#f4f3f4'}
@@ -71,9 +72,6 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
           <Text style={styles.dosageInfo}>
             {t("medications.stockAvailable")}: {stock}
           </Text>
-          {/* <Text style={styles.dosageInfo}>
-          {t("medications.active")} -> {userMedication.disabled == true ? t("common.false") : t("common.true")}
-        </Text> */}
 
           <View className="flex flex-row gap-2 justify-between">
             <TouchableOpacity style={styles.stockButton} onPress={() => setIsStockModalVisible(true)}>
@@ -83,13 +81,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
             <TouchableOpacity style={styles.editButton} onPress={() => setIsEditModalVisible(true)}>
               <Text style={styles.editButtonText}>{t("common.edit")}</Text>
             </TouchableOpacity>
-
           </View>
-          {/* <TouchableOpacity style={styles.statusButton} onPress={toggleMedicationStatus}>
-          <Text style={styles.statusButtonText}>
-            {userMedication.disabled ? t("medications.activate") : t("medications.deactivate")}
-          </Text>
-        </TouchableOpacity> */}
 
           <Modal visible={isStockModalVisible} transparent={true} animationType="fade">
             <StockModal
@@ -97,7 +89,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
               fetchStock={fetchStock}
               userMedicationId={userMedication.id}
             />
-        <Toast />
+            <Toast />
           </Modal>
 
           <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
@@ -106,7 +98,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
               onUserMedicationEdited={onUserMedicationEdited}
               userMedication={userMedication}
             />
-        <Toast />
+            <Toast />
           </Modal>
         </View>
       </View>
