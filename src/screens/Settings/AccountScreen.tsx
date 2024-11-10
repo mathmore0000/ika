@@ -40,6 +40,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
 
     useEffect(() => {
+        if (!dateOfBirth) return;
         setDateOfBirthFormatted(formatDate(dateOfBirth))
     }, [dateOfBirth]);
 
@@ -74,13 +75,13 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             // Solicitar permissões de câmera
             const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
             if (cameraStatus !== 'granted') {
-                showErrorToast('Permissão para acessar a câmera é necessária.');
+                showErrorToast(t('permissions.cameraIsNeeded'));
             }
 
             // Solicitar permissões de biblioteca de mídia
             const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (mediaStatus !== 'granted') {
-                showErrorToast('Permissão para acessar a biblioteca de fotos é necessária.');
+                showErrorToast(t('permissions.galleryIsNeeded'));
             }
         })();
     }, []);
@@ -213,7 +214,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             console.log(error)
             console.log(error == "Error: Missing camera or camera roll permission")
             if (error == "Error: Missing camera or camera roll permission"){
-                return showErrorToast("Erro")
+                return showErrorToast(t('pemissions.missingCameraOrGallery'))
             }
             console.log("Erro ao tirar foto:"+ error);
         }

@@ -29,7 +29,7 @@
       "passwordInvalid": "Senha inválida."
     }
   },
-  "medications": {    
+  "medications": {
     "selectMedication": "Selecione um medicamento",
     "selectActiveIngredient": "Selecione um Ingrediente Ativo",
     "searchIngredient": "Pesquisar ingrediente...",
@@ -88,6 +88,7 @@
     "takeMedication": "Tomar Medicamento",
     "recordVideo": "Gravar Vídeo",
     "chooseVideo": "Escolher Vídeo da Galeria",
+    "chooseVideoFromGallery": "Escolher Vídeo da Galeria",
     "videoSelected": "Vídeo Selecionado",
     "errorRecordingVideo": "Erro ao gravar vídeo.",
     "usageRegistered": "Uso registrado com sucesso.",
@@ -216,7 +217,16 @@
     "nameUpdateError": "Erro ao atualizar o nome.",
     "photoUpdateSuccess": "Foto de perfil atualizada com sucesso.",
     "photoUpdateError": "Erro ao atualizar a foto de perfil.",
-    "logout": "Fechar sessão"
+    "logout": "Fechar sessão",
+    "enterAllFields": "Preencha todos os campos.",
+    "passwordsDoNotMatch": "As senhas não coincidem.",
+    "passwordsNotStrongEnough": "A senha não é forte o suficiente.",
+    "passwordUpdateSuccess": "Senha atualizada com sucesso.",
+    "passwordUpdateWrongPasswordError": "Senha atual incorreta.",
+    "changePassword": "Alterar Senha",
+    "currentPassword": "Senha Atual",
+    "newPassword": "Nova Senha",
+    "confirmPassword": "Confirmar Senha"
   },
   "calendar": {
     "today": "Hoje",
@@ -257,8 +267,9 @@
     "add": "Adicionar",
     "deleteVideo": "Excluir Vídeo",
     "false": "Falso",
-    "true": "Verdadeiro"
-  },  
+    "true": "Verdadeiro",
+    "notConnectedToInternet": "Não está conectado à internet."
+  },
   "settings": {
     "reports": "Relatórios",
     "account": "Conta",
@@ -277,5 +288,10 @@
     "responsiblesDescription": "Gerencie seus responsáveis",
     "notificationsDescription": "Gerencie suas notificações",
     "videosDescription": "Assista seus vídeos"
+  },
+  "permissions": {
+    "cameraIsNeeded": "A câmera é necessária.",
+    "galleryIsNeeded": "A galeria é necessária.",
+    "missingCameraOrGallery": "Câmera ou galeria ausente."
   }
 }

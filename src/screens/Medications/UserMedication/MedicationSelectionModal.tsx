@@ -112,8 +112,6 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
         />
       </View>
 
-
-
       <FlatList
         data={filteredMedications}
         keyExtractor={(item) => item.id}

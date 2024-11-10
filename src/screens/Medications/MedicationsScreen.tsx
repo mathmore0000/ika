@@ -6,10 +6,12 @@ import styles from "@/screens/_styles/medications";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import AppLayout from "@/components/shared/AppLayout";
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
 
 const MedicationScreen = ({ navigation, local = "Medications" }) => {
+  const { t } = useTranslation();
   const [userMedications, setUserMedications] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -42,7 +44,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
       setCurrentPage(page + 1);
     } catch (error) {
       console.log(error);
-      showErrorToast("Error loading medications.");
+      showErrorToast(t('calendar.errorLoadingMedications'));
     } finally {
       setLoading(false);
     }
@@ -61,7 +63,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
   return (
     <View className="flex-1 p-6 flex flex-col gap-2">
       <View className="flex flex-row items-center justify-between">
-        <Text style={styles.header}>Seus medicamentos</Text>
+        <Text style={styles.header}>{t('medications.medicationList')}</Text>
         <TouchableOpacity style={styles.addButton} onPress={openModal}>
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
@@ -70,7 +72,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
       <FlatList
         data={userMedications}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text style={styles.emptyText}>No medications found.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>{t('medications.noMedicationsFound')}</Text>}
         renderItem={({ item }) => (
           <MedicationCard fetchUserMedications={fetchUserMedications} userMedication={item} />
         )}

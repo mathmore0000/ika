@@ -41,7 +41,7 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
       setCurrentPage(page + 1);
     } catch (error) {
       console.log(error)
-      showErrorToast("Error loading medications.");
+      showErrorToast(t('medications.errorLoadingMedications'));
     } finally {
       setLoading(false);
     }

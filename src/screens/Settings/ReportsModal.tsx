@@ -74,7 +74,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
                     dialogTitle: 'Compartilhar Relatório',
                 });
             } else {
-                showErrorToast('Compartilhamento não está disponível no seu dispositivo.');
+                showErrorToast(t('reports.sharingNotAvailable'));
             }
             showSuccessToast(t('reports.downloadSuccess'));
             onClose();
@@ -119,7 +119,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
                     dialogTitle: 'Compartilhar Relatório',
                 });
             } else {
-                showErrorToast('Compartilhamento não está disponível no seu dispositivo.');
+                showErrorToast(t('reports.sharingNotAvailable'));
             }
             showSuccessToast(t('reports.downloadSuccess'));
             onClose();

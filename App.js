@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { Platform } from "react-native"; // Adicione esta linha
+import { NavigationContainer } from "@react-navigation/native";
+import { Platform, Alert } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getToken } from "@/server/api";
-import { navigationRef, setCurrentScreen, currentScreen } from "@/navigation/RootNavigation";
+import { navigationRef, setCurrentScreen } from "@/navigation/RootNavigation";
 import "./src/assets/styles/global.css";
-import { getUser, setToken, updateUserNotificationToken } from "@/contexts/AuthContext"
-import i18n from '@/i18n';
-import Toast from 'react-native-toast-message';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import Constants from 'expo-constants';
+import { getUser, setToken, updateUserNotificationToken } from "@/contexts/AuthContext";
+import i18n from "@/i18n";
+import Toast from "react-native-toast-message";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import NetInfo from "@react-native-community/netinfo";
+import Constants from "expo-constants";
 
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
@@ -21,21 +22,29 @@ import MedicationsScreen from "@/screens/Medications/MedicationsScreen";
 import LoginScreen from "@/screens/auth/LoginScreen";
 import SignUpScreen from "@/screens/auth/SignUpScreen";
 import LoadingScreen from "@/screens/_aux/LoadingScreen";
-import VideoFilterScreen from "@/screens/VideoFilterScreen"
-import AccountScreen from "@/screens/Settings/AccountScreen"
+import VideoFilterScreen from "@/screens/VideoFilterScreen";
+import AccountScreen from "@/screens/Settings/AccountScreen";
+import NoInternetScreen from "@/screens/NoInternetScreen";
 
-let checkAuth = () => { };
+let checkAuth = () => {};
 
 function App() {
   const Stack = createNativeStackNavigator();
+  const [isConnected, setIsConnected] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+    return () => unsubscribe();
+  }, []);
 
   checkAuth = async () => {
     const token = await getToken();
-    if (!!token == true) {
+    if (!!token) {
       const user = getUser();
-      const language = user.locale
-
+      const language = user.locale;
       i18n.changeLanguage(language);
     }
     setIsAuthenticated(!!token);
@@ -45,11 +54,6 @@ function App() {
     checkAuth();
   }, []);
 
-  if (isAuthenticated === null) {
-    return <LoadingScreen />;
-  }
-
-  // Função para registrar o dispositivo para notificações push
   const registerForPushNotifications = async () => {
     let token;
     if (!Device.isDevice) {
@@ -57,20 +61,24 @@ function App() {
     }
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig.extra.eas.projectId })).data;
-    await updateUserNotificationToken(token); // Exibir o token no console por enquanto
+    token = (
+      await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig.extra.eas.projectId,
+      })
+    ).data;
+    await updateUserNotificationToken(token);
 
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
         importance: Notifications.AndroidImportance.MAX,
         sound: true,
       });
@@ -80,7 +88,7 @@ function App() {
   const onLoginSuccess = async (token, refreshToken) => {
     await setToken(token, refreshToken);
     await registerForPushNotifications();
-    await checkAuth()
+    await checkAuth();
   };
 
   function AuthStack() {
@@ -117,12 +125,21 @@ function App() {
         if (currentRoute) {
           setCurrentScreen(currentRoute.name);
         }
-      }}>
+      }}
+    >
       <Toast />
-      {isAuthenticated ? <MainStack /> : <AuthStack />}
+      {!isConnected ? (
+        <NoInternetScreen />
+      ) : isAuthenticated === null ? (
+        <LoadingScreen />
+      ) : isAuthenticated ? (
+        <MainStack />
+      ) : (
+        <AuthStack />
+      )}
     </NavigationContainer>
   );
 }
 
-export { checkAuth }
+export { checkAuth };
 export default App;

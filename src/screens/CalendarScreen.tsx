@@ -266,7 +266,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                       />
                     </View>
                     <Text className="text-sm">{t('calendar.time')}: {dose.time}</Text>
-                    <Text className="">{t('calendar.nextExpiration', { date: getDateAndHour(new Date(dose.nextExpirationDate)) })}</Text>
+                    <Text className="">{t('calendar.nextExpiration', { date: dose.nextExpirationDate ? getDateAndHour(new Date(dose.nextExpirationDate)) : "N/A" })}</Text>
                     <DoseStatusButton dose={dose} />
                   </View>
                 </View>
