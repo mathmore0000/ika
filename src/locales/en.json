@@ -28,7 +28,7 @@
       "passwordRequired": "Password is required.",
       "passwordInvalid": "Invalid password."
     }
-  }, 
+  },
   "medications": {
     "fourHours": "4 hours",
     "sixHours": "6 hours",
@@ -304,5 +304,26 @@
     "cameraIsNeeded": "Camera is needed.",
     "galleryIsNeeded": "Gallery is needed.",
     "missingCameraOrGallery": "Camera or gallery is missing."
+  },
+  "dates": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fry": "Fri",
+    "sat": "Sat",
+    "jan": "Jan",
+    "fev": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dez": "Dec"
   }
 }

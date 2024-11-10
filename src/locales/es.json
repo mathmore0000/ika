@@ -304,5 +304,26 @@
     "cameraIsNeeded": "Se necesita la cámara.",
     "galleryIsNeeded": "Se necesita la galería.",
     "missingCameraOrGallery": "Cámara o galería faltante."
+  },
+  "dates": {
+    "sun": "Dom",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fry": "Vie",
+    "sat": "Sáb",
+    "jan": "Ene",
+    "fev": "Feb",
+    "mar": "Mar",
+    "apr": "Abr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Ago",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dez": "Dic"
   }
 }

@@ -29,7 +29,7 @@
       "passwordInvalid": "Senha inválida."
     }
   },
-  "medications": {    
+  "medications": {
     "fourHours": "4 horas",
     "sixHours": "6 horas",
     "eightHours": "8 horas",
@@ -304,5 +304,26 @@
     "cameraIsNeeded": "A câmera é necessária.",
     "galleryIsNeeded": "A galeria é necessária.",
     "missingCameraOrGallery": "Câmera ou galeria ausente."
+  },
+  "dates": {
+    "sun": "Dom",
+    "mon": "Seg",
+    "tue": "Ter",
+    "wed": "Qua",
+    "thu": "Qui",
+    "fry": "Sex",
+    "sat": "Sáb",
+    "jan": "Jan",
+    "fev": "Fev",
+    "mar": "Mar",
+    "apr": "Abr",
+    "may": "Mai",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Ago",
+    "sep": "Set",
+    "oct": "Out",
+    "nov": "Nov",
+    "dez": "Dez"
   }
 }
