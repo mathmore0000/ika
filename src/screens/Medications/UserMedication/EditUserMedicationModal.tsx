@@ -46,7 +46,12 @@ const EditUserMedicationModal = ({ closeModal, userMedication, onUserMedicationE
       });
 
       showSuccessToast(t("medications.medicationUpdated"));
-      onUserMedicationEdited();
+      onUserMedicationEdited({
+        ...userMedication, 
+        timeBetween: parseFloat(timeBetween),
+        firstDosageTime: firstDosageTimeISO,
+        maxTakingTime: parseFloat(maxTakingTime),
+      });
       closeModal();
     } catch (error) {
       console.log(error.response.data);

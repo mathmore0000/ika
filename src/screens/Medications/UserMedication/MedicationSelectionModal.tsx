@@ -41,23 +41,17 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
   };
 
   const fetchMedications = async (page = 0, size = 50, isRefreshing = false) => {
-    console.log("1")
     if (loading || page >= totalPages) return;
-    console.log("2")
 
     if (isRefreshing) {
-    console.log("3")
     setRefreshing(true);
     } else {
       setLoading(true);
     }
 
     try {
-      console.log("4")
       const response = await api.get("/medications", { params: { page, size } });
       const newMedications = filterOutUserMedications(response.data.content);
-      console.log(page === 0)
-      console.log(newMedications[0])
       setMedications((prevMedications) => 
         page === 0 ? newMedications : [...prevMedications, ...newMedications]
       );

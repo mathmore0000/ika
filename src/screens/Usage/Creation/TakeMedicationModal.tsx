@@ -8,7 +8,9 @@ import styles from "@/screens/_styles/medications";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
+import { cancelMedicationRemindersForNextHour } from "@/utils/alarm"
 
+const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
 const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTaken }) => {
   const { t } = useTranslation();
 
@@ -116,6 +118,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
 
     try {
       // Send the form data through the api instance with the correct headers
+      const doseTimeSplit = dose.time.split(":")
       await api.post("/usages", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -126,6 +129,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
       setVideo(null);
       setSelectedStocks([]);
       closeModal();
+      cancelMedicationRemindersForNextHour(dose.medication.id, Number(doseTimeSplit[0]), Number(doseTimeSplit[1].split(" ")[0]), `Hora de tomar ${dose.medication.name}`, minutesTimeBetweenRelation[dose.maxTakingTime])
       handleMedicationTaken(
         dose.medication.id,
         dose.datetime);

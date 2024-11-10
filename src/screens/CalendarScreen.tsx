@@ -179,7 +179,10 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString([], {
+      hour: "2-digit", minute: "2-digit",
+      hour12: false, // Formato 24 horas
+    });
   };
 
   const openTakeMedicationModal = (dose) => {
@@ -248,7 +251,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       <ExpandableDatePicker
         selectedDate={new Date(selectedDay)}
         onDateSelect={(date) => setSelectedDay(date.toISOString().split("T")[0])}
-        expirationDates={expirationDates} 
+        expirationDates={expirationDates}
       />
 
       <ScrollView

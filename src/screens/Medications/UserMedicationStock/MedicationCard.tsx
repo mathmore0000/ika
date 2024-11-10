@@ -5,12 +5,11 @@ import styles from "@/screens/_styles/medications";
 import api from "@/server/api";
 import StockModal from "./StockModal";
 import EditUserMedicationModal from "../UserMedication/EditUserMedicationModal";
-import dayjs from "dayjs";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
 import Toast from "react-native-toast-message";
 
-const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
+const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseTimes }) => {
   const { t } = useTranslation();
   const [stock, setStock] = useState([]);
   const [isStockModalVisible, setIsStockModalVisible] = useState(false);
@@ -27,21 +26,7 @@ const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
     }
   };
 
-  const calculateDoseTimes = () => {
-    const doseTimes = [];
-    let doseTime = dayjs(userMedication.firstDosageTime);
-    const initialDoseTimePlus1 = doseTime.add(1, "day");
-    const interval = userMedication.timeBetween;
-
-    do {
-      doseTimes.push(doseTime.format("HH:mm"));
-      doseTime = doseTime.add(interval, "hour");
-    } while (!doseTime.isSame(initialDoseTimePlus1, "minute"));
-
-    return doseTimes.sort();
-  };
-
-  const doseTimes = calculateDoseTimes();
+  const doseTimes = calculateDoseTimes(userMedication);
 
   const toggleMedicationStatus = async () => {
     try {
@@ -53,7 +38,7 @@ const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
           status: disabled ? t("medications.activated") : t("medications.deactivated"),
         })
       );
-      onUserMedicationCreated(); // Refresh list
+      onUserMedicationEdited(userMedication); // Refresh list
     } catch (error) {
       showErrorToast(t("medications.errorUpdatingMedicationStatus"));
     }
@@ -118,7 +103,7 @@ const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
           <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
             <EditUserMedicationModal
               closeModal={() => setIsEditModalVisible(false)}
-              onUserMedicationEdited={onUserMedicationCreated}
+              onUserMedicationEdited={onUserMedicationEdited}
               userMedication={userMedication}
             />
         <Toast />

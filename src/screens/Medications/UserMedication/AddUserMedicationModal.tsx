@@ -41,7 +41,7 @@ const AddUserMedicationModal = ({
 
     try {
       const firstDosageTimeISO = firstDosageTime.toISOString();
-      await api.post("/user-medications", {
+      const response = await api.post("/user-medications", {
         idMedication: selectedMedication.id,
         quantityInt: quantityInt,
         quantityMl: quantityMl,
@@ -51,7 +51,7 @@ const AddUserMedicationModal = ({
       });
 
       showSuccessToast(t("medications.medicationAddedToUserSuccess"));
-      onUserMedicationCreated();
+      await onUserMedicationCreated(response.data);
       closeMedicationSelectionModal();
       closeModal();
     } catch (error) {
