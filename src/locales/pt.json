@@ -30,6 +30,13 @@
     }
   },
   "medications": {    
+    "fourHours": "4 horas",
+    "sixHours": "6 horas",
+    "eightHours": "8 horas",
+    "twelveHours": "12 horas",
+    "twentyFourHours": "24 horas",
+    "halfHour": "30 minutos",
+    "oneHour": "1 hora",
     "selectMedication": "Selecione um medicamento",
     "selectActiveIngredient": "Selecione um Ingrediente Ativo",
     "searchIngredient": "Pesquisar ingrediente...",
