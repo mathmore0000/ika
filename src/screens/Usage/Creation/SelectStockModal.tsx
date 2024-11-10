@@ -1,6 +1,6 @@
 // SelectStockModal.js
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, ActivityIndicator, RefreshControl } from "react-native";
 import styles from "@/screens/_styles/medications";
 import { showErrorToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,8 @@ const SelectStockModal = ({
   setCurrentPage,
   totalPages,
   loading,
+  refreshing, // Recebido
+  onRefresh, // Recebido
 }) => {
   const { t } = useTranslation();
   const [selectedStock, setSelectedStock] = useState(null);
@@ -53,6 +55,9 @@ const SelectStockModal = ({
           onEndReached={loadMoreStocks}
           onEndReachedThreshold={0.5}
           ListFooterComponent={loading && <ActivityIndicator size="small" color="#0000ff" />}
+          refreshControl={ // Adicionado
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           renderItem={({ item }) => (
             <TouchableOpacity
               style={item.id === selectedStock?.id ? styles.stockItemSelected : styles.stockItem}
@@ -64,6 +69,7 @@ const SelectStockModal = ({
             </TouchableOpacity>
           )}
         />
+
 
         {selectedStock && (
           <TextInput

@@ -1,6 +1,5 @@
-// ActiveIngredientSelectionModal.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Modal } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from "react-native";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
@@ -15,25 +14,30 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchActiveIngredients(currentPage, 30);
   }, [currentPage]);
 
-  const fetchActiveIngredients = async (page, size) => {
+  const fetchActiveIngredients = async (page = 0, size = 30, isRefreshing = false) => {
     if (loading || page >= totalPages) return;
 
-    setLoading(true);
+    isRefreshing ? setRefreshing(true) : setLoading(true);
+
     try {
       const response = await api.get("/active-ingredients", { params: { page, size } });
-      setActiveIngredients(prev => [...prev, ...response.data.content]);
-      setFilteredActiveIngredients(filterActiveIngredients([...activeIngredients, ...response.data.content], searchText));
+      const newIngredients = response.data.content;
+
+      setActiveIngredients(prev => (page === 0 ? newIngredients : [...prev, ...newIngredients]));
+      setFilteredActiveIngredients(filterActiveIngredients(page === 0 ? newIngredients : [...activeIngredients, ...newIngredients], searchText));
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       showErrorToast(t("medications.errorLoadingIngredients"));
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -56,6 +60,11 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
     if (currentPage + 1 < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
+  };
+
+  const onRefresh = () => {
+    setCurrentPage(0);
+    fetchActiveIngredients(0, 30, true); // Recarrega a lista desde o início
   };
 
   return (
@@ -83,6 +92,9 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>

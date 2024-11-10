@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from "react-native";
 import AppLayout from "@/components/shared/AppLayout";
 import api from "@/server/api";
-import notificationsData from "@/assets/mock/NotificationsMock.json"; // Importa os dados mockados
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { NotificationsProps } from "@/constants/interfaces/props/Notifications";
 
 const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Notifications" }) => {
-
   const [notifications, setNotifications] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchNotifications(0);
@@ -23,10 +22,16 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
     }
   };
 
-  const fetchNotifications = async (page = currentPage) => {
+  const fetchNotifications = async (page = currentPage, isRefreshing = false) => {
     if (loading || page >= totalPages) return;
 
-    setLoading(true);
+    if (isRefreshing) {
+      setRefreshing(true);
+      page = 0; // Reinicia a paginação ao fazer refresh
+    } else {
+      setLoading(true);
+    }
+
     try {
       const response = await api.get("/notifications", {
         params: { page, size: 10 },
@@ -40,11 +45,16 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
       setTotalPages(response.data.totalPages);
       setCurrentPage(page + 1);
     } catch (error) {
-      console.log(error)
-      showErrorToast(t('medications.errorLoadingMedications'));
+      console.log(error);
+      showErrorToast("Error loading notifications");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const onRefresh = () => {
+    fetchNotifications(0, true); // Chama a função de fetch com o parâmetro isRefreshing
   };
 
   const setNotificationAsSeen = (idNotification: string) => {
@@ -54,7 +64,6 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
       )
     );
   };
-
 
   const renderItem = ({ item }: any) => (
     <TouchableOpacity
@@ -80,12 +89,15 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
   return (
     <View style={styles.container}>
       <FlatList
-        onEndReached={loadMoreNotifications}
         data={notifications}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
-        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null} // Indicador de carregamento
+        onEndReached={loadMoreNotifications}
+        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
       <AppLayout navigation={navigation} local={local} />
     </View>

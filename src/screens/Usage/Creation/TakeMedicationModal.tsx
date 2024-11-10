@@ -8,7 +8,7 @@ import styles from "@/screens/_styles/medications";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 
-const TakeMedicationModal = ({ isVisible, closeModal, medicationId, fetchUserMedications }) => {
+const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTaken }) => {
   const { t } = useTranslation();
 
   const [stocks, setStocks] = useState([]);
@@ -18,6 +18,13 @@ const TakeMedicationModal = ({ isVisible, closeModal, medicationId, fetchUserMed
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isSelectStockModalVisible, setIsSelectStockModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // Adicionado
+
+  const onRefresh = () => { // Adicionado
+    setRefreshing(true);
+    resetStocks();
+    fetchStocks(0).finally(() => setRefreshing(false));
+  };
 
   // Fetch medication stocks with pagination
   useEffect(() => {
@@ -38,7 +45,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, medicationId, fetchUserMed
 
     setLoading(true);
     try {
-      const response = await api.get(`/user-medication-stocks/valid/${medicationId}`, { params: { page, size } });
+      const response = await api.get(`/user-medication-stocks/valid/${dose.medication.id}`, { params: { page, size } });
       setStocks((prevStocks) => [...prevStocks, ...response.data.content]);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -118,7 +125,9 @@ const TakeMedicationModal = ({ isVisible, closeModal, medicationId, fetchUserMed
       setVideo(null);
       setSelectedStocks([]);
       closeModal();
-      fetchUserMedications();
+      handleMedicationTaken(
+        dose.medication.id,
+        dose.datetime);
     } catch (error) {
       console.error(t("medications.errorRegisteringUsage"), error?.response?.data);
       showErrorToast(t("medications.errorRegisteringUsage"));
@@ -179,6 +188,8 @@ const TakeMedicationModal = ({ isVisible, closeModal, medicationId, fetchUserMed
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}
           loading={loading}
+          refreshing={refreshing} // Adicionado
+          onRefresh={onRefresh} // Adicionado
         />
       </View>
     </Modal>

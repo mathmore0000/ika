@@ -8,7 +8,7 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 import { useTranslation } from "react-i18next";
 
-const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedications }) => {
+const EditUserMedicationModal = ({ closeModal, userMedication, onUserMedicationEdited }) => {
   const { t } = useTranslation();
   const [timeBetween, setTimeBetween] = useState(userMedication.timeBetween?.toString() || "8");
   const [maxTakingTime, setMaxTakingTime] = useState(userMedication.maxTakingTime?.toString() || "0.5");
@@ -46,7 +46,7 @@ const EditUserMedicationModal = ({ closeModal, userMedication, fetchUserMedicati
       });
 
       showSuccessToast(t("medications.medicationUpdated"));
-      fetchUserMedications();
+      onUserMedicationEdited();
       closeModal();
     } catch (error) {
       console.log(error.response.data);

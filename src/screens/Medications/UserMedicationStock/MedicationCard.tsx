@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
 
-const MedicationCard = ({ userMedication, fetchUserMedications }) => {
+const MedicationCard = ({ userMedication, onUserMedicationCreated }) => {
   const { t } = useTranslation();
   const [stock, setStock] = useState([]);
   const [isStockModalVisible, setIsStockModalVisible] = useState(false);
@@ -52,7 +52,7 @@ const MedicationCard = ({ userMedication, fetchUserMedications }) => {
           status: disabled ? t("medications.activated") : t("medications.deactivated"),
         })
       );
-      fetchUserMedications(); // Refresh list
+      onUserMedicationCreated(); // Refresh list
     } catch (error) {
       showErrorToast(t("medications.errorUpdatingMedicationStatus"));
     }
@@ -116,7 +116,7 @@ const MedicationCard = ({ userMedication, fetchUserMedications }) => {
           <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
             <EditUserMedicationModal
               closeModal={() => setIsEditModalVisible(false)}
-              fetchUserMedications={fetchUserMedications}
+              onUserMedicationEdited={onUserMedicationCreated}
               userMedication={userMedication}
             />
           </Modal>

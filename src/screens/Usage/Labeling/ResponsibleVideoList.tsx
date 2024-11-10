@@ -1,6 +1,5 @@
-// ResponsibleVideoList.js
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, StyleSheet, RefreshControl } from "react-native";
 import api from "@/server/api";
 import VideoModal from "./VideoModal";
 import VideoActionsModal from "./VideoActionsModal";
@@ -11,6 +10,7 @@ const ResponsibleVideoList = () => {
   const { t } = useTranslation();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // Estado para o refresh
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -20,10 +20,10 @@ const ResponsibleVideoList = () => {
     fetchVideos(0, true);
   }, [filterStatus]);
 
-  const fetchVideos = async (page = currentPage, reset = false) => {
+  const fetchVideos = async (page = 0, reset = false, isRefreshing = false) => {
     if (loading || page >= totalPages) return;
-    setLoading(true);
 
+    isRefreshing ? setRefreshing(true) : setLoading(true);
     try {
       const response = await api.get("/usages/responsible", {
         params: {
@@ -32,18 +32,25 @@ const ResponsibleVideoList = () => {
           isApproved: filterStatus,
         },
       });
-      setVideos(reset ? response.data.content : [...videos, ...response.data.content]);
+      const newVideos = response.data.content;
+      setVideos(reset ? newVideos : [...videos, ...newVideos]);
       setTotalPages(response.data.totalPages);
       setCurrentPage(page);
     } catch (error) {
       console.error(t("videos.errorLoadingVideos"), error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
+  const onRefresh = () => {
+    setCurrentPage(0);
+    fetchVideos(0, true, true); // Passa `isRefreshing` como true para o refresh
+  };
+
   const applyFilter = (status) => {
-    if (status == filterStatus) return;
+    if (status === filterStatus) return;
     setFilterStatus(status);
     setVideos([]);
     setTotalPages(1);
@@ -90,6 +97,9 @@ const ResponsibleVideoList = () => {
             </TouchableOpacity>
           </View>
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
       {/* Modal para visualização e ações de aprovação/rejeição */}

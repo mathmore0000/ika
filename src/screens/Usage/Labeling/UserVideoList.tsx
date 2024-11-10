@@ -1,6 +1,5 @@
-// UserVideoList.js
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Modal, Alert } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Modal, Alert, RefreshControl } from "react-native";
 import api from "@/server/api";
 import VideoModal from "./VideoModal";
 import { useTranslation } from 'react-i18next';
@@ -10,6 +9,7 @@ const UserVideoList = () => {
   const { t } = useTranslation();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // Estado de refresh
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [filterStatus, setFilterStatus] = useState(null);
@@ -19,9 +19,10 @@ const UserVideoList = () => {
     fetchVideos(0, true);
   }, [filterStatus]);
 
-  const fetchVideos = async (page = currentPage, reset = false) => {
+  const fetchVideos = async (page = 0, reset = false, isRefreshing = false) => {
     if (loading || page >= totalPages) return;
-    setLoading(true);
+
+    isRefreshing ? setRefreshing(true) : setLoading(true);
     try {
       const response = await api.get("/usages/user", {
         params: {
@@ -29,18 +30,20 @@ const UserVideoList = () => {
           isApproved: filterStatus,
         }
       });
-      setVideos(reset ? response.data.content : [...videos, ...response.data.content]);
+      const newVideos = response.data.content;
+      setVideos(reset ? newVideos : [...videos, ...newVideos]);
       setTotalPages(response.data.totalPages);
       setCurrentPage(page);
     } catch (error) {
       console.error(t("videos.errorFetchingUserVideos"), error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   const applyFilter = (status) => {
-    if (status == filterStatus) return;
+    if (status === filterStatus) return;
     setVideos([]);
     setCurrentPage(0);
     setTotalPages(1);
@@ -51,6 +54,11 @@ const UserVideoList = () => {
     if (currentPage + 1 < totalPages) {
       fetchVideos(currentPage + 1);
     }
+  };
+
+  const onRefresh = () => {
+    setCurrentPage(0);
+    fetchVideos(0, true, true); // Chama com reset e refreshing como true
   };
 
   const handleDeleteVideo = async (videoId) => {
@@ -110,6 +118,9 @@ const UserVideoList = () => {
             }
           </View>
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
       {selectedVideo && (

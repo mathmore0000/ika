@@ -1,44 +1,50 @@
 // CalendarScreen.js
-import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Button } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
 import api from "@/server/api";
 import AppLayout from "@/components/shared/AppLayout";
 import { getDaysArray, today, todayFormatted, getDateAndHour } from "@/utils/date";
 import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Import the modal
 import Icon from "react-native-vector-icons/AntDesign";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const { t } = useTranslation();
   const weekDays = getDaysArray(today);
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]);
-  const [userMedications, setUserMedications] = useState([]);
-  const [usages, setUsages] = useState([]);
   const [dailyDoses, setDailyDoses] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedMedicationId, setSelectedMedicationId] = useState(null);
+  const [selectedDose, setSelectedDose] = useState(null);
+  const [refreshing, setRefreshing] = useState(false); // Novo estado
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadDay().finally(() => setRefreshing(false));
+  };
 
   const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log("entrando...")
+      loadDay();
+    }, [])
+  );
 
   useEffect(() => {
     loadDay();
   }, [selectedDay]);
 
-  useEffect(() => {
-    if (userMedications.length > 0) {
-      fetchDailyDoses();
-    }
-  }, [userMedications, usages]);
-
   const loadDay = async () => {
-    fetchUserMedications();
-    fetchUsages(selectedDay);
+    await fetchDailyDoses(selectedDay);
   }
 
-  const fetchDailyDoses = async () => {
+  const fetchDailyDoses = async (selectedDay) => {
+    const userMedications = await fetchUserMedications();
+    const usagesData = await fetchUsages(selectedDay); // Chama o fetchUsages e aguarda os dados
     const dailyDosesArray = userMedications.flatMap((userMedication) => calculateDoseTimes(userMedication));
-    const dailyDosesWithExpirationDate = await mountAllCards(dailyDosesArray);
-
+    const dailyDosesWithExpirationDate = await mountAllCards(dailyDosesArray, usagesData); // Passa o usagesData diretamente
     const dailyDosesOrdered = dailyDosesWithExpirationDate.sort((a, b) => {
       const aTime = a.datetime.getHours() * 60 + a.datetime.getMinutes();
       const bTime = b.datetime.getHours() * 60 + b.datetime.getMinutes();
@@ -51,10 +57,11 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const fetchUserMedications = async () => {
     try {
       const response = await api.get("/user-medications", { params: { page: 0, size: 50 } });
-      setUserMedications(response.data.content);
+      return response.data.content;
     } catch (error) {
       console.error("Erro ao carregar medicamentos:", error);
     }
+    return [];
   };
 
   const fetchUsages = async (date) => {
@@ -65,10 +72,11 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       const response = await api.get("/usages/user", {
         params: { fromDate: dateObj.toISOString(), toDate: toDate.toISOString() },
       });
-      setUsages(response.data.content);
+      console.log("response.data.content", response.data.content);
+      return response.data.content;
     } catch (error) {
-      console.log(error.response?.data);
       console.error("Erro ao carregar usos:", error);
+      return [];
     }
   };
 
@@ -110,7 +118,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     return doseTimes;
   };
 
-  const mountAllCards = async (dailyDosesArray) => {
+  const mountAllCards = async (dailyDosesArray, usagesData) => {
     const allMedicationIds = new Set(dailyDosesArray.map((dose) => dose.medication.id));
     const medicationIdNextExpirationRelation = new Map();
 
@@ -124,7 +132,8 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       dose.isTaken = false;
     });
 
-    for (const usage of usages) {
+    console.log("dailyDosesArray", dailyDosesArray); // Usa usagesData diretamente
+    for (const usage of usagesData) {
       const medicationId = usage.userMedicationStockResponses[0].medicationResponse.id;
       const doses = dailyDosesArray.filter((dose) => dose.medication.id === medicationId);
       const usageTime = new Date(usage.actionTmstamp);
@@ -133,8 +142,10 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       for (const dose of doses) {
         const doseTime = new Date(dose.datetime);
         doseTime.setFullYear(usageTime.getFullYear(), usageTime.getMonth(), usageTime.getDate());
-        const timeDiff = Math.abs(usageTime - doseTime) / (1000 * 60); // Diferença em minutos
+        const timeDiff = Math.abs(usageTime - doseTime) / (1000 * 60);
 
+        console.log(timeDiff, minutesTimeBetweenRelation[dose.maxTakingTime]);
+        console.log(timeDiff <= minutesTimeBetweenRelation[dose.maxTakingTime]);
         if (timeDiff <= minutesTimeBetweenRelation[dose.maxTakingTime]) {
           dose.isTaken = true;
           foundMatch = true;
@@ -154,12 +165,22 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     return dailyDosesArray;
   };
 
+  const handleMedicationTaken = (medicationId, datetime) => {
+    setDailyDoses((prevDoses) =>
+      prevDoses.map((dose) =>
+        dose.medication.id === medicationId && dose.datetime.getTime() === datetime.getTime()
+          ? { ...dose, isTaken: true }
+          : dose
+      )
+    );
+  };
+
   const formatTime = (date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  const openTakeMedicationModal = (medicationId) => {
-    setSelectedMedicationId(medicationId);
+  const openTakeMedicationModal = (dose) => {
+    setSelectedDose(dose);
     setShowModal(true);
   };
 
@@ -210,7 +231,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
           alignItems: "center",
           borderRadius: 5,
         }}
-        onPress={() => openTakeMedicationModal(dose.medication.id)}
+        onPress={() => openTakeMedicationModal(dose)}
         disabled={isDisabled}
       >
         <Text style={{ fontSize: 14, color: "white", fontWeight: "bold" }}>{buttonText}</Text>
@@ -246,7 +267,9 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80, flexGrow: 1 }}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80, flexGrow: 1 }}>
         {dailyDoses.length > 0 ? (
           dailyDoses.map((dose, index) => (
             <View key={`${dose.medication.id}-${dose.time}-${index}`}>
@@ -299,8 +322,8 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       <TakeMedicationModal
         isVisible={showModal}
         closeModal={() => setShowModal(false)}
-        medicationId={selectedMedicationId}
-        fetchUserMedications={loadDay}
+        dose={selectedDose}
+        handleMedicationTaken={handleMedicationTaken}
       />
     </View>
   );

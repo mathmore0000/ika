@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, Modal, ActivityIndicator, Dimensions } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Modal, ActivityIndicator, RefreshControl, Dimensions } from "react-native";
 import MedicationSelectionModal from "./UserMedication/MedicationSelectionModal";
 import MedicationCard from "./UserMedicationStock/MedicationCard";
 import styles from "@/screens/_styles/medications";
@@ -17,37 +17,49 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // Estado para controle de "puxar para recarregar"
 
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
 
   const onUserMedicationCreated = () => {
+    setUserMedications([]);
     setCurrentPage(0);
     fetchUserMedications(0); // Recarrega a lista do início
   };
 
-  const fetchUserMedications = async (page = currentPage) => {
-    if (loading || page >= totalPages) return;
+  const fetchUserMedications = async (page = 0, isRefreshing = false) => {
+    // Define o estado de carregamento de acordo com o contexto
+    if (isRefreshing) setRefreshing(true);
+    else setLoading(true);
 
-    setLoading(true);
     try {
       const response = await api.get("/user-medications", {
         params: { page, size: 20, sortBy: "medication.name" },
       });
       const newUserMedications = response.data.content;
 
+      // Substitui a lista se for refresh ou página 0; senão, adiciona os novos itens
       setUserMedications((prevUserMedications) =>
         page === 0 ? newUserMedications : [...prevUserMedications, ...newUserMedications]
       );
 
       setTotalPages(response.data.totalPages);
-      setCurrentPage(page + 1);
+      setCurrentPage(page + 1); // Incrementa a página atual
     } catch (error) {
       console.log(error);
       showErrorToast(t('calendar.errorLoadingMedications'));
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  // Função de "puxar para recarregar" - redefine a página para 0 e carrega do início
+  const onRefresh = () => {
+    setUserMedications([]);
+    setCurrentPage(0);
+    fetchUserMedications(0, true); // Chama com a primeira página e "refreshing" como true
   };
 
   useEffect(() => {
@@ -74,12 +86,18 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text style={styles.emptyText}>{t('medications.noMedicationsFound')}</Text>}
         renderItem={({ item }) => (
-          <MedicationCard fetchUserMedications={fetchUserMedications} userMedication={item} />
+          <MedicationCard onUserMedicationCreated={onUserMedicationCreated} userMedication={item} />
         )}
-        onEndReached={loadMoreMedications} // Chama quando o fim da lista é alcançado
-        onEndReachedThreshold={0.5} // Controla quando carregar mais (0.5 é ao alcançar a metade do final da lista)
-        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null} // Indicador de carregamento
+        onEndReached={loadMoreMedications}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        removeClippedSubviews={true}
+        initialNumToRender={10}
       />
+
 
       <Modal visible={isModalVisible} transparent={true} animationType="fade">
         <View className="flex-1 flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
@@ -95,6 +113,5 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
     </View>
   );
 };
-
 
 export default MedicationScreen;

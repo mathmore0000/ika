@@ -1,6 +1,5 @@
-// CategorySelectionModal.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Modal } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from "react-native";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
@@ -15,24 +14,29 @@ const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchCategories(currentPage, 50);
   }, [currentPage]);
 
-  const fetchCategories = async (page, size) => {
+  const fetchCategories = async (page = 0, size = 50, isRefreshing = false) => {
     if (loading || page >= totalPages) return;
 
-    setLoading(true);
+    isRefreshing ? setRefreshing(true) : setLoading(true);
+
     try {
       const response = await api.get("/categories", { params: { page, size } });
-      setCategories(prev => [...prev, ...response.data.content]);
-      setFilteredCategories(filterCategories([...categories, ...response.data.content], searchText));
+      const newCategories = response.data.content;
+
+      setCategories(prev => (page === 0 ? newCategories : [...prev, ...newCategories]));
+      setFilteredCategories(filterCategories(page === 0 ? newCategories : [...categories, ...newCategories], searchText));
       setTotalPages(response.data.totalPages);
     } catch (error) {
       showErrorToast(t("medications.errorLoadingCategories"));
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -55,6 +59,11 @@ const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
     if (currentPage + 1 < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
+  };
+
+  const onRefresh = () => {
+    setCurrentPage(0);
+    fetchCategories(0, 50, true); // Recarrega a lista desde o início
   };
 
   return (
@@ -82,6 +91,9 @@ const CategorySelectionModal = ({ closeModal, onCategorySelected }) => {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
       <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
