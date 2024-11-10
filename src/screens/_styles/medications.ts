@@ -106,6 +106,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 15,
   },
+  dropdown: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,   
+    minHeight: 40,
+  },
+  dropdownContainer: {
+    borderColor: "#ccc",
+  },
   input: {
     width: "100%",
     height: 40,
@@ -113,7 +122,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginBottom: 15,
+  },
+  input_search: {
+    height: 30,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 5,
+  },
+  input_select: {
+    width: "100%",
+    backgroundColor: "#f3f4f6",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: 40,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
   },
   inputError: {
     borderColor: "red",
@@ -121,7 +148,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 12,
-    marginBottom: 10,
     alignSelf: "flex-start",
   },
   datePickerText: {

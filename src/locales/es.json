@@ -33,6 +33,13 @@
     }
   },
   "medications": {
+    "fourHours": "4 horas",
+    "sixHours": "6 horas",
+    "eightHours": "8 horas",
+    "twelveHours": "12 horas",
+    "twentyFourHours": "24 horas",
+    "halfHour": "30 minutos",
+    "oneHour": "1 hora",
     "selectMedication": "Selecciona un medicamento",
     "selectActiveIngredient": "Selecciona un Ingrediente Activo",
     "searchIngredient": "Buscar ingrediente...",
@@ -248,7 +255,8 @@
     "deleteVideo": "Eliminar Video",
     "false": "Falso",
     "true": "Verdadero"
-  },  
+  },
+    
   "settings": {
     "medications": "Medicamentos",
     "calendar": "Calendario",

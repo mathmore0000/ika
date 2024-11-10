@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.contanier-input {
+    @apply flex flex-col items-start gap-1 w-full;
+}
