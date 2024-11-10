@@ -1,6 +1,6 @@
 // MedicationSelectionModal.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal} from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal, Dimensions } from "react-native";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import IconEnty from "react-native-vector-icons/Entypo";
 
 const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicationCreated }) => {
+  const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
   const { t } = useTranslation();
   const [medications, setMedications] = useState<medicationType[]>([]);
   const [filteredMedications, setFilteredMedications] = useState([]);
@@ -148,10 +149,17 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
       />
 
       <Modal visible={isNewMedicationModalVisible} transparent={true} animationType="fade">
-        <NewMedicationModal
-          closeModal={closeIsNewMedicationModal}
-          onMedicationCreated={onMedicationCreated}
-        />
+        <View className="flex-1 flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+          <View className="bg-white rounded-t-lg flex items-center justify-center" style={{
+            width: width, // 80% da largura da tela
+            height: height * 0.9, // 80% da altura da tela
+          }}>
+            <NewMedicationModal
+              closeModal={closeIsNewMedicationModal}
+              onMedicationCreated={onMedicationCreated}
+            />
+          </View>
+        </View>
       </Modal>
 
       <Modal visible={isNewUserMedicationModal} transparent={true} animationType="fade">

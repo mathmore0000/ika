@@ -28,8 +28,15 @@
       "passwordRequired": "Password is required.",
       "passwordInvalid": "Invalid password."
     }
-  },
+  }, 
   "medications": {
+    "fourHours": "4 hours",
+    "sixHours": "6 hours",
+    "eightHours": "8 hours",
+    "twelveHours": "12 hours",
+    "twentyFourHours": "24 hours",
+    "halfHour": "30 minutes",
+    "oneHour": "1 hour",
     "selectMedication": "Select a medication",
     "selectActiveIngredient": "Select an Active Ingredient",
     "searchIngredient": "Search ingredient...",
