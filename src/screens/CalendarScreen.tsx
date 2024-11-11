@@ -122,7 +122,9 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     const hoursToBeRemoved = (Math.floor(firstDoseTime.getHours() / interval)) * interval
     ajustedFirstDoseTime.setHours(firstDoseTime.getHours() - hoursToBeRemoved)
     ajustedFirstDoseTime.setMinutes(firstDoseTime.getMinutes())
-    ajustedFirstDoseTime.setDate(selectedDate.getDate()+1)
+    ajustedFirstDoseTime.setDate(selectedDate.getDate() + 1)
+    ajustedFirstDoseTime.setMonth(selectedDate.getMonth())
+
     return ajustedFirstDoseTime
   }
 
@@ -138,8 +140,9 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
     // Loop para calcular os horários das doses do dia
     let doseTime = getFirstDoseTimeToday(selectedDate, new Date(userMedication.firstDosageTime), interval);
+    const dateTime = doseTime;
     const initialDoseTimePlus1 = new Date(doseTime);
-    initialDoseTimePlus1.setDate(initialDoseTimePlus1.getDate()+1)
+    initialDoseTimePlus1.setDate(initialDoseTimePlus1.getDate() + 1)
 
     while (doseTime < initialDoseTimePlus1) {
       if (findPreviousOrEqualDate(sortedStatuses, doseTime)?.active) {
@@ -147,7 +150,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         doseTimes.push({
           medication: userMedication.medication,
           datetime: new Date(doseTime),
-          trueDateTime: doseTime,
           time: formatTime(doseTime),
           isTaken: userMedication.isTaken,
           isExpiringSoon: userMedication.isExpiringSoon,
@@ -229,9 +231,10 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
   const DoseStatusButton = ({ dose }) => {
     const isWithinTimeRange =
-      new Date().getDate() == dose.trueDateTime.getDate() && Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime];
+      new Date().getDate() == dose.datetime.getDate() && Math.abs(Date.now() - dose.datetime) / (1000 * 60) <= minutesTimeBetweenRelation[dose.maxTakingTime];
     const isTaken = dose.isTaken;
-    const isPastDue = Date.now() > Number(dose.trueDateTime);
+
+    const isPastDue = Date.now() > Number(dose.datetime);
 
     let buttonText, buttonColor, isDisabled;
 
