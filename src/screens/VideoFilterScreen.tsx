@@ -4,8 +4,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import UserVideoList from "./Usage/Labeling/UserVideoList";
 import ResponsibleVideoList from "./Usage/Labeling/ResponsibleVideoList";
 import { useTranslation } from 'react-i18next';
+import AppLayout from "@/components/shared/AppLayout"; 
 
-const VideoFilterScreen = () => {
+const VideoFilterScreen = ({ navigation, local = 'Videos' }) => {
   const { t } = useTranslation();
   const [isSupervisedView, setIsSupervisedView] = useState(false);
     
@@ -32,6 +33,7 @@ const VideoFilterScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      <AppLayout navigation={navigation} local={local} />
 
       {/* Video List */}
       {isSupervisedView ? <ResponsibleVideoList /> : <UserVideoList />}

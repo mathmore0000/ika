@@ -4,6 +4,8 @@ import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 import { useTranslation } from 'react-i18next';
+import Icon from "react-native-vector-icons/AntDesign";
+import IconIon from "react-native-vector-icons/Ionicons";
 
 const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected }) => {
   const { t } = useTranslation();
@@ -68,26 +70,36 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
   };
 
   return (
-    <View style={styles.modalContainer}>
-      <Text style={styles.title}>{t("medications.selectActiveIngredient")}</Text>
-
-      <TextInput
-        style={styles.searchInput}
-        placeholder={t("medications.searchIngredient")}
-        value={searchText}
-        onChangeText={handleSearch}
-      />
-
+    <View className="flex-1 px-5 pt-5 w-full">
+      <View className="flex flex-row items-center justify-between pb-4">
+        <Text style={styles.title}>{t("medications.selectActiveIngredient")}</Text>
+        <TouchableOpacity className="-mt-3" onPress={closeModal}>
+          <Icon name="close" size={25} color="#000" />
+        </TouchableOpacity>
+      </View>
+      <View className="flex-row items-center bg-gray-200 rounded-md px-2 py-1 mb-4">
+        <Icon name="search1" size={18} color="#000" />
+        <TextInput
+          className="flex-1 ml-2 text-base text-black"
+          placeholder={t("medications.searchIngredient")}
+          value={searchText}
+          onChangeText={handleSearch}
+        />
+      </View>
       <FlatList
         data={filteredActiveIngredients}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={item.id === selectedActiveIngredient?.id ? styles.itemSelected : styles.item}
-            onPress={() => handleSelect(item)}
-          >
-            <Text style={styles.itemText}>{item.description}</Text>
-          </TouchableOpacity>
+          <View className="py-2">            
+            <TouchableOpacity
+              className="flex flex-row items-center justify-between rounded-sm p-2 bg-gray-100"
+              style={item.id === selectedActiveIngredient?.id ? styles.itemSelected : styles.item}
+              onPress={() => handleSelect(item)}
+            >
+              <Text style={styles.itemText}>{item.description}</Text>
+              <IconIon name="chevron-forward-outline" style={styles.icon} />
+            </TouchableOpacity>
+          </View>
         )}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
@@ -96,10 +108,6 @@ const ActiveIngredientSelectionModal = ({ closeModal, onActiveIngredientSelected
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-
-      <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
-      </TouchableOpacity>
     </View>
   );
 };
