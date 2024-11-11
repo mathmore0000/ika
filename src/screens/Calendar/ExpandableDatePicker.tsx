@@ -56,7 +56,7 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
                     {getDaysArray(selectedDate).map((day) => (
                         <TouchableOpacity key={day.fullDate} onPress={() => handleDateSelect(new Date(day.fullDate))} style={{ marginRight: 8 }}>
                             <Text style={{ textAlign: "center", fontWeight: day.isSameDate ? "bold" : "normal" }}>
-                                {day.name} {day.number}
+                                {/* {day.name} {day.number} */}
                             </Text>
                         </TouchableOpacity>
                     ))}

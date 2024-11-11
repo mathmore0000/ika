@@ -95,35 +95,72 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     }
   };
 
+  function findPreviousOrEqualDate(array, targetDate) {
+    // Convertemos a data de destino para um objeto Date
+    const target = new Date(targetDate);
+
+    let left = 0;
+    let right = array.length - 1;
+    let result = null;
+
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      const midDate = new Date(array[mid].createdAt);
+
+      if (midDate <= target) {
+        result = array[mid];
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+    return result;
+  }
+
+  const getFirstDoseTimeToday = (selectedDate: Date, firstDoseTime: Date, interval: number) => {
+    const ajustedFirstDoseTime = new Date(firstDoseTime)
+    const hoursToBeRemoved = (Math.floor(firstDoseTime.getHours() / interval)) * interval
+    ajustedFirstDoseTime.setHours(firstDoseTime.getHours() - hoursToBeRemoved)
+    ajustedFirstDoseTime.setMinutes(firstDoseTime.getMinutes())
+    ajustedFirstDoseTime.setDate(selectedDate.getDate()+1)
+    return ajustedFirstDoseTime
+  }
+
   const calculateDoseTimes = (userMedication) => {
     const doseTimes = [];
-    const firstDoseTime = new Date(userMedication.firstDosageTime);
     const interval = userMedication.timeBetween;
-    const initialDoseTimePlus1 = new Date(firstDoseTime);
-    initialDoseTimePlus1.setDate(initialDoseTimePlus1.getDate() + 1);
+    const selectedDate = new Date(selectedDay);
 
-    let doseTime = new Date(firstDoseTime);
+    // Ordena os status por data de criação para definir períodos de ativação/inativação
+    const sortedStatuses = userMedication.userMedicationStatuses
+      .slice()
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-    do {
-      const datetimeForDose = new Date(new Date(selectedDay).setHours(new Date(doseTime).getHours()))
-      datetimeForDose.setDate(datetimeForDose.getDate() + 1)
-      doseTimes.push({
-        medication: userMedication.medication,
-        datetime: new Date(doseTime),
-        trueDateTime: datetimeForDose,
-        time: formatTime(doseTime),
-        isTaken: userMedication.isTaken,
-        isExpiringSoon: userMedication.isExpiringSoon,
-        maxTakingTime: userMedication.maxTakingTime,
-        disabled: userMedication.disabled,
-        type: "dose",
-      });
-      doseTime.setHours(doseTime.getHours() + interval);
-    } while (doseTime < initialDoseTimePlus1);
+    // Loop para calcular os horários das doses do dia
+    let doseTime = getFirstDoseTimeToday(selectedDate, new Date(userMedication.firstDosageTime), interval);
+    const initialDoseTimePlus1 = new Date(doseTime);
+    initialDoseTimePlus1.setDate(initialDoseTimePlus1.getDate()+1)
+
+    while (doseTime < initialDoseTimePlus1) {
+      if (findPreviousOrEqualDate(sortedStatuses, doseTime)?.active) {
+        // Adiciona a dose se estiver dentro de um intervalo ativo
+        doseTimes.push({
+          medication: userMedication.medication,
+          datetime: new Date(doseTime),
+          trueDateTime: doseTime,
+          time: formatTime(doseTime),
+          isTaken: userMedication.isTaken,
+          isExpiringSoon: userMedication.isExpiringSoon,
+          maxTakingTime: userMedication.maxTakingTime,
+          disabled: userMedication.disabled,
+          type: "dose",
+        });
+      }
+      doseTime.setHours(doseTime.getHours() + interval); // Próxima dose com base no intervalo
+    }
 
     return doseTimes;
   };
-
   const mountAllCards = async (dailyDosesArray, usagesData) => {
     const allMedicationIds = new Set(dailyDosesArray.map((dose) => dose.medication.id));
     const medicationIdNextExpirationRelation = new Map();
@@ -140,7 +177,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
 
     for (const usage of usagesData) {
       const medicationId = usage.userMedicationStockResponses[0].medicationResponse.id;
-      const doses = dailyDosesArray.filter((dose) => dose.medication.id === medicationId);
+      const doses = dailyDosesArray.filter((dose) => dose?.medication?.id === medicationId);
       const usageTime = new Date(usage.actionTmstamp);
       let foundMatch = false;
 
@@ -178,7 +215,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
     );
   };
 
-  const formatTime = (date) => {
+  const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], {
       hour: "2-digit", minute: "2-digit",
       hour12: false, // Formato 24 horas
@@ -259,7 +296,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80, flexGrow: 1 }}>
         {dailyDoses.length > 0 ? (
           dailyDoses.map((dose, index) => (
-            <View key={`${dose.medication.id}-${dose.time}-${index}`}>
+            <View key={`${dose.medication?.id}-${dose.time}-${index}`}>
               {dose.type === "dose" ? (
                 <View
                   className="p-4 my-2 border border-gray-300 rounded-lg bg-white"
@@ -269,7 +306,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                 >
                   <View className="flex flex-col justify-between">
                     <View className="flex flex-row justify-between items-center">
-                      <Text className="font-bold text-lg">{dose.medication.name}</Text>
+                      <Text className="font-bold text-lg">{dose.medication?.name}</Text>
                       <Icon
                         name={dose.isTaken ? "checkcircleo" : !dose.isExpiringSoon ? "clockcircleo" : "warning"}
                         size={20}
@@ -291,7 +328,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
                     backgroundColor: dose.isExpiringSoon ? "rgba(255, 100, 100, 0.1)" : "white",
                   }}
                 >
-                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication.name}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>{dose.medication?.name}</Text>
                   <Text style={{ fontSize: 14 }}>{t('calendar.time')}: {dose.time}</Text>
                   <Text>{dose.type}</Text>
                 </View>
