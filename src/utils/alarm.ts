@@ -37,6 +37,7 @@ export const scheduleIntrusiveMedicationReminders = async (hour, minute, medicat
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: "Lembrete de Medicação",
+                sound: true,
                 body: body,
                 data: { medicationId, hour, minute },
             },
@@ -79,6 +80,7 @@ export const cancelMedicationRemindersForNextHour = async (medicationId, hour, m
             content: {
                 title: "Lembrete de Medicação",
                 body: body,
+                sound: true,
                 data: { medicationId, hour, minute },
             },
             trigger: {
