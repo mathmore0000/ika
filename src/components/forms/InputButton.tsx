@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { InputButtonNodeProps } from "@/constants/interfaces/props/InputButton";
 
-const InputButtonComponent: React.FC<InputButtonNodeProps> = ({ navigation, local, onPress, placeholder, label, value, isInvalid = true }) => {
+const InputButtonComponent: React.FC<InputButtonNodeProps> = ({ navigation, local, onPress, placeholder, label, value, isInvalid = false }) => {
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {

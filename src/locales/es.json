@@ -281,6 +281,19 @@
     "true": "Verdadero",
     "notConnectedToInternet": "No está conectado a internet."
   },
+  "languages": {
+    "selectLanguage": "Seleccionar idioma",
+    "portuguese": "Português",
+    "english": "Inglés",
+    "spanish": "Español"
+  },
+  "reports": {
+    "selectReport": "Seleccione el informe",
+    "selectMonth": "Seleccione el mes",
+    "selectYear": "Seleccione el año",
+    "userReport": "Informe del usuario",
+    "responsibleReport": "Informe del responsable"
+  },
   "settings": {
     "reports": "Informes",
     "account": "Cuenta",

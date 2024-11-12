@@ -11,9 +11,9 @@
 }
 
 .button-confirm {
-    @apply flex w-1/2 items-center justify-center border p-2 rounded-lg bg-primary;
+    @apply flex items-center justify-center border p-2 rounded-lg bg-primary;
 }
 
 .button-cancel {
-    @apply flex w-1/2 items-center justify-center border p-2 rounded-lg border-primary;
+    @apply flex items-center justify-center border p-2 rounded-lg border-primary;
 }

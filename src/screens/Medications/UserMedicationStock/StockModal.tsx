@@ -88,11 +88,11 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
         />
       )}
       <View className="flex flex-row mt-2 gap-2">
-        <TouchableOpacity className="button-cancel" onPress={closeModal}>
+        <TouchableOpacity className="button-cancel w-1/2" onPress={closeModal}>
           <Text className="font-semibold text-primary text-lg">{t("common.cancel")}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="button-confirm" onPress={handleSaveStock}>
+        <TouchableOpacity className="button-confirm w-1/2" onPress={handleSaveStock}>
           <Text className="text-white font-semibold text-lg">{t("common.save")}</Text>
         </TouchableOpacity>
       </View>

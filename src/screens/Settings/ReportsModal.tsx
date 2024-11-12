@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { encode as btoa } from 'base-64';
 import { Picker } from '@react-native-picker/picker';
 import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/AntDesign";
+import DropdownComponent from '@/components/forms/Dropdown';
 
 interface ReportsModalProps {
     visible: boolean;
@@ -36,7 +38,10 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
         { label: 'Dezembro', value: 12 },
     ];
 
-    const years = Array.from({ length: 2 }, (_, i) => new Date().getFullYear() - 0 + i); // De 5 anos atrás até 5 anos no futuro    
+    const years: { label: any, value: any }[] = Array.from({ length: 11 }, (_, i) => {
+        const year = new Date().getFullYear() - 5 + i;
+        return { value: year, label: year };
+    });
 
     const arrayBufferToBase64 = (buffer) => {
         let binary = '';
@@ -147,55 +152,57 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             onRequestClose={onClose}
         >
             <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}><View style={styles.pickerContainer}>
-                    <Text style={styles.pickerLabel}>{t('reports.selectMonth')}</Text>
-                    <Picker
-                        selectedValue={selectedMonth}
-                        style={styles.picker}
-                        onValueChange={(itemValue) => setSelectedMonth(itemValue)}
-                    >
-                        {months.map((month) => (
-                            <Picker.Item key={month.value} label={month.label} value={month.value} />
-                        ))}
-                    </Picker>
-                </View>
-
-                    <View style={styles.pickerContainer}>
-                        <Text style={styles.pickerLabel}>{t('reports.selectYear')}</Text>
-                        <Picker
-                            selectedValue={selectedYear}
-                            style={styles.picker}
-                            onValueChange={(itemValue) => setSelectedYear(itemValue)}
-                        >
-                            {years.map((year) => (
-                                <Picker.Item key={year} label={year.toString()} value={year} />
-                            ))}
-                        </Picker>
+                <View style={styles.modalContainer}>
+                    <View className="w-full flex flex-row items-center justify-between">
+                        <Text className="text-xl font-bold">{t('reports.selectReport')}</Text>
+                        <TouchableOpacity onPress={onClose}>
+                            <Icon name="close" size={20} />
+                        </TouchableOpacity>
+                    </View>
+                    <View className="w-full mt-4">
+                        <View className="container-input">
+                            <DropdownComponent
+                                data={months}
+                                label={t('reports.selectMonth')}
+                                navigation={null}
+                                setValue={setSelectedMonth}
+                                value={selectedMonth}
+                            />
+                        </View>
+                        <View className="container-input">
+                            <DropdownComponent
+                                data={years}
+                                label={t('reports.selectYear')}
+                                navigation={null}
+                                setValue={setSelectedYear}
+                                value={selectedYear}
+                            />
+                        </View>
                     </View>
 
-                    <Text style={styles.modalTitle}>{t('reports.selectReport')}</Text>
+                    <View className="flex flex-col w-full items-center gap-2 justify-between">
+                        <TouchableOpacity
+                            className="button-cancel flex-row w-full"
+                            onPress={handleGenerateUserReport}
+                            disabled={loading}
+                        >
+                            <Icon name="filetext1" color="#23527c" size={20}/>
+                            <Text className="font-semibold text-primary p-2">{t('reports.userReport')}</Text>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.reportButton}
-                        onPress={handleGenerateUserReport}
-                        disabled={loading}
-                    >
-                        <Text style={styles.reportButtonText}>{t('reports.userReport')}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.reportButton}
-                        onPress={handleGenerateResponsibleReport}
-                        disabled={loading}
-                    >
-                        <Text style={styles.reportButtonText}>{t('reports.responsibleReport')}</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            className="button-confirm flex-row w-full"
+                            onPress={handleGenerateResponsibleReport}
+                            disabled={loading}
+                        >
+                            <Icon name="filetext1" color="#fff" size={20}/>
+                            <Text className="font-semibold text-white p-2">{t('reports.responsibleReport')}</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     {loading && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 10 }} />}
 
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <Text style={styles.closeButtonText}>{t('common.cancel')}</Text>
-                    </TouchableOpacity>
+
                 </View>
             </View>
             <Toast />
@@ -211,11 +218,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        width: '80%',
+        width: '90%',
+        maxWidth: 400,
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 20,
         alignItems: 'center',
+        gap: 10
     },
     modalTitle: {
         fontSize: 18,

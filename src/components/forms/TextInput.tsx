@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 // import AntDesign from '@expo/vector-icons/AntDesign';
 import { TextInputNodeProps } from "@/constants/interfaces/props/TextInput";
 
-const TextInputComponent: React.FC<TextInputNodeProps> = ({ navigation, local, keyboardType, editable, placeholder, label, setValue, value, isInvalid = true }) => {
+const TextInputComponent: React.FC<TextInputNodeProps> = ({ navigation, local, keyboardType, editable, placeholder, label, setValue, value, isInvalid = false }) => {
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {

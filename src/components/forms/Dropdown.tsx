@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 // import AntDesign from '@expo/vector-icons/AntDesign';
 import { DropdownNodeProps } from "@/constants/interfaces/props/Dropdown";
 
-const DropdownComponent: React.FC<DropdownNodeProps> = ({navigation, local, data, placeholder, label, setValue, value, search = false, isInvalid = true}) => {
+const DropdownComponent: React.FC<DropdownNodeProps> = ({navigation, local, data, placeholder, label, setValue, value, search = false, isInvalid = false}) => {
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {
