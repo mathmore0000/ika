@@ -1,11 +1,14 @@
 // StockModal.js
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Dimensions } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 import { useTranslation } from 'react-i18next';
+import Icon from "react-native-vector-icons/AntDesign";
+import InputButtonComponent from "@/components/forms/InputButton";
+import TextInputComponent from "@/components/forms/TextInput";
 
 const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
   const { t } = useTranslation();
@@ -47,24 +50,34 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
   };
 
   return (
-    <View style={styles.modalContainer}>
-      <Text style={styles.title}>{t("medications.addStock")}</Text>
+    <View className="flex flex-col gap-2">
+      <View className="flex flex-row items-center justify-between">
+        <Text className="font-bold text-xl">{t("medications.addStock")}</Text>
+        <Icon name="close" size={20} onPress={closeModal} />
+      </View>
+      <View className="contanier-input">
+        <TextInputComponent
+          label={t("medications.quantity")}
+          placeholder="0"
+          keyboardType="numeric"
+          value={quantityStocked}
+          isInvalid={!!errors.quantityStocked}
+          setValue={setQuantityStocked}
+          navigation={null}
+        />
+        {errors.quantityStocked && <Text style={styles.errorText}>{errors.quantityStocked}</Text>}
+      </View>
 
-      <TextInput
-        style={[styles.input, errors.quantityStocked && styles.inputError]}
-        placeholder={t("medications.quantity")}
-        keyboardType="numeric"
-        value={quantityStocked}
-        onChangeText={setQuantityStocked}
-      />
-      {errors.quantityStocked && <Text style={styles.errorText}>{errors.quantityStocked}</Text>}
-
-      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-        <Text style={[styles.datePickerText, errors.expirationDate && styles.inputError]}>
-          {expirationDate.toLocaleDateString()}
-        </Text>
-      </TouchableOpacity>
-      {errors.expirationDate && <Text style={styles.errorText}>{errors.expirationDate}</Text>}
+      <View className="contanier-input">
+        <InputButtonComponent          
+          onPress={() =>setShowDatePicker(true)}
+          label="Data"//traduzir
+          value={expirationDate.toLocaleDateString()}
+          isInvalid={!!errors.expirationDate}
+          navigation={null}
+        />
+        {errors.expirationDate && <Text style={styles.errorText}>{errors.expirationDate}</Text>}
+      </View>
 
       {showDatePicker && (
         <DateTimePicker
@@ -74,14 +87,15 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
           onChange={handleDateChange}
         />
       )}
+      <View className="flex flex-row mt-2 gap-2">
+        <TouchableOpacity className="button-cancel" onPress={closeModal}>
+          <Text className="font-semibold text-primary text-lg">{t("common.cancel")}</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSaveStock}>
-        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity className="button-confirm" onPress={handleSaveStock}>
+          <Text className="text-white font-semibold text-lg">{t("common.save")}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

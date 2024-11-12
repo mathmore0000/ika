@@ -9,3 +9,11 @@
 .button-icon {
     @apply flex flex-row justify-center items-center rounded-md p-2 gap-2;
 }
+
+.button-confirm {
+    @apply flex w-1/2 items-center justify-center border p-2 rounded-lg bg-primary;
+}
+
+.button-cancel {
+    @apply flex w-1/2 items-center justify-center border p-2 rounded-lg border-primary;
+}

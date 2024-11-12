@@ -1,6 +1,6 @@
 // MedicationCard.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Modal, Switch } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Switch, Dimensions } from "react-native";
 import styles from "@/screens/_styles/medications";
 import api from "@/server/api";
 import StockModal from "./StockModal";
@@ -14,6 +14,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
   const [stock, setStock] = useState([]);
   const [isStockModalVisible, setIsStockModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const { width, height } = Dimensions.get("screen")
 
   const fetchStock = async () => {
     try {
@@ -39,7 +40,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
         })
       );
       console.log(disabled ? "desabilitado" : "habilitado")
-      onUserMedicationEdited({...userMedication, disabled }); // Refresh list
+      onUserMedicationEdited({ ...userMedication, disabled }); // Refresh list
     } catch (error) {
       showErrorToast(t("medications.errorUpdatingMedicationStatus"));
     }
@@ -82,23 +83,30 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
               <Text style={styles.editButtonText}>{t("common.edit")}</Text>
             </TouchableOpacity>
           </View>
-
           <Modal visible={isStockModalVisible} transparent={true} animationType="fade">
-            <StockModal
-              closeModal={() => setIsStockModalVisible(false)}
-              fetchStock={fetchStock}
-              userMedicationId={userMedication.id}
-            />
+            <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
+              <View className="w-4/5 p-5 bg-white rounded-xl">
+                <StockModal
+                  closeModal={() => setIsStockModalVisible(false)}
+                  fetchStock={fetchStock}
+                  userMedicationId={userMedication.id}
+                />
+              </View>
+            </View>
             <Toast />
           </Modal>
 
           <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
-            <EditUserMedicationModal
-              closeModal={() => setIsEditModalVisible(false)}
-              onUserMedicationEdited={onUserMedicationEdited}
-              userMedication={userMedication}
-            />
-            <Toast />
+            <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
+              <View className="w-4/5 p-5 bg-white rounded-xl">
+                <EditUserMedicationModal
+                  closeModal={() => setIsEditModalVisible(false)}
+                  onUserMedicationEdited={onUserMedicationEdited}
+                  userMedication={userMedication}
+                />
+                <Toast />
+              </View>
+            </View>
           </Modal>
         </View>
       </View>
