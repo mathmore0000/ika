@@ -217,6 +217,8 @@
     "saveSelection": "Salvar Seleção"
   },
   "account": {
+    "enterFullName": "Digite o nome completo",
+    "changeProfilePhoto": "Alterar Foto de Perfil",
     "displayName": "Nome de Exibição",
     "phoneNumber": "Número de Telefone",
     "dateOfBirth": "Data de Nascimento",

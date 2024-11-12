@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
-// import AntDesign from '@expo/vector-icons/AntDesign';
-import { TextInputNodeProps } from "@/constants/interfaces/props/TextInput";
+import { StyleSheet, Text, View} from 'react-native';
+import { MaskedTextInput } from 'react-native-mask-text';
+import { MaskInputNodeProps } from "@/constants/interfaces/props/MaskInput";
 
-const TextInputComponent: React.FC<TextInputNodeProps> = ({ navigation, local, keyboardType, secureTextEntry, editable, placeholder, label, setValue, value, isInvalid = false }) => {
+const MaskInputComponent: React.FC<MaskInputNodeProps> = ({ navigation, local, keyboardType, mask, editable, placeholder, label, setValue, value, isInvalid = false }) => {
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {
@@ -17,27 +17,27 @@ const TextInputComponent: React.FC<TextInputNodeProps> = ({ navigation, local, k
     return (
         <View style={styles.container}>
             {renderLabel()}
-            <TextInput
+            <MaskedTextInput                        
                 style={[styles.input, isInvalid && styles.inputError, isFocus && { borderColor: '#0047ab' }]}
                 placeholder={!isFocus ? (placeholder) : '...'} //traduzir
                 placeholderTextColor={'#c7c7c7'}
-                keyboardType={keyboardType || "default"}
+                mask={mask}                
                 value={value}
-                onChangeText={(value) => {
-                        setValue(value);
+                onChangeText={(text, rawText) => {
+                        setValue(text, rawText);
                         setIsFocus(false);
                     }
                 }
-                secureTextEntry={secureTextEntry}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 editable={editable}
+                keyboardType={keyboardType}
             />
         </View>
     );
 };
 
-export default TextInputComponent;
+export default MaskInputComponent;
 
 const styles = StyleSheet.create({
     container: {

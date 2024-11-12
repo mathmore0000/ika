@@ -7,7 +7,8 @@ import {
     TextInput,
     Image,
     Alert,
-    Platform
+    Platform,
+    Modal
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AccountProps } from "@/constants/interfaces/props/Account";
@@ -20,6 +21,10 @@ import ChangePasswordModal from './ChangePasswordModal'; // Importar o modal
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaskedTextInput } from 'react-native-mask-text';
 import RemoteImage from "@/components/shared/RemoteImage";
+import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/AntDesign';
+import TextInputComponent from '@/components/forms/TextInput';
+import MaskInputComponent from '@/components/forms/MaskTextInput';
 
 const Account: React.FC<AccountProps> = ({ navigation }) => {
     const { t } = useTranslation();
@@ -38,6 +43,8 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     const [profilePicture, setProfilePicture] = useState(user?.avatarUrl || '');
 
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
+
+    const [isEditPhotoModalVisible, setIsEditPhotoModalVisible] = useState(false);
 
     useEffect(() => {
         if (!dateOfBirth) return;
@@ -213,10 +220,10 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         } catch (error) {
             console.log(error)
             console.log(error == "Error: Missing camera or camera roll permission")
-            if (error == "Error: Missing camera or camera roll permission"){
+            if (error == "Error: Missing camera or camera roll permission") {
                 return showErrorToast(t('pemissions.missingCameraOrGallery'))
             }
-            console.log("Erro ao tirar foto:"+ error);
+            console.log("Erro ao tirar foto:" + error);
         }
     };
 
@@ -277,95 +284,88 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             {/* Foto de Perfil */}
-            <TouchableOpacity onPress={handleChoosePhoto}>
-                <RemoteImage
-                    uri={profilePicture}
-                    style={styles.profileImage}
-                />
-            </TouchableOpacity>
-            <View style={styles.buttonsContainer}>
-                <TouchableOpacity onPress={handleTakePhoto} style={styles.button}>
-                    <Text style={styles.buttonText}>{t('account.takePhoto')}</Text>
+            <View className="flex flex-col items-center">
+                <TouchableOpacity onPress={handleChoosePhoto}>
+                    <RemoteImage
+                        uri={profilePicture}
+                        style={styles.profileImage}
+                    />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleChoosePhoto} style={styles.button}>
-                    <Text style={styles.buttonText}>{t('account.choosePhoto')}</Text>
+                <TouchableOpacity className="bg-primary p-3 rounded-full border-2 border-white" style={{ marginTop: -20 }} onPress={() => setIsEditPhotoModalVisible(true)}>
+                    <IconM name="circle-edit-outline" size={20} color="#FFF" />
                 </TouchableOpacity>
             </View>
 
             {/* Nome de Exibição */}
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>{t('account.displayName')}:</Text>
-                {isEditingName ? (
-                    <>
-                        <TextInput
-                            style={styles.input}
-                            value={displayName}
-                            onChangeText={setDisplayName}
-                            placeholder={t('account.displayName')}
-                        />
-                        <TouchableOpacity onPress={handleSaveName} style={styles.saveButton}>
-                            <Text style={styles.saveButtonText}>{t('common.save')}</Text>
-                        </TouchableOpacity>
-                    </>
+                <View className="flex-1">
+                    <TextInputComponent
+                        label={t('account.displayName')}
+                        value={displayName}
+                        setValue={setDisplayName}
+                        navigation={null}
+                        editable={isEditingName}
+                        placeholder={t('account.enterFullName')}
+                    />
+                </View>
+                {!isEditingName ? (
+                    <TouchableOpacity className="border border-gray-500 rounded-md p-2 mt-2" onPress={() => setIsEditingName(true)}>
+                        <IconM name="pencil-outline" size={22} color="#6b7280" />
+                    </TouchableOpacity>
                 ) : (
-                    <>
-                        <Text style={styles.value}>{displayName}</Text>
-                        <TouchableOpacity onPress={() => setIsEditingName(true)} style={styles.editButton}>
-                            <Text style={styles.editButtonText}>{t('common.edit')}</Text>
-                        </TouchableOpacity>
-                    </>
-                )}
+                    <TouchableOpacity className="bg-gray-500 rounded-md p-2 mt-2" onPress={handleSaveName} >
+                        <IconM name="content-save-edit-outline" size={22} color="#FFF" />
+                    </TouchableOpacity>
+                )
+                }
             </View>
+
 
             {/* Número de Telefone */}
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>{t('account.phoneNumber')}:</Text>
-                {isEditingPhone ? (
-                    <>
-                        <MaskedTextInput
-                            mask="(99) 99999-9999"
-                            style={styles.input}
-                            value={phoneNumber}
-                            onChangeText={(text, rawText) => setPhoneNumber(rawText)}
-                            placeholder={t('account.phoneNumber')}
-                            keyboardType="phone-pad"
-                        />
-                        <TouchableOpacity onPress={handleSavePhoneNumber} style={styles.saveButton}>
-                            <Text style={styles.saveButtonText}>{t('common.save')}</Text>
-                        </TouchableOpacity>
-                    </>
+                <View className="flex-1">
+                    <MaskInputComponent
+                        label={t('account.phoneNumber')}
+                        navigation={null}
+                        mask="(99) 99999-9999"
+                        value={phoneNumber}
+                        editable={isEditingPhone}
+                        setValue={(text, rawText) => setPhoneNumber(rawText)}
+                        placeholder={t('account.phoneNumber')}
+                        keyboardType="phone-pad"
+                    />
+                </View>
+                {!isEditingPhone ? (
+                    <TouchableOpacity className="border border-gray-500 rounded-md p-2 mt-2" onPress={() => setIsEditingPhone(true)}>
+                        <IconM name="pencil-outline" size={22} color="#6b7280" />
+                    </TouchableOpacity>
                 ) : (
-                    <>
-                        <Text style={styles.value}>{phoneNumber ? `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7)}` : t('account.notProvided')}</Text>
-                        <TouchableOpacity onPress={() => setIsEditingPhone(true)} style={styles.editButton}>
-                            <Text style={styles.editButtonText}>{t('common.edit')}</Text>
-                        </TouchableOpacity>
-                    </>
-                )}
+                    <TouchableOpacity className="bg-gray-500 rounded-md p-2 mt-2" onPress={handleSavePhoneNumber} >
+                        <IconM name="content-save-edit-outline" size={22} color="#FFF" />
+                    </TouchableOpacity>
+                )
+                }
             </View>
 
             {/* Data de Nascimento */}
             <View style={styles.fieldContainer}>
-                <Text style={styles.label}>{t('account.dateOfBirth')}:</Text>
-                {isEditingDOB ? (
-                    <>
-                        <MaskedTextInput
-                            style={styles.input}
-                            value={dateOfBirth}
-                            onChangeText={(text) => setDateOfBirth(text)}
-                            placeholder="YYYY-MM-DD"
-                            keyboardType="numeric"
-                        />
-                    </>
-                ) : (
-                    <>
-                        <Text style={styles.value}>{dateOfBirthFormatted || t('account.notProvided')}</Text>
-                        <TouchableOpacity onPress={() => setIsEditingDOB(true)} style={styles.editButton}>
-                            <Text style={styles.editButtonText}>{t('common.edit')}</Text>
-                        </TouchableOpacity>
-                    </>
-                )}
+                <View className="flex-1">
+                    <TextInputComponent
+                        label={t('account.dateOfBirth')}
+                        navigation={null}
+                        value={dateOfBirthFormatted || t('account.notProvided')}
+                        editable={isEditingDOB}
+                        setValue={(text) => setDateOfBirth(text)}
+                    />
+                </View>
+                {!isEditingPhone && (
+                    <TouchableOpacity className="border border-gray-500 rounded-md p-2 mt-2" onPress={() => setIsEditingDOB(true)}>
+                        <IconM name="pencil-outline" size={22} color="#6b7280" />
+                    </TouchableOpacity>
+                )
+                }
             </View>
+
             {isEditingDOB && (
                 <DateTimePicker
                     value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
@@ -378,6 +378,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
 
             {/* Trocar Senha */}
             <TouchableOpacity onPress={openChangePasswordModal} style={styles.changePasswordButton}>
+                <IconM name="form-textbox-password" size={22} color="#FFF" />
                 <Text style={styles.changePasswordButtonText}>{t('account.changePassword')}</Text>
             </TouchableOpacity>
 
@@ -386,6 +387,27 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                 visible={isPasswordModalVisible}
                 onClose={closeChangePasswordModal}
             />
+
+            <Modal visible={isEditPhotoModalVisible} transparent={true} animationType="fade">
+                <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
+                    <View className="w-4/5 p-5 gap-3 bg-white rounded-xl">
+                        <View className="flex flex-row items-center justify-between">
+                            <Text className="font-bold text-xl">{t('account.changeProfilePhoto')}</Text>
+                            <Icon name="close" size={20} onPress={() => setIsEditPhotoModalVisible(false)} />
+                        </View>
+                        <View className="flex flex-col gap-2 mt-4">
+                            <TouchableOpacity onPress={handleTakePhoto} className="button-icon bg-primary">
+                                <IconM name="camera-outline" color="#FFF" size={20} />
+                                <Text className="text-white font-semibold">{t('account.takePhoto')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleChoosePhoto} className="button-icon border border-primary">
+                                <IconM name="camera-burst" color="#23527c" size={20} />
+                                <Text className='text-primary font-semibold'>{t('account.choosePhoto')}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -394,7 +416,7 @@ const styles = StyleSheet.create({
     // Estilos para o componente
     container: {
         flex: 1,
-        backgroundColor: '#F2EDE9',
+        backgroundColor: '#FFF',
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingTop: 50,
@@ -436,6 +458,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginTop: 20,
+        gap: 10
     },
     label: {
         fontSize: 16,
@@ -470,11 +493,14 @@ const styles = StyleSheet.create({
     },
     changePasswordButton: {
         marginTop: 30,
-        backgroundColor: '#FFA500',
+        backgroundColor: '#23527c',
         padding: 15,
         borderRadius: 5,
+        gap: 15,
         width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
     },
     changePasswordButtonText: {
         color: '#FFF',

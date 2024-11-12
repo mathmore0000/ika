@@ -1,12 +1,12 @@
 // ChangePasswordModal.tsx
 import React, { useState } from 'react';
-import { 
-  Modal, 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
-  TextInput 
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import api from '@/server/api';
@@ -15,6 +15,8 @@ import {
   validatePassword,
 } from "@/data/validations/auth/auth";
 import Toast from "react-native-toast-message";
+import TextInputComponent from '@/components/forms/TextInput';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 interface ChangePasswordModalProps {
   visible: boolean;
@@ -52,7 +54,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
       setConfirmPassword('');
       onClose();
     } catch (error) {
-      if (error.response.status == 401){
+      if (error.response.status == 401) {
         return showErrorToast(t('account.passwordUpdateWrongPasswordError'));
       }
       console.error('Error changing password:', error);
@@ -64,29 +66,33 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>{t('account.changePassword')}</Text>
-          
-          <TextInput
-            style={styles.input}
-            placeholder={t('account.currentPassword')}
-            secureTextEntry
-            value={currentPassword}
-            onChangeText={setCurrentPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder={t('account.newPassword')}
-            secureTextEntry
-            value={newPassword}
-            onChangeText={setNewPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder={t('account.confirmPassword')}
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
+          <View className="flex flex-row items-center justify-between">
+            <Text className="font-bold text-xl">{t('account.changePassword')}</Text>
+            <Icon name="close" size={20} onPress={onClose} />
+          </View>
+          <View className="flex flex-col gap-3 mt-4">
+            <TextInputComponent
+              secureTextEntry={true}
+              label={t('account.currentPassword')}
+              value={currentPassword}
+              navigation={null}
+              setValue={setCurrentPassword}
+            />
+            <TextInputComponent
+              label={t('account.newPassword')}
+              navigation={null}
+              secureTextEntry
+              value={newPassword}
+              setValue={setNewPassword}
+            />
+            <TextInputComponent
+              label={t('account.confirmPassword')}
+              secureTextEntry
+              navigation={null}
+              value={confirmPassword}
+              setValue={setConfirmPassword}
+            />
+          </View>
 
           <View style={styles.buttonsContainer}>
             <TouchableOpacity onPress={handleChangePassword} style={styles.saveButton}>
@@ -135,7 +141,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   saveButton: {
-    backgroundColor: "#483DF7",
+    borderColor: "#23527c",
+    borderWidth: 1,
     padding: 10,
     borderRadius: 5,
     flex: 1,
@@ -143,11 +150,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saveButtonText: {
-    color: "#FFF",
+    color: "#23527c",
     fontWeight: "bold",
   },
   cancelButton: {
-    backgroundColor: "#FF6347",
+    backgroundColor: "#23527c",
     padding: 10,
     borderRadius: 5,
     flex: 1,

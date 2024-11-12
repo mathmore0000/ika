@@ -1,13 +1,13 @@
 // Home.ts
 import { DefaultProps } from './base';
 
-export interface TextInputNodeProps extends DefaultProps {
+export interface MaskInputNodeProps extends DefaultProps {
   placeholder?: string;
   label: string;
-  setValue: (value: any) => void;
+  setValue: (text: any, rawText:any) => void;
   value: any;
+  mask: string;
   isInvalid?: boolean;
   editable?: boolean;
-  secureTextEntry?: boolean;
   keyboardType?: 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad';
 }

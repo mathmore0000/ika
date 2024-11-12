@@ -38,10 +38,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
         { label: 'Dezembro', value: 12 },
     ];
 
-    const years: { label: any, value: any }[] = Array.from({ length: 11 }, (_, i) => {
-        const year = new Date().getFullYear() - 5 + i;
-        return { value: year, label: year };
-    });
+    const years = Array.from({ length: 2 }, (_, i) => new Date().getFullYear() - 0 + i); // De 5 anos atrás até 5 anos no futuro  
 
     const arrayBufferToBase64 = (buffer) => {
         let binary = '';
@@ -171,7 +168,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
                         </View>
                         <View className="container-input">
                             <DropdownComponent
-                                data={years}
+                                data={years.map(year => ({ label: year.toString(), value: year }))}
                                 label={t('reports.selectYear')}
                                 navigation={null}
                                 setValue={setSelectedYear}
