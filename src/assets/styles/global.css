@@ -5,3 +5,7 @@
 .contanier-input {
     @apply flex flex-col items-start gap-1 w-full;
 }
+
+.button-icon {
+    @apply flex flex-row justify-center items-center rounded-md p-2 gap-2;
+}

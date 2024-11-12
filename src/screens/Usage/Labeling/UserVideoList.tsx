@@ -6,6 +6,8 @@ import VideoModal from "./VideoModal";
 import { useTranslation } from 'react-i18next';
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/AntDesign";
+import { getDateAndHour } from "@/utils/date";
 
 const UserVideoList = () => {
   const { t } = useTranslation();
@@ -72,6 +74,52 @@ const UserVideoList = () => {
     fetchVideos(0, true, true);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case true:
+        return {
+          icon: "check",
+          color: "green",
+          hexadecimal: "#166534",
+        }
+      case false:
+        return {
+          icon: "close",
+          color: "red",
+          hexadecimal: "#991b1b",
+        };
+      default:
+        return {
+          icon: "ellipsis1",
+          color: "yellow",
+          hexadecimal: "#a16207",
+        };
+    }
+  }
+
+  const getStatusStyles = (status) => {
+    const { icon, color, hexadecimal } = getStatusColor(status);
+    return {
+        container: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 2,
+            paddingHorizontal: 8,
+            borderRadius: 12,
+            borderColor: hexadecimal,
+            borderWidth: 1,
+            gap:2
+        },
+        text: {
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: hexadecimal,
+        },
+        iconColor: hexadecimal,
+        iconName: icon,
+    };
+};
+
   const handleDeleteVideo = async (videoId) => {
     Alert.alert(
       t("videos.deleteConfirmation"),
@@ -97,30 +145,40 @@ const UserVideoList = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 px-5">
       {/* Botões para filtro de status */}
-      <View style={styles.filterContainer}>
-        <TouchableOpacity onPress={() => applyFilter(true)}>
-          <Text style={styles.viewButton}>{t("videos.filterApproved")}</Text>
+      <View className="flex flex-wrap w-full gap-2">
+        <View className="flex flex-row gap-2 w-full">
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex flex-row flex-1 items-center justify-between p-2" onPress={() => applyFilter(true)}>
+            <Text className="text-gray-600 text-xs">{t("videos.filterApproved")}</Text>
+            <Icon name="check" size={15} color="#666666" />
+          </TouchableOpacity>
+
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex flex-row flex-1 items-center justify-between p-2" onPress={() => applyFilter(false)}>
+            <Text className="text-gray-600 text-xs">{t("videos.filterRejected")}</Text>
+            <Icon name="close" size={15} color="#666666" />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity className="bg-gray-200 rounded-lg flex flex-row items-center justify-between p-2 w-full" onPress={() => applyFilter(null)}>
+          <Text className="text-gray-600 text-xs">{t("videos.filterAll")}</Text>
+          <Icon name="bars" size={15} color="#666666" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => applyFilter(false)}>
-          <Text style={styles.viewButton}>{t("videos.filterRejected")}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => applyFilter(null)}>
-          <Text style={styles.viewButton}>{t("videos.filterAll")}</Text>
-        </TouchableOpacity>
+
+        {/* Botões para filtro de datas */}
+        <View className="flex flex-row gap-2 w-full">
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex-1 flex flex-row items-center justify-between p-2" onPress={() => setShowFromDatePicker(true)}>
+            <Text className="text-black text-xs">De: {fromDate && fromDate.toLocaleDateString("pt-BR")}</Text>
+            <Icon name="calendar" size={15} color="#666666" />
+          </TouchableOpacity>
+
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex-1 flex flex-row items-center justify-between p-2" onPress={() => setShowToDatePicker(true)}>
+            <Text className="text-black text-xs">Até: {toDate && toDate.toLocaleDateString("pt-BR")}</Text>
+            <Icon name="calendar" size={15} color="#666666" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Botões para filtro de datas */}
-      <View style={styles.dateFilterContainer}>
-        <Button title={t("videos.fromDate")} onPress={() => setShowFromDatePicker(true)} />
-        <Button title={t("videos.toDate")} onPress={() => setShowToDatePicker(true)} />
-      </View>
-      <Text>
-        Filtro de data:
-        De: {fromDate && fromDate.toISOString()}
-        Até: {toDate && toDate.toISOString()}
-      </Text>
 
       {/* Pickers de data */}
       {showFromDatePicker && (
@@ -151,23 +209,34 @@ const UserVideoList = () => {
 
       {/* Lista de vídeos */}
       <FlatList
+        className="pt-4"
         data={videos}
         keyExtractor={(item) => item.id}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => (
           <View style={styles.videoItem}>
-            <Text style={styles.videoText}>{t("videos.videoId")}: {item.id}</Text>
-            <Text style={styles.videoText}>{t("videos.timestamp")}: {item.actionTmstamp}</Text>
-            <Text style={styles.videoText}>{t("videos.status")}: {item.isApproved === true ? t("videos.approved") : (item.isApproved === false ? t("videos.rejected") : t("videos.pending"))}</Text>
-            <TouchableOpacity onPress={() => setSelectedVideo(item)}>
-              <Text style={styles.viewButton}>{t("videos.viewVideo")}</Text>
-            </TouchableOpacity>
-            {!item.isApproved && (
-              <TouchableOpacity onPress={() => handleDeleteVideo(item.id)}>
-                <Text style={styles.deleteButton}>{t("common.deleteVideo")}</Text>
+            {/* <Text style={styles.videoText}>{t("videos.videoId")}: {item.id}</Text> */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text>{t("videos.timestamp")}: {getDateAndHour(new Date(item.actionTmstamp))}</Text>
+              <View style={getStatusStyles().container}>
+                <Icon name={getStatusStyles().iconName} size={15} color={getStatusStyles().iconColor} />
+                <Text style={getStatusStyles().text}>
+                  {item.isApproved === true ? t("videos.approved") : (item.isApproved === false ? t("videos.rejected") : t("videos.pending"))}
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex flex-1 gap-2 flex-row justify-between">
+              <TouchableOpacity className="w-1/2 button-icon bg-primary" onPress={() => setSelectedVideo(item)}>
+                <Icon name="play" size={18} color="#fff" />
+                <Text className="text-white font-semibold">{t("videos.viewVideo")}</Text>
               </TouchableOpacity>
-            )}
+              <TouchableOpacity className="w-1/2 button-icon border border-red-500" disabled={item.isApproved} onPress={() => handleDeleteVideo(item.id)}>
+                <Icon name="delete" size={18} color="#FF4500" />
+                <Text className="text-red-500 font-semibold">{t("common.deleteVideo")}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -203,6 +272,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    gap: 20,
   },
   videoText: {
     fontSize: 16,

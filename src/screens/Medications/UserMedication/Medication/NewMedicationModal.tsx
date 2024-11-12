@@ -1,6 +1,6 @@
 // NewMedicationModal.js
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, Dimensions } from "react-native";
 import { medicationType, medicationErrorType, activeIngredientType, categoryType } from "@/constants/interfaces/Entities";
 import api from "@/server/api";
 import { Picker } from "@react-native-picker/picker";
@@ -32,6 +32,7 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
 
   const openIngredientModal = () => setIsIngredientModalVisible(true);
   const closeIngredientModal = () => setIsIngredientModalVisible(false);
+  const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
 
   const handleCategorySelected = (category: categoryType) => {
     updateCustomMedication({ category: category });
@@ -155,12 +156,12 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
           </View>
 
           <View className="contanier-input">
-            <InputButtonComponent 
+            <InputButtonComponent
               onPress={openCategoryModal}
               label="Categoria" //traduzir
               value={customMedication.category.description/*traduzir*/}
-              isInvalid={!!errors.category}                           
-             />
+              isInvalid={!!errors.category}
+            />
             {errors.category && <Text style={styles.errorText}>{t(errors.category)}</Text>}
           </View>
           <View className="contanier-input">
@@ -201,12 +202,12 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
             {errors.dosage && <Text style={styles.errorText}>{t(errors.dosage)}</Text>}
           </View>
           <View className="contanier-input">
-          <InputButtonComponent 
+            <InputButtonComponent
               onPress={openIngredientModal}
               label="Ingrediente ativo" //traduzir
               value={customMedication.activeIngredient.description/*traduzir*/}
-              isInvalid={!!errors.activeIngredient}                           
-             />
+              isInvalid={!!errors.activeIngredient}
+            />
             {errors.activeIngredient && <Text style={styles.errorText}>{t(errors.activeIngredient)}</Text>}
           </View>
           <View className="container-input">
@@ -249,17 +250,31 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
             <Text style={styles.saveButtonText}>{t("common.save")}</Text>
           </TouchableOpacity>
 
-          <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
-            <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
-            <Toast />
-          </Modal>
 
-          <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
-            <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
-            <Toast />
-          </Modal>
         </View>
       </ScrollView>
+      <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
+        <View className="flex-1 w-full flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+          <View className="bg-white w-full rounded-t-lg flex items-center justify-center" style={{
+            width: width, // 80% da largura da tela
+            height: height * 0.8, // 80% da altura da tela
+          }}>
+            <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
+            <Toast />
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
+        <View className="flex-1 w-full flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+          <View className="bg-white w-full rounded-t-lg flex items-center justify-center" style={{
+            width: width, // 80% da largura da tela
+            height: height * 0.8, // 80% da altura da tela
+          }}>
+            <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
+          </View>
+        </View>
+        <Toast />
+      </Modal>
     </View>
   );
 };

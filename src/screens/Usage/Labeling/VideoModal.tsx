@@ -53,6 +53,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff5c5c',
     borderRadius: 5,
     padding: 5,
+    width: 26,   
+    alignItems: 'center', 
   },
   closeButtonText: {
     color: '#fff',

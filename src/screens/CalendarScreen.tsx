@@ -286,7 +286,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: 20 }}>
       <ExpandableDatePicker
         selectedDate={new Date(selectedDay)}
         onDateSelect={(date) => setSelectedDay(date.toISOString().split("T")[0])}

@@ -1,5 +1,6 @@
+// MedicationSelectionModal.js
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal, Dimensions, RefreshControl } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Modal, Dimensions } from "react-native";
 import api from "@/server/api";
 import { showErrorToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
@@ -9,10 +10,9 @@ import { medicationType } from "@/constants/interfaces/Entities";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/AntDesign";
 import IconEnty from "react-native-vector-icons/Entypo";
-import Toast from "react-native-toast-message";
 
 const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicationCreated }) => {
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
   const { t } = useTranslation();
   const [medications, setMedications] = useState<medicationType[]>([]);
   const [filteredMedications, setFilteredMedications] = useState([]);
@@ -21,7 +21,6 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [isNewMedicationModalVisible, setIsNewMedicationModalVisible] = useState(false);
   const [isNewUserMedicationModal, setIsNewUserMedicationModal] = useState(false);
 
@@ -36,33 +35,27 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
   }, [currentPage]);
 
   const onMedicationCreated = async () => {
-    setCurrentPage(0);
+    await setMedications([]);
+    await setCurrentPage(0);
     await fetchMedications(0);
   };
 
-  const fetchMedications = async (page = 0, size = 50, isRefreshing = false) => {
+  const fetchMedications = async (page = currentPage, size = 50) => {
     if (loading || page >= totalPages) return;
 
-    if (isRefreshing) {
-    setRefreshing(true);
-    } else {
-      setLoading(true);
-    }
-
+    setLoading(true);
     try {
       const response = await api.get("/medications", { params: { page, size } });
       const newMedications = filterOutUserMedications(response.data.content);
-      setMedications((prevMedications) => 
-        page === 0 ? newMedications : [...prevMedications, ...newMedications]
-      );
+      const updatedMedications: medicationType[] = page === 0 ? newMedications : [...medications, ...newMedications];
 
-      setFilteredMedications(filterMedications(newMedications, searchText));
+      setMedications(updatedMedications);
+      setFilteredMedications(filterMedications(updatedMedications, searchText));
       setTotalPages(response.data.totalPages);
     } catch (error) {
       showErrorToast(t("medications.errorLoadingMedications"));
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
@@ -99,17 +92,13 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
     }
   };
 
-  const onRefresh = () => {
-    setMedications([])
-    setCurrentPage(0);
-    fetchMedications(0, 50, true); // Recarrega a lista com a primeira página e estado de "refreshing"
-  };
-
   return (
     <View className="flex-1 px-5 pt-5">
       <View className="flex flex-row items-center justify-between pb-4">
         <Text className="font-bold text-xl">{t("medications.selectMedication")}</Text>
-        <TouchableOpacity onPress={closeModal}>
+        <TouchableOpacity
+          onPress={closeModal}
+        >
           <Icon name="close" size={25} color="#000" />
         </TouchableOpacity>
       </View>
@@ -130,16 +119,20 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
         ListEmptyComponent={<Text style={styles.emptyText}>{t("medications.noMedicationsFound")}</Text>}
         renderItem={({ item }) => (
           <View className="flex flex-col px-2">
-            <View className="flex flex-row justify-between items-center py-3">
+            <View className="flex flex-row justify-between items-center py-3" >
               <View className="flex flex-col">
-                <Text className="font-bold text-lg">{item.name}</Text>
-                <Text>{t("medications.medicationDosage", { dosage: item.dosage })}</Text>
+                <Text className="font-bold text-lg">
+                  {item.name}
+                </Text>
+                <Text className="">
+                  {t("medications.medicationDosage", { dosage: item.dosage })}
+                </Text>
               </View>
               <TouchableOpacity
                 className={`
-                  w-7 h-7 border-2 border-gray-300 rounded-md items-center justify-center mr-2
-                  ${item.id === selectedMedication.id && "bg-primary border-primary"}
-                `}
+                w-7 h-7 border-2 border-gray-300 rounded-md items-center justify-center mr-2
+                ${item.id === selectedMedication.id && "bg-primary border-primary"}
+              `}
                 onPress={() => handleSelect(item)}
               >
                 {item.id === selectedMedication.id && (
@@ -153,19 +146,20 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={loading ? <ActivityIndicator size="small" color="#0000ff" /> : null}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
       />
 
-      {/* Modais para criação de medicamentos e adição de medicamento ao inventário */}
       <Modal visible={isNewMedicationModalVisible} transparent={true} animationType="fade">
         <View className="flex-1 flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
-          <View className="bg-white rounded-t-lg flex items-center justify-center" style={{ width: width, height: height * 0.9 }}>
-            <NewMedicationModal closeModal={closeIsNewMedicationModal} onMedicationCreated={onMedicationCreated} />
+          <View className="bg-white rounded-t-lg flex items-center justify-center" style={{
+            width: width, // 80% da largura da tela
+            height: height * 0.9, // 80% da altura da tela
+          }}>
+            <NewMedicationModal
+              closeModal={closeIsNewMedicationModal}
+              onMedicationCreated={onMedicationCreated}
+            />
           </View>
         </View>
-        <Toast />
       </Modal>
 
       <Modal visible={isNewUserMedicationModal} transparent={true} animationType="fade">
@@ -175,10 +169,8 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
           onUserMedicationCreated={onUserMedicationCreated}
           selectedMedication={selectedMedication}
         />
-        <Toast />
       </Modal>
-
-      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center">
+      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" >
         <TouchableOpacity onPress={openIsNewMedicationModal} className="w-1/2 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
           <IconEnty name="add-to-list" size={20} color="#23527c" />
           <Text className="font-bold text-primary">{t("medications.addMedicationButton")}</Text>

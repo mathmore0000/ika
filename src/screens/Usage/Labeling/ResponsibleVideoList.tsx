@@ -7,6 +7,8 @@ import VideoActionsModal from "./VideoActionsModal";
 import RemoteImage from "@/components/shared/RemoteImage";
 import { useTranslation } from 'react-i18next';
 import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/AntDesign";
+import { getDateAndHour } from "@/utils/date";
 
 const ResponsibleVideoList = () => {
   const { t } = useTranslation();
@@ -59,6 +61,7 @@ const ResponsibleVideoList = () => {
     fetchVideos(0, true, true); // Passa `isRefreshing` como true para o refresh
   };
 
+
   const applyFilter = (status) => {
     if (status === filterStatus) return;
     setFilterStatus(status);
@@ -74,31 +77,38 @@ const ResponsibleVideoList = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 px-5">
       {/* Filtros de status */}
-      <View style={styles.filterContainer}>
-        <TouchableOpacity onPress={() => applyFilter(true)}>
-          <Text style={styles.viewButton}>{t("videos.filterApproved")}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => applyFilter(false)}>
-          <Text style={styles.viewButton}>{t("videos.filterRejected")}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => applyFilter(null)}>
-          <Text style={styles.viewButton}>{t("videos.filterAll")}</Text>
-        </TouchableOpacity>
-      </View>
+      <View className="flex flex-wrap w-full gap-2">
+        <View className="flex flex-row gap-2 w-full">
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex flex-row flex-1 items-center justify-between p-2" onPress={() => applyFilter(true)}>
+            <Text className="text-gray-600 text-xs">{t("videos.filterApproved")}</Text>
+            <Icon name="check" size={15} color="#666666" />
+          </TouchableOpacity>
 
-      {/* Filtros de data */}
-      <View style={styles.dateFilterContainer}>
-        <Button title={t("videos.fromDate")} onPress={() => setShowFromDatePicker(true)} />
-        <Button title={t("videos.toDate")} onPress={() => setShowToDatePicker(true)} />
-      </View>
-      <Text>
-        Filtro de data:
-        De: {fromDate && fromDate.toISOString()}
-        Até: {toDate && toDate.toISOString()}
-      </Text>
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex flex-row flex-1 items-center justify-between p-2" onPress={() => applyFilter(false)}>
+            <Text className="text-gray-600 text-xs">{t("videos.filterRejected")}</Text>
+            <Icon name="close" size={15} color="#666666" />
+          </TouchableOpacity>
+        </View>
 
+        <TouchableOpacity className="bg-gray-200 rounded-lg flex flex-row items-center justify-between p-2 w-full" onPress={() => applyFilter(null)}>
+          <Text className="text-gray-600 text-xs">{t("videos.filterAll")}</Text>
+          <Icon name="bars" size={15} color="#666666" />
+        </TouchableOpacity>
+
+        <View className="flex flex-row gap-2 w-full">
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex-1 flex flex-row items-center justify-between p-2" onPress={() => setShowFromDatePicker(true)}>
+            <Text className="text-black text-xs">De: {fromDate && fromDate.toLocaleDateString("pt-BR")}</Text>
+            <Icon name="calendar" size={15} color="#666666" />
+          </TouchableOpacity>
+
+          <TouchableOpacity className="bg-gray-200 rounded-lg flex-1 flex flex-row items-center justify-between p-2" onPress={() => setShowToDatePicker(true)}>
+            <Text className="text-black text-xs">Até: {toDate && toDate.toLocaleDateString("pt-BR")}</Text>
+            <Icon name="calendar" size={15} color="#666666" />
+          </TouchableOpacity>
+        </View>
+      </View>
       {/* Pickers de data */}
       {showFromDatePicker && (
         <DateTimePicker
@@ -133,14 +143,18 @@ const ResponsibleVideoList = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => (
-          <View style={styles.videoItem}>
-            <RemoteImage uri={item.user.avatarUrl} style={styles.profileImage} />
-            <Text style={styles.videoText}>{t("videos.user")}: {item.user.displayName}</Text>
-            <Text style={styles.videoText}>{t("videos.email")}: {item.user.email}</Text>
-            <Text style={styles.videoText}>{t("videos.videoId")}: {item.id}</Text>
-            <Text style={styles.videoText}>{t("videos.timestamp")}: {item.actionTmstamp}</Text>
-            <TouchableOpacity onPress={() => setSelectedVideo(item)}>
-              <Text style={styles.viewButton}>
+          <View className="flex p-6 flex-col gap-2 border-b border-[#d0d0d0]">
+            <View className="flex flex-row gap-2">
+              <RemoteImage uri={item.user.avatarUrl} style={styles.profileImage} />
+              <View className="flex flex-col gap-1">
+                <Text className="text-base">{t("videos.user")}: {item.user.displayName}</Text>
+                <Text className="text-base">{t("videos.email")}: {item.user.email}</Text>
+                {/* <Text className="text-base">{t("videos.videoId")}: {item.id}</Text> */}
+                <Text className="text-base">{t("videos.timestamp")}: {getDateAndHour(new Date(item.actionTmstamp))}</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={{borderColor: item.isApproved == null ? "#ca8a04" :  item.isApproved ? "#991b1b" : "#166534"}} className="rounded-md border p-1 flex items-center" onPress={() => setSelectedVideo(item)}>
+              <Text style={{color: item.isApproved == null ? "#ca8a04" :  item.isApproved ? "#991b1b" : "#166534"}}  className="text-lg text-white">
                 {item.isApproved == null ? t("videos.classify") : (item.isApproved ? t("videos.reject") : t("videos.approve"))}
               </Text>
             </TouchableOpacity>
@@ -172,6 +186,11 @@ const ResponsibleVideoList = () => {
 };
 
 const styles = StyleSheet.create({
+  profileImage:{
+    maxWidth: 70,
+    maxHeight: 70,
+    borderRadius: 50,
+  },
   container: {
     flex: 1,
     padding: 20,

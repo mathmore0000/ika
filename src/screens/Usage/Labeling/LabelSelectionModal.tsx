@@ -70,7 +70,7 @@ const LabelSelectionModal = ({ isVisible, closeModal, onLabelSelect, initialSele
           />
         )}
 
-        <TouchableOpacity onPress={handleSaveSelection} style={styles.saveButton}>
+        <TouchableOpacity onPress={handleSaveSelection} className="bg-primary" style={styles.saveButton}>
           <Text style={styles.saveButtonText}>{t("labels.saveSelection")}</Text>
         </TouchableOpacity>
 
@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   saveButton: {
-    backgroundColor: "#4caf50",
     padding: 10,
     borderRadius: 5,
     marginTop: 20,

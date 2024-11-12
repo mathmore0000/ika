@@ -1,17 +1,17 @@
-// VideoFilterScreen.js
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import UserVideoList from "./Usage/Labeling/UserVideoList";
 import ResponsibleVideoList from "./Usage/Labeling/ResponsibleVideoList";
 import { useTranslation } from 'react-i18next';
+import AppLayout from "@/components/shared/AppLayout";
 
-const VideoFilterScreen = () => {
+const VideoFilterScreen = ({ navigation, local = 'Videos' }) => {
   const { t } = useTranslation();
   const [isSupervisedView, setIsSupervisedView] = useState(false);
-    
+  const { height } = Dimensions.get("window");
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{t("videos.videos")}</Text>
 
       {/* Toggle Button */}
       <View style={styles.toggleContainer}>
@@ -23,18 +23,22 @@ const VideoFilterScreen = () => {
             {t("videos.myVideos")}
           </Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[styles.toggleButton, isSupervisedView && styles.activeButton]}
           onPress={() => setIsSupervisedView(true)}
         >
-          <Text style={[styles.buttonText, isSupervisedView && styles.activeButtonText]}>
+          <Text style={[styles.buttonText2, isSupervisedView && styles.activeButtonText]}>
             {t("videos.supervisedVideos")}
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Video List */}
-      {isSupervisedView ? <ResponsibleVideoList /> : <UserVideoList />}
+      <View style={[styles.listContainer, { marginBottom: height * 0.08 }]} className="flex-1">
+        {isSupervisedView ? <ResponsibleVideoList /> : <UserVideoList />}
+      </View>
+      <AppLayout navigation={navigation} local={local} />
     </View>
   );
 };
@@ -45,34 +49,51 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-  },
   toggleContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 20,
+    alignItems: "center",
+    borderTopEndRadius: 6,
+    borderTopStartRadius: 6,
+    width: "100%",
+    backgroundColor: "#d1d5db",
+    padding: 5,
   },
   toggleButton: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 5,
-    alignItems: "center",
-    marginHorizontal: 5,
-    backgroundColor: "#ddd",
+    height: 40,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#d1d5db',
+    borderColor: '#d1d5db',
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   activeButton: {
-    backgroundColor: "#4caf50",
+    backgroundColor: "#fff",
   },
   buttonText: {
     color: "#333",
-    fontSize: 16,
+    fontSize: 14,
+  },
+  buttonText2: {
+    color: "#333",
+    fontSize: 13,
   },
   activeButtonText: {
-    color: "#fff",
+    color: "#000",
+  },
+  listContainer: {    
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: '#D1D5DB',
+    width: '100%',
+    paddingVertical: 20,
+    borderBottomStartRadius: 6, 
+    borderBottomEndRadius: 6
   },
 });
 

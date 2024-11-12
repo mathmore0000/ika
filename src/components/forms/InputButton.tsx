@@ -18,7 +18,14 @@ const InputButtonComponent: React.FC<InputButtonNodeProps> = ({ navigation, loca
         <View style={styles.container}>
             {renderLabel()}
             <TouchableOpacity onFocus={() => setIsFocus(true)} onBlur={() => setIsFocus(false)} onPress={onPress} style={[styles.input_select, isInvalid && styles.inputError, isFocus && { borderColor: '#0047ab' }]}>
-                <Text style={[styles.text, !value && {color: "#a0a0a0"}]}>{value || (placeholder || "Selecione")}</Text>{/*traduzir*/}
+                <Text
+                    style={[styles.text, !value && { color: "#a0a0a0" }]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {value || (placeholder || "Selecione")}
+                </Text>
+
                 <Icon name="chevron-forward-outline" style={styles.icon} />
             </TouchableOpacity>
         </View>
@@ -42,7 +49,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         fontSize: 14,
     },
-    text:{
+    text: {
         fontSize: 16,
     },
     input_select: {
@@ -54,10 +61,12 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 0.5,
         borderRadius: 8,
-        paddingHorizontal: 8,        
+        paddingHorizontal: 8,
     },
     icon: {
         fontSize: 16,
+        position: 'absolute',
+        right: 3,
     },
     inputError: {
         borderColor: "red",
