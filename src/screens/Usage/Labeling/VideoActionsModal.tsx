@@ -5,6 +5,8 @@ import api from "@/server/api";
 import LabelSelectionModal from "./LabelSelectionModal";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
+import TextInputComponent from '@/components/forms/TextInput';
+import InputButtonComponent from '@/components/forms/InputButton';
 
 const VideoActionsModal = ({ closeModal, video, onActionComplete }) => {
   const { t } = useTranslation();
@@ -37,10 +39,19 @@ const VideoActionsModal = ({ closeModal, video, onActionComplete }) => {
   return (
     <View style={styles.modalContainer}>
       <Text style={styles.modalTitle}>{t("videos.reviewVideo")}</Text>
-      <Text>{t("videos.videoId")}: {video.id}</Text>
+      {/* <Text>{t("videos.videoId")}: {video.id}</Text> */}
 
-      <Text style={styles.modalLabel}>{t("videos.selectedLabels")}:</Text>
-      <TouchableOpacity onPress={() => setIsLabelModalVisible(true)}>
+      {/* <Text style={styles.modalLabel}>{t("videos.selectedLabels")}:</Text> */}
+      <View className="contanier-input">
+        <InputButtonComponent
+          onPress={()=> setIsLabelModalVisible(true)}
+          label={t("videos.selectedLabels")}//traduzir
+          placeholder={t("videos.chooseLabels")}
+          value={displaySelectedLabels/*traduzir*/}
+          isInvalid={validationError && selectedLabels.length === 0}
+        />
+      </View>
+      {/* <TouchableOpacity onPress={() => setIsLabelModalVisible(true)}>
         <Text style={[
           styles.selectLabelsText,
           validationError && selectedLabels.length === 0 && styles.errorBorder,
@@ -49,26 +60,29 @@ const VideoActionsModal = ({ closeModal, video, onActionComplete }) => {
             ? displaySelectedLabels
             : t("videos.chooseLabels")}
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <TextInput
         style={[
           styles.textInput,
           validationError && obs === "" && styles.errorBorder,
         ]}
+        textAlignVertical="top"
+        multiline
+        numberOfLines={4}
         placeholder={t("videos.observation")}
-        value={obs}
+        value={obs}    
         onChangeText={(text) => {
           setObs(text);
           if (validationError) setValidationError(false);
         }}
       />
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => handleAction(true)} style={styles.approveButton}>
+      <View style={{marginLeft: -7}} className="flex flex-row items-center w-[98%] gap-2 mt-4">
+        <TouchableOpacity onPress={() => handleAction(true)} className="w-1/2 flex flex-row justify-center bg-green-700 p-3 rounded-sm">
           <Text style={styles.buttonText}>{t("videos.approve")}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleAction(false)} style={styles.rejectButton}>
+        <TouchableOpacity onPress={() => handleAction(false)} className="w-1/2 bg-red-700 flex flex-row justify-center p-3 rounded-sm">
           <Text style={styles.buttonText}>{t("videos.reject")}</Text>
         </TouchableOpacity>
       </View>
@@ -92,6 +106,7 @@ const styles = StyleSheet.create({
     margin: 20,
     alignItems: "center",
     justifyContent: "center",
+    width: "90%",
   },
   modalTitle: {
     fontSize: 18,
