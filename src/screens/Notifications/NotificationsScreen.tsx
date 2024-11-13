@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from "react-native";
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Dimensions } from "react-native";
 import AppLayout from "@/components/shared/AppLayout";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { NotificationsProps } from "@/constants/interfaces/props/Notifications";
 import { formatNotificationDate } from "@/utils/date";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Notifications" }) => {
   const [notifications, setNotifications] = useState([]);
@@ -12,6 +13,8 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
+  const { width, height } = Dimensions.get("window");
 
   useEffect(() => {
     fetchNotifications(0);
@@ -88,7 +91,7 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{paddingBottom: insets.bottom + (height * 0.069)}]}>
       <FlatList
         data={notifications}
         renderItem={renderItem}

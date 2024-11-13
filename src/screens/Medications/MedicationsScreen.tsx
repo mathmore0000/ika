@@ -9,6 +9,7 @@ import AppLayout from "@/components/shared/AppLayout";
 import { useTranslation } from 'react-i18next';
 import Toast from "react-native-toast-message";
 import { scheduleIntrusiveMedicationReminders, deleteAllReminders, showAllAlarmsCount } from "@/utils/alarm"
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get("window");
 
@@ -21,6 +22,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
+  const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
 
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
@@ -142,7 +144,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
 
 
   return (
-    <View className="flex-1 p-6 flex flex-col gap-2">
+    <View className="flex-1 p-6 flex flex-col gap-2" style={{paddingBottom: insets.bottom + (height * 0.07)}}>
       <View className="flex flex-row items-center justify-end">
         {/* <Text style={styles.header}>{t('medications.medicationList')}</Text> */}
         <TouchableOpacity style={styles.addButton} onPress={openModal}>

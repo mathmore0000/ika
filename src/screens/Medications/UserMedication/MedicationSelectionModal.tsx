@@ -10,6 +10,7 @@ import { medicationType } from "@/constants/interfaces/Entities";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/AntDesign";
 import IconEnty from "react-native-vector-icons/Entypo";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicationCreated }) => {
   const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
@@ -23,6 +24,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
   const [loading, setLoading] = useState(false);
   const [isNewMedicationModalVisible, setIsNewMedicationModalVisible] = useState(false);
   const [isNewUserMedicationModal, setIsNewUserMedicationModal] = useState(false);
+  const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
 
   const openIsNewMedicationModal = () => setIsNewMedicationModalVisible(true);
   const closeIsNewMedicationModal = () => setIsNewMedicationModalVisible(false);
@@ -170,7 +172,7 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
           selectedMedication={selectedMedication}
         />
       </Modal>
-      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" >
+      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" style={{marginBottom: insets.bottom}}>
         <TouchableOpacity onPress={openIsNewMedicationModal} className="w-1/2 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
           <IconEnty name="add-to-list" size={20} color="#23527c" />
           <Text className="font-bold text-primary">{t("medications.addMedicationButton")}</Text>
