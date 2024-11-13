@@ -78,21 +78,21 @@ export function formatNotificationDate(inputDate: Date) {
       return targetDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
   } else if (diffDays === 1) {
       // Se a data é de um dia atrás, retorna "ontem"
-      return "ontem";
+      return "Ontem";
   } else if (diffHours >= 6) {
       // Se a data é há mais de 6 horas, retorna "há mais de 5hr"
-      return "há mais de 5hr";
+      return "Há mais de 5hr";
   } else if (diffHours >= 1) {
       // Se a data é há 1 ou mais horas, retorna "há Xhr"
-      return `há ${diffHours}hr`;
+      return `Há ${diffHours}hr`;
   } else if (diffMinutes >= 1) {
       // Se a data é há 1 ou mais minutos, retorna "há Xmin"
-      return `há ${diffMinutes}min`;
+      return `Há ${diffMinutes}min`;
   } else if (diffSeconds >= 1) {
       // Se a data é há 1 ou mais segundos, retorna "há Xseg"
-      return `há ${diffSeconds}seg`;
+      return `Há ${diffSeconds}seg`;
   } else {
       // Se a data é menos de 1 segundo, retorna "há menos de 1s"
-      return "há menos de 1s";
+      return "Há menos de 1s";
   }
 }

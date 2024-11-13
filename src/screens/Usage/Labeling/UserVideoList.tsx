@@ -8,6 +8,7 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
 import { getDateAndHour } from "@/utils/date";
+import { formatNotificationDate } from "@/utils/date";
 
 const UserVideoList = () => {
   const { t } = useTranslation();
@@ -100,25 +101,25 @@ const UserVideoList = () => {
   const getStatusStyles = (status) => {
     const { icon, color, hexadecimal } = getStatusColor(status);
     return {
-        container: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: 2,
-            paddingHorizontal: 8,
-            borderRadius: 12,
-            borderColor: hexadecimal,
-            borderWidth: 1,
-            gap:2
-        },
-        text: {
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: hexadecimal,
-        },
-        iconColor: hexadecimal,
-        iconName: icon,
+      container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 2,
+        paddingHorizontal: 8,
+        borderRadius: 12,
+        borderColor: hexadecimal,
+        borderWidth: 1,
+        gap: 2
+      },
+      text: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: hexadecimal,
+      },
+      iconColor: hexadecimal,
+      iconName: icon,
     };
-};
+  };
 
   const handleDeleteVideo = async (videoId) => {
     Alert.alert(
@@ -218,7 +219,7 @@ const UserVideoList = () => {
           <View style={styles.videoItem}>
             {/* <Text style={styles.videoText}>{t("videos.videoId")}: {item.id}</Text> */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text>{t("videos.timestamp")}: {getDateAndHour(new Date(item.actionTmstamp))}</Text>
+              <Text>{getDateAndHour(new Date(item.actionTmstamp))}</Text>
               <View style={getStatusStyles().container}>
                 <Icon name={getStatusStyles().iconName} size={15} color={getStatusStyles().iconColor} />
                 <Text style={getStatusStyles().text}>
@@ -228,13 +229,13 @@ const UserVideoList = () => {
             </View>
 
             <View className="flex flex-1 gap-2 flex-row justify-between">
-              <TouchableOpacity className="w-1/2 button-icon bg-primary" onPress={() => setSelectedVideo(item)}>
+              <TouchableOpacity className="w-1/2 button-icon bg-gray-500" onPress={() => setSelectedVideo(item)}>
                 <Icon name="play" size={18} color="#fff" />
                 <Text className="text-white font-semibold">{t("videos.viewVideo")}</Text>
               </TouchableOpacity>
-              <TouchableOpacity className="w-1/2 button-icon border border-red-500" disabled={item.isApproved} onPress={() => handleDeleteVideo(item.id)}>
-                <Icon name="delete" size={18} color="#FF4500" />
-                <Text className="text-red-500 font-semibold">{t("common.deleteVideo")}</Text>
+              <TouchableOpacity className="w-1/2 button-icon border border-gray-500" disabled={item.isApproved} onPress={() => handleDeleteVideo(item.id)}>
+                <Icon name="delete" size={18} color="#6b7280" />
+                <Text className="text-gray-500 font-semibold">{t("common.deleteVideo")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -270,8 +271,9 @@ const styles = StyleSheet.create({
   },
   videoItem: {
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#ccc",
     gap: 20,
   },
   videoText: {

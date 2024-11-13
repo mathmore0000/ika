@@ -143,7 +143,7 @@ const ResponsibleVideoList = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         renderItem={({ item }) => (
-          <View className="flex p-6 flex-col gap-2 border-b border-[#d0d0d0]">
+          <View className="flex p-6 flex-col gap-2 border rounded-md border-[#d0d0d0]">
             <View className="flex flex-row gap-2">
               <RemoteImage uri={item.user.avatarUrl} style={styles.profileImage} />
               <View className="flex flex-col gap-1">
