@@ -105,12 +105,12 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
                                         width: "14.28%",
                                         padding: 8,
                                         borderRadius: 4,
-                                        backgroundColor: isSelected ? "#23527c" : isToday ? "#FFA500" : isExpiry ? "#F44336" : "transparent", // Red for expiration dates
+                                        backgroundColor: isSelected ? "#FFF" : isToday ? "#052847" : isExpiry ? "#F44336" : "transparent", // Red for expiration dates
                                     }}
                                 >
                                     <Text style={{
                                         textAlign: "center",
-                                        color: isSelected ? "#FFF" : isAdjacentMonth ? "#000" : isToday || isExpiry ? "#FFF" : "#e8e8e8", // White for today and expiration dates
+                                        color: isSelected ? "#000" : isAdjacentMonth ? "#000" : isToday || isExpiry ? "#FFF" : "#e8e8e8", // White for today and expiration dates
                                         fontWeight: isToday || isExpiry ? "bold" : "normal"
                                     }}>
                                         {day.number}
