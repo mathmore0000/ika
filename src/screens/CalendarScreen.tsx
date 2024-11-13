@@ -9,12 +9,14 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import ExpandableDatePicker from "@/screens/Calendar/ExpandableDatePicker";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const { t } = useTranslation();
   const weekDays = getDaysArray(today);
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]);
   console.log("setSelectedDay", selectedDay)
+  const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
 
   const [dailyDoses, setDailyDoses] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -286,7 +288,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   };
 
   return (
-    <View style={{ flex: 1, paddingTop: 20 }}>
+    <View style={{ flex: 1}}>
       <ExpandableDatePicker
         selectedDate={new Date(selectedDay)}
         onDateSelect={(date) => setSelectedDay(date.toISOString().split("T")[0])}

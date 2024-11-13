@@ -4,11 +4,14 @@ import UserVideoList from "./Usage/Labeling/UserVideoList";
 import ResponsibleVideoList from "./Usage/Labeling/ResponsibleVideoList";
 import { useTranslation } from 'react-i18next';
 import AppLayout from "@/components/shared/AppLayout";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const VideoFilterScreen = ({ navigation, local = 'Videos' }) => {
   const { t } = useTranslation();
   const [isSupervisedView, setIsSupervisedView] = useState(false);
   const { height } = Dimensions.get("window");
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.container}>
@@ -35,7 +38,7 @@ const VideoFilterScreen = ({ navigation, local = 'Videos' }) => {
       </View>
 
       {/* Video List */}
-      <View style={[styles.listContainer, { marginBottom: height * 0.08 }]} className="flex-1">
+      <View style={[styles.listContainer, { marginBottom: insets.bottom + (height * 0.09) }]} className="flex-1">
         {isSupervisedView ? <ResponsibleVideoList /> : <UserVideoList />}
       </View>
       <AppLayout navigation={navigation} local={local} />

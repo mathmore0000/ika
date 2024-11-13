@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { getDaysArray } from "@/utils/date";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [monthDays, setMonthDays] = useState(getMonthDaysWithAdjacentDays(new Date().getFullYear(), new Date().getMonth()));
     const [displayedMonth, setDisplayedMonth] = useState(new Date().getMonth());
     const [displayedYear, setDisplayedYear] = useState(new Date().getFullYear());
+    const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
 
     const toggleExpand = () => setIsExpanded(!isExpanded);
 
@@ -43,24 +45,29 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
 
     const isExpirationDate = (date) => expirationDates.includes(date.toISOString().split("T")[0]);
     return (
-        <View style={{ padding: 16, backgroundColor: "#FFF", borderRadius: 8 }}>
+        <View className="bg-primary flex flex-col" style={{ paddingTop: insets.top, padding: 10 }}>
             {/* Header with current date and expand button */}
             <TouchableOpacity onPress={toggleExpand} style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>{todayFormatted}</Text>
-                <Icon name={isExpanded ? "up" : "down"} size={18} />
+                <View className="p-6">
+                    <Text className="font-bold text-2xl  text-white">Hoje</Text>
+                    <Text className=" text-white">{todayFormatted}</Text>
+                </View>
+                <Icon name={isExpanded ? "up" : "down"} color="#fff" size={18} />
             </TouchableOpacity>
 
             {/* Weekly View */}
             {!isExpanded && (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
+                <View className="w-full flex justify-between flex-row px-4">
                     {getDaysArray(selectedDate).map((day) => (
-                        <TouchableOpacity key={day.fullDate} onPress={() => handleDateSelect(new Date(day.fullDate))} style={{ marginRight: 8 }}>
-                            <Text style={{ textAlign: "center", fontWeight: day.isSameDate ? "bold" : "normal" }}>
-                                {/* {day.name} {day.number} */}
-                            </Text>
+                        <TouchableOpacity className="flex items-center justify-center p-2" key={day.fullDate} onPress={() => handleDateSelect(new Date(day.fullDate))} style={{
+                            borderBottomWidth: day.isSameDate ? 2 : 0,
+                            borderBottomColor: day.isSameDate ? "white" : "transparent",
+                        }}>
+                            <Text className="text-white">{day.name.split(".")[0]}</Text>
+                            <Text className="text-white">{day.number}</Text>
                         </TouchableOpacity>
                     ))}
-                </ScrollView>
+                </View>
             )}
 
             {/* Expanded Monthly Calendar */}
@@ -68,17 +75,17 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
                 <View style={{ marginTop: 20 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <TouchableOpacity onPress={() => navigateMonth(-1)}>
-                            <Icon name="left" size={18} />
+                            <Icon name="left" color="#fff" size={18} />
                         </TouchableOpacity>
-                        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{monthNames[displayedMonth]} {displayedYear}</Text>
+                        <Text style={{ fontSize: 16, fontWeight: "bold", color: "#fff" }}>{monthNames[displayedMonth]} {displayedYear}</Text>
                         <TouchableOpacity onPress={() => navigateMonth(1)}>
-                            <Icon name="right" size={18} />
+                            <Icon name="right" color="#fff" size={18} />
                         </TouchableOpacity>
                     </View>
 
                     <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 10 }}>
                         {["D", "S", "T", "Q", "Q", "S", "S"].map((dayName, index) => (
-                            <Text key={index} style={{ width: "14.28%", textAlign: "center", fontWeight: "bold" }}>{dayName}</Text>
+                            <Text key={index} style={{ width: "14.28%", textAlign: "center", fontWeight: "bold", color: "#fff"}}>{dayName}</Text>
                         ))}
                     </View>
 
@@ -103,7 +110,7 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
                                 >
                                     <Text style={{
                                         textAlign: "center",
-                                        color: isSelected ? "#FFF" : isAdjacentMonth ? "#B0B0B0" : isToday || isExpiry ? "#FFF" : "#000", // White for today and expiration dates
+                                        color: isSelected ? "#FFF" : isAdjacentMonth ? "#000" : isToday || isExpiry ? "#FFF" : "#e8e8e8", // White for today and expiration dates
                                         fontWeight: isToday || isExpiry ? "bold" : "normal"
                                     }}>
                                         {day.number}
