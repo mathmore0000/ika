@@ -60,3 +60,39 @@ export function convertDateToLocalTimezone(date: Date) {
 export function getDateAndHour(date: Date) {
   return date.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
+
+//traduzir
+export function formatNotificationDate(inputDate: Date) {
+  const now = new Date();
+  const targetDate = inputDate;
+  const diffTime = now - targetDate;
+
+  // Diferença em milissegundos
+  const diffSeconds = Math.floor(diffTime / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays >= 2) {
+      // Se a data é há mais de 2 dias, retorna a data no formato "dd/mm"
+      return targetDate.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  } else if (diffDays === 1) {
+      // Se a data é de um dia atrás, retorna "ontem"
+      return "ontem";
+  } else if (diffHours >= 6) {
+      // Se a data é há mais de 6 horas, retorna "há mais de 5hr"
+      return "há mais de 5hr";
+  } else if (diffHours >= 1) {
+      // Se a data é há 1 ou mais horas, retorna "há Xhr"
+      return `há ${diffHours}hr`;
+  } else if (diffMinutes >= 1) {
+      // Se a data é há 1 ou mais minutos, retorna "há Xmin"
+      return `há ${diffMinutes}min`;
+  } else if (diffSeconds >= 1) {
+      // Se a data é há 1 ou mais segundos, retorna "há Xseg"
+      return `há ${diffSeconds}seg`;
+  } else {
+      // Se a data é menos de 1 segundo, retorna "há menos de 1s"
+      return "há menos de 1s";
+  }
+}

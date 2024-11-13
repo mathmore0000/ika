@@ -4,6 +4,7 @@ import AppLayout from "@/components/shared/AppLayout";
 import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { NotificationsProps } from "@/constants/interfaces/props/Notifications";
+import { formatNotificationDate } from "@/utils/date";
 
 const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Notifications" }) => {
   const [notifications, setNotifications] = useState([]);
@@ -82,7 +83,7 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
     >
       <Text style={styles.title}>{item.message} - {item.seen ? "Visualizado" : "Não visualizado"}</Text>
       <Text style={styles.description}>{JSON.parse(item.detailedMessage)?.message}</Text>
-      <Text style={styles.time}>{item.createdAt}</Text>
+      <Text style={styles.time}>{formatNotificationDate(new Date(item.createdAt))}</Text>
     </TouchableOpacity>
   );
 
