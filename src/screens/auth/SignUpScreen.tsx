@@ -41,6 +41,7 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
   };
 
   const handlePressSignUp = async () => {
+    onChangeEmail(email.toLowerCase());
     const newErrors: { [key: string]: string } = {};
     const nameError = validateName(name);
     if (nameError) newErrors.name = nameError;

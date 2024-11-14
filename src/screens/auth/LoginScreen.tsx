@@ -19,6 +19,7 @@ import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { checkAuth } from "@/../App.js";
 import { useTranslation } from "react-i18next";
+import { setEmitFlags } from "typescript";
 
 const Login = ({ navigation, onLoginSuccess }) => {
   const { t } = useTranslation();
@@ -41,6 +42,7 @@ const Login = ({ navigation, onLoginSuccess }) => {
 
   const handlePressLogin = async () => {
     const newErrors: { [key: string]: string } = {};
+    onChangeEmail(email.toLowerCase());
 
     const emailError = validateEmail(email);
     if (emailError) {
