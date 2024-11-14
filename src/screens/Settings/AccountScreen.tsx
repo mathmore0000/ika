@@ -21,6 +21,7 @@ import ChangePasswordModal from './ChangePasswordModal'; // Importar o modal
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaskedTextInput } from 'react-native-mask-text';
 import RemoteImage from "@/components/shared/RemoteImage";
+import Toast from "react-native-toast-message";
 import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/AntDesign';
 import TextInputComponent from '@/components/forms/TextInput';
@@ -190,6 +191,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                 const uri = asset.uri;
                 setProfilePicture(uri);
                 await uploadProfilePicture(uri);
+                setIsEditPhotoModalVisible(false);
             } else {
                 console.log('Usuário cancelou a seleção da imagem');
             }
@@ -215,6 +217,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                 setProfilePicture(uri);
                 await uploadProfilePicture(asset.uri);
                 console.log("handleTakePhoto 6");
+                setIsEditPhotoModalVisible(false);
             } else {
                 console.log('Usuário cancelou a captura da foto');
             }
@@ -409,7 +412,9 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                         </View>
                     </View>
                 </View>
+                <Toast />
             </Modal>
+            <Toast />
         </View>
     );
 };
