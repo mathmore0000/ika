@@ -82,8 +82,10 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
   };
 
   const pickVideoFromCamera = async () => {
+    console.log("pegando...")
     let result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Videos });
-    if (!result.cancelled) setVideo(result.uri);
+    if (!result.cancelled) setVideo(result.assets[0].uri);
+    console.log("pego", video)
   };
 
   const pickVideoFromGallery = async () => {
