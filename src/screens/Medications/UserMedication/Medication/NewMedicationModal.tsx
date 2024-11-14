@@ -250,7 +250,7 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
             <Text style={styles.saveButtonText}>{t("common.save")}</Text>
           </TouchableOpacity>
 
-
+          <Toast />
         </View>
       </ScrollView>
       <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
