@@ -29,8 +29,8 @@ export default StyleSheet.create({
         fontSize: 24,
     },
     profileImage: {
-        width: 25,
-        height: 25,
+        width: 35,
+        height: 35,
         borderRadius: 75,
     },
     container: {
@@ -59,17 +59,60 @@ export default StyleSheet.create({
     },
     acceptButton: {
         backgroundColor: "#28a745",
-        padding: 10,
+        padding: 6,
         borderRadius: 5,
     },
     removeButton: {
         backgroundColor: "#dc3545",
-        padding: 10,
+        padding: 6,
         borderRadius: 5,
         marginLeft: 10,
     },
+    toggleContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        borderTopEndRadius: 6,
+        borderTopStartRadius: 6,
+        width: "100%",
+        backgroundColor: "#23527c",
+        padding: 5,
+    },
+    toggleButton: {
+        flex: 1,
+        height: 40,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: '#23527c',
+        borderColor: '#23527c',
+        borderWidth: 1,
+        borderBottomWidth: 0,
+        borderRadius: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    activeButton: {
+        backgroundColor: "#496b8a",
+    },
     buttonText: {
         color: "#fff",
+        fontSize: 14,
         fontWeight: "bold",
     },
+    buttonText2: {
+        color: "#fff",
+        fontSize: 13,
+    },
+    activeButtonText: {
+        color: "#fff",
+    },
+    listContainer: {
+        borderWidth: 1,
+        borderTopWidth: 0,
+        borderColor: '#D1D5DB',
+        width: '100%',
+        paddingVertical: 20,
+        borderBottomStartRadius: 6,
+        borderBottomEndRadius: 6
+    }
 });
