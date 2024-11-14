@@ -30,6 +30,7 @@
     }
   },
   "medications": {
+    "stockExpiresIn": "Expires in {{date}}",
     "fourHours": "4 hours",
     "sixHours": "6 hours",
     "eightHours": "8 hours",
