@@ -56,6 +56,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error(t("medications.errorLoadingStocks"), error);
+      showErrorToast(t("user.userReportError"));
     } finally {
       setLoading(false);
     }

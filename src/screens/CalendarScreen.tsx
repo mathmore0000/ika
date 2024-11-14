@@ -6,6 +6,7 @@ import AppLayout from "@/components/shared/AppLayout";
 import { getDaysArray, today, todayFormatted, getDateAndHour } from "@/utils/date";
 import TakeMedicationModal from "./Usage/Creation/TakeMedicationModal"; // Import the modal
 import Icon from "react-native-vector-icons/AntDesign";
+import { showErrorToast } from "@/utils/toast";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import ExpandableDatePicker from "@/screens/Calendar/ExpandableDatePicker";
@@ -66,6 +67,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       return response.data.content;
     } catch (error) {
       console.error("Erro ao carregar medicamentos:", error);
+      showErrorToast(t("medications.errorLoadingMedications"));
     }
     return [];
   };
@@ -81,6 +83,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       return response.data.content;
     } catch (error) {
       console.error("Erro ao carregar usos:", error);
+      showErrorToast(t("calendar.errorLoadingUsages"));
       return [];
     }
   };
@@ -90,6 +93,7 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
       const response = await api.get(`/user-medication-stocks/next-expiration/${medicationId}`);
       return response.data;
     } catch (error) {
+      showErrorToast(t("calendar.errorLoadingUsages"));
       console.error("Erro ao obter data de expiração:", error);
     }
   };

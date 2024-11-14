@@ -168,7 +168,8 @@
     "accepted": "Aceito"
   },
   "user": {
-    "localeAlterSuccess": "Linguagem atualizada"
+    "localeAlterSuccess": "Linguagem atualizada",
+    "localeAlterError": "Erro ao atualizar linguagem"
   },
   "videos": {
     "myVideos": "Meus Vídeos",
@@ -226,7 +227,9 @@
     "notProvided": "Não fornecido",
     "addPhoto": "Adicionar Foto",
     "takePhoto": "Tirar Foto",
+    "takePhotoError": "Erro ao tirar Foto",
     "choosePhoto": "Escolher Foto",
+    "choosePhotoError": "Erro ao escolher sua foto de perfíl",
     "nameUpdateSuccess": "Nome atualizado com sucesso.",
     "nameUpdateError": "Erro ao atualizar o nome.",
     "photoUpdateSuccess": "Foto de perfil atualizada com sucesso.",
@@ -295,6 +298,7 @@
     "selectMonth": "Selecione o mês",
     "selectYear": "Selecione o ano",
     "userReport": "Relatório do usuário",
+    "reportError": "Erro ao gerar o relatório",
     "responsibleReport": "Relatório do responsável"
   },
   "settings": {

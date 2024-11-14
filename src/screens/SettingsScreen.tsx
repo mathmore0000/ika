@@ -7,7 +7,7 @@ import LanguageModal from './Settings/LanguageModal';
 import i18n from '@/i18n';
 import api from "@/server/api";
 import { useTranslation } from 'react-i18next';
-import { showSuccessToast } from "@/utils/toast";
+import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { logout } from '@/contexts/AuthContext';
 import ReportsModal from "@/screens/Settings/ReportsModal"; // Importe o ReportsModal
 
@@ -52,6 +52,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
       showSuccessToast(t('user.localeAlterSuccess'))
     } catch (error) {
       // Aqui você pode lidar com o erro, por exemplo, mostrando uma mensagem ao usuário
+      showErrorToast(t("user.localeAlterError"));
       console.error('Error updating locale:', error);
     }
   };

@@ -50,6 +50,7 @@ const UserVideoList = () => {
       setCurrentPage(page);
     } catch (error) {
       console.error(t("videos.errorFetchingUserVideos"), error);
+      showErrorToast(t("videos.errorFetchingUserVideos"));
     } finally {
       setLoading(false);
       setRefreshing(false);

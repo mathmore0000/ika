@@ -195,6 +195,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             }
         } catch (error) {
             console.log("Erro ao escolher foto: ", error);
+            showErrorToast(t("user.choosePhotoError"));
         }
     };
 
@@ -223,6 +224,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             if (error == "Error: Missing camera or camera roll permission") {
                 return showErrorToast(t('pemissions.missingCameraOrGallery'))
             }
+            showErrorToast(t("user.takePhotoError"));
             console.log("Erro ao tirar foto:" + error);
         }
     };

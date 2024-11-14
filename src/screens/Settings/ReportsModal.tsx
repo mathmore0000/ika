@@ -88,6 +88,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             if (error.response.data == "Wrong year or month value") {
                 return showErrorToast(t('reports.WrongDate'))
             }
+            showErrorToast(t("user.reportError"));
             console.log("Erro: ", error)
         }
         finally {
@@ -133,6 +134,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             if (error.response.data == "Wrong year or month value") {
                 return showErrorToast(t('reports.WrongDate'))
             }
+            showErrorToast(t("user.reportError"));
             console.log("Erro: ", error)
         }
         finally {

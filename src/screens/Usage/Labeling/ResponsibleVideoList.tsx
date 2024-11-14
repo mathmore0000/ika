@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
 import { getDateAndHour } from "@/utils/date";
+import { showErrorToast } from "@/utils/toast";
 
 const ResponsibleVideoList = () => {
   const { t } = useTranslation();
@@ -49,7 +50,8 @@ const ResponsibleVideoList = () => {
       setTotalPages(response.data.totalPages);
       setCurrentPage(page);
     } catch (error) {
-      console.error(t("videos.errorLoadingVideos"), error);
+      console.error(error);
+      showErrorToast(t("videos.errorLoadingVideos"));
     } finally {
       setLoading(false);
       setRefreshing(false);
