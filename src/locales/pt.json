@@ -127,13 +127,21 @@
     "units": "unidades",
     "searchMedication": "Pesquisar medicamento...",
     "bandNone": "Sem tarja",
+    "chooseMedication": "Escolha o medicamento",
     "bandRedNoRetention": "Tarja vermelha sem retenção",
     "bandRedWithRetention": "Tarja vermelha com retenção",
     "bandBlack": "Tarja preta",
     "bandYellow": "Tarja amarela",
     "firstDose": "Primeira dose",
     "editUserMedication": "Editar Medicamento do Usuário",
-    "stockAvailable": "Estoque disponível"
+    "stockAvailable": "Estoque disponível",
+    "validationErrors": {
+      "categoryRequired": "A categoria é obrigatória",
+      "quantityRequired": "A quantidade é obrigatória",
+      "dosageRequired": "A dosagem é obrigatória",
+      "activeIngredientRequired": "O princípio ativo é obrigatório",
+      "stockQuantityRequired": "A quantidade em estoque é obrigatória"
+    }
   },
   "notifications": {
     "noNotifications": "Nenhuma notificação.",
@@ -219,6 +227,8 @@
     "saveSelection": "Salvar Seleção"
   },
   "account": {
+    "invalidPhoneNumber": "Número de telefone inválido",
+    "phoneNumberUpdateSuccess": "Número de telefone atualizado com sucesso",
     "enterFullName": "Digite o nome completo",
     "changeProfilePhoto": "Alterar Foto de Perfil",
     "displayName": "Nome de Exibição",
@@ -228,8 +238,8 @@
     "addPhoto": "Adicionar Foto",
     "takePhoto": "Tirar Foto",
     "takePhotoError": "Erro ao tirar Foto",
+    "choosePhotoError": "Erro ao escolher sua foto de perfil",
     "choosePhoto": "Escolher Foto",
-    "choosePhotoError": "Erro ao escolher sua foto de perfíl",
     "nameUpdateSuccess": "Nome atualizado com sucesso.",
     "nameUpdateError": "Erro ao atualizar o nome.",
     "photoUpdateSuccess": "Foto de perfil atualizada com sucesso.",
@@ -287,13 +297,13 @@
     "true": "Verdadeiro",
     "notConnectedToInternet": "Não está conectado à internet."
   },
-  "languages":{
+  "languages": {
     "selectLanguage": "Selecione o idioma",
     "portuguese": "Português",
     "english": "Inglês",
     "spanish": "Espanhol"
   },
-  "reports":{
+  "reports": {
     "selectReport": "Selecione o relatório",
     "selectMonth": "Selecione o mês",
     "selectYear": "Selecione o ano",

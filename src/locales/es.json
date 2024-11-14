@@ -30,6 +30,14 @@
     }
   },
   "medications": {
+    "chooseMedication": "Elija el medicamento",
+    "validationErrors": {
+      "categoryRequired": "La categoría es obligatoria",
+      "quantityRequired": "La cantidad es obligatoria",
+      "dosageRequired": "La dosis es obligatoria",
+      "activeIngredientRequired": "El ingrediente activo es obligatorio",
+      "stockQuantityRequired": "La cantidad en stock es obligatoria"
+    },
     "stockExpiresIn": "Expira em {{date}}",
     "fourHours": "4 horas",
     "sixHours": "6 horas",
@@ -168,6 +176,7 @@
     "accepted": "Aceptado"
   },
   "user": {
+    "localeAlterError": "Error al actualizar el idioma",
     "localeAlterSuccess": "Idioma actualizado"
   },
   "videos": {
@@ -218,6 +227,10 @@
     "saveSelection": "Guardar Selección"
   },
   "account": {
+    "takePhotoError": "Error al tomar la foto",
+    "choosePhotoError": "Error al elegir su foto de perfil",
+    "invalidPhoneNumber": "Número de teléfono inválido",
+    "phoneNumberUpdateSuccess": "Número de teléfono actualizado con éxito",
     "enterFullName": "Ingresa tu nombre completo",
     "changeProfilePhoto": "Cambiar Foto de Perfil",
     "displayName": "Nombre de exhibición",
@@ -291,6 +304,7 @@
     "spanish": "Español"
   },
   "reports": {
+    "reportError": "Error al generar el informe",
     "selectReport": "Seleccione el informe",
     "selectMonth": "Seleccione el mes",
     "selectYear": "Seleccione el año",
