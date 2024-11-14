@@ -6,6 +6,7 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { NotificationsProps } from "@/constants/interfaces/props/Notifications";
 import { formatNotificationDate } from "@/utils/date";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from "react-native-vector-icons/Ionicons";
 
 const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Notifications" }) => {
   const [notifications, setNotifications] = useState([]);
@@ -84,14 +85,17 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
         })
       }
     >
-      <Text style={styles.title}>{item.message} - {item.seen ? "Visualizado" : "Não visualizado"}</Text>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Text style={styles.title}>{item.message}</Text>
+        <Icon name="checkmark-done" size={18} color={item.seen ? "gray" : "#327ec2"} />
+      </View>
       <Text style={styles.description}>{JSON.parse(item.detailedMessage)?.message}</Text>
       <Text style={styles.time}>{formatNotificationDate(new Date(item.createdAt))}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={[styles.container,{paddingBottom: insets.bottom + (height * 0.069)}]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom + (height * 0.069) }]}>
       <FlatList
         data={notifications}
         renderItem={renderItem}
