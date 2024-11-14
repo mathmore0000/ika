@@ -14,8 +14,25 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
 
     const toggleExpand = () => setIsExpanded(!isExpanded);
 
-    const handleDateSelect = (date) => {
+    const handleDateSelectExpanded = (date: Date) => {
+        console.log("handleDateSelectExpanded", date)
         onDateSelect(date);
+    };
+
+    const handleDateSelectNotExpanded = (date: Date) => {
+        const finalDate = new Date(date);
+        finalDate.setDate(date.getDate()-1)
+        console.log("handleDateSelectNotExpanded", finalDate)
+        onDateSelect(finalDate)
+    }
+    const isSameDateNotExpanded = (selectedDate: Date, fullDate: Date) => {
+        const finalDate = new Date(fullDate);
+        finalDate.setDate(fullDate.getDate()-1)
+        return (
+            selectedDate.getUTCFullYear() === finalDate.getUTCFullYear() &&
+            selectedDate.getUTCMonth() === finalDate.getUTCMonth() &&
+            selectedDate.getUTCDate() === finalDate.getUTCDate()
+        );
     };
 
     const navigateMonth = (direction) => {
@@ -32,7 +49,7 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
         setDisplayedYear(newYear);
         setMonthDays(getMonthDaysWithAdjacentDays(newYear, newMonth));
     };
-    const isSameDate = (date1, date2) => {
+    const isSameDate = (date1: Date, date2: Date) => {
         return (
             date1.getUTCFullYear() === date2.getUTCFullYear() &&
             date1.getUTCMonth() === date2.getUTCMonth() &&
@@ -59,9 +76,9 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
             {!isExpanded && (
                 <View className="w-full flex justify-between flex-row px-4">
                     {getDaysArray(selectedDate).map((day) => (
-                        <TouchableOpacity className="flex items-center justify-center p-2" key={day.fullDate} onPress={() => handleDateSelect(new Date(day.fullDate))} style={{
-                            borderBottomWidth: day.isSameDate ? 2 : 0,
-                            borderBottomColor: day.isSameDate ? "white" : "transparent",
+                        <TouchableOpacity className="flex items-center justify-center p-2" key={day.fullDate} onPress={() => handleDateSelectNotExpanded(new Date(day.fullDate))} style={{
+                            borderBottomWidth: isSameDateNotExpanded(selectedDate, new Date(day.fullDate)) ? 2 : 0,
+                            borderBottomColor: isSameDateNotExpanded(selectedDate, new Date(day.fullDate)) ? "white" : "transparent",
                         }}>
                             <Text className="text-white">{day.name.split(".")[0]}</Text>
                             <Text className="text-white">{day.number}</Text>
@@ -100,7 +117,7 @@ const ExpandableDatePicker = ({ selectedDate, onDateSelect, expirationDates }) =
                             return (
                                 <TouchableOpacity
                                     key={day.fullDate}
-                                    onPress={() => handleDateSelect(date)}
+                                    onPress={() => handleDateSelectExpanded(date)}
                                     style={{
                                         width: "14.28%",
                                         padding: 8,

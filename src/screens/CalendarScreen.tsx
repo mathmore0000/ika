@@ -15,7 +15,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   const { t } = useTranslation();
   const weekDays = getDaysArray(today);
   const [selectedDay, setSelectedDay] = useState(today.toISOString().split("T")[0]);
-  console.log("setSelectedDay", selectedDay)
   const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
 
   const [dailyDoses, setDailyDoses] = useState([]);
@@ -34,7 +33,6 @@ const CalendarScreen = ({ navigation, local = "Calendar" }) => {
   useFocusEffect(
     useCallback(() => {
       loadDay();
-      console.log("useCallback com selectedDay:", selectedDay);
     }, [selectedDay])
   );
   
