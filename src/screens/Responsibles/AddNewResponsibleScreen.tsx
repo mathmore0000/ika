@@ -14,7 +14,6 @@ export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchRes
     const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
     const handleInvite = async () => {
-        setEmail(email.toLowerCase());
         const newErrors: { [key: string]: string } = {};
         const emailError = validateEmail(email);
         if (emailError) {
@@ -27,7 +26,7 @@ export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchRes
         setErrors({});
         try {
             await api.post(BASE_URL, null, {
-                params: { emailResponsible: email },
+                params: { emailResponsible: email.toLowerCase() },
             });
             showSuccessToast(t("responsibles.userInvited"));
             fetchResponsibles();

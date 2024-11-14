@@ -62,7 +62,7 @@ const SignUp: React.FC<NavigationProps> = ({ navigation }) => {
     try {
       await api.post("/auth/signup", {
         displayName: name,
-        email: email,
+        email: email.toLowerCase(),
         locale: "pt",
         password: password,
       });

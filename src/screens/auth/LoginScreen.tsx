@@ -42,8 +42,6 @@ const Login = ({ navigation, onLoginSuccess }) => {
 
   const handlePressLogin = async () => {
     const newErrors: { [key: string]: string } = {};
-    onChangeEmail(email.toLowerCase());
-
     const emailError = validateEmail(email);
     if (emailError) {
       newErrors.email = emailError;
@@ -63,7 +61,7 @@ const Login = ({ navigation, onLoginSuccess }) => {
 
     try {
       const response = await api.post("/auth/login", {
-        username: email,
+        username: email.toLowerCase(),
         password: password,
       });
       await onLoginSuccess(response.data.jwt, response.data.refreshToken)
