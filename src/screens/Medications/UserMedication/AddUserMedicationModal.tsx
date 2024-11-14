@@ -1,6 +1,6 @@
 // AddUserMedicationModal.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import api from "@/server/api";
@@ -8,6 +8,10 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import styles from "@/screens/_styles/medications";
 import { convertDateToLocalTimezone } from "@/utils/date";
 import { useTranslation } from "react-i18next";
+import Icon from "react-native-vector-icons/Ionicons";
+import DropdownComponent from '@/components/forms/Dropdown';
+import TextInputComponent from '@/components/forms/TextInput';
+import InputButtonComponent from '@/components/forms/InputButton';
 
 const AddUserMedicationModal = ({
   closeModal,
@@ -27,6 +31,13 @@ const AddUserMedicationModal = ({
   const [firstDosageTime, setFirstDosageTime] = useState(new Date());
   const [errors, setErrors] = useState({});
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const timeBetweenOptions = [
+    { label: "4 horas", value: "4" },
+    { label: "6 horas", value: "6" },
+    { label: "8 horas", value: "8" },
+    { label: "12 horas", value: "12" },
+    { label: "24 horas", value: "24" },
+  ];
 
   const handleSave = async () => {
     const validationErrors = {};
@@ -91,78 +102,94 @@ const AddUserMedicationModal = ({
   };
 
   return (
-    <View style={styles.modalContainer}>
-      <Text style={styles.title}>{t("medications.addToInventory")}</Text>
-      <Text style={styles.subTitle}>{selectedMedication.name}</Text>
+    <View className="flex-1 px-5 pt-5 w-full">
+      <View className="flex flex-row items-center justify-between pb-4">
+        <View className="flex flex-col items-start justify-between">
+          <Text className="font-bold text-xl">{t("medications.addToInventory")}</Text>
+          <Text>{selectedMedication.name}</Text>
+        </View>
+        <TouchableOpacity
+          onPress={closeModal}
+        >
+          <Icon name="return-up-back-outline" size={25} color="#000" />
+        </TouchableOpacity>
+      </View>
+      <ScrollView className="flex pt-5">
+        <View className="flex-1 flex flex-col gap-3 w-full">
+          <View className="contanier-input">
+            <TextInputComponent
+              navigation={null}
+              isInvalid={errors.quantityInt}
+              label={t("medications.quantityPills")}
+              keyboardType="numeric"
+              value={quantityInt}
+              setValue={handleQuantityIntChange}
+              editable={quantityMl === "0" || quantityMl === ""}
+            />
+            {errors.quantityInt && <Text style={styles.errorText}>{errors.quantityInt}</Text>}
+          </View>
+          <View className="contanier-input">
+            <TextInputComponent
+              label={t("medications.quantityMl")}
+              keyboardType="numeric"
+              navigation={null}
+              value={quantityMl}
+              setValue={handleQuantityMlChange}
+              editable={quantityInt === "0" || quantityInt === ""}
+            />
+            {errors.quantityMl && <Text style={styles.errorText}>{errors.quantityMl}</Text>}
+          </View>
+          <View className="contanier-input">
+            <DropdownComponent
+              data={timeBetweenOptions}
+              label={t("medications.timeBetweenDoses", { hours: timeBetween })}
+              navigation={null}
+              value={timeBetween}
+              setValue={setTimeBetween}
+              isInvalid={errors.timeBetween}
+            />
+            {errors.timeBetween && <Text style={styles.errorText}>{errors.timeBetween}</Text>}
+          </View>
 
-      <TextInput
-        style={[styles.input, errors.quantityInt && styles.inputError]}
-        placeholder={t("medications.quantityPills")}
-        keyboardType="numeric"
-        value={quantityInt}
-        onChangeText={handleQuantityIntChange}
-        editable={quantityMl === "0" || quantityMl === ""}
-      />
-      {errors.quantityInt && <Text style={styles.errorText}>{errors.quantityInt}</Text>}
+          <View className="contanier-input">
+            <InputButtonComponent
+              label={t("medications.firstDose")}
+              value={formatTimeForDisplay(firstDosageTime)}
+              onPress={() => setShowTimePicker(true)}
+              isInvalid={errors.firstDosageTime}
+            />
+            {showTimePicker && (
+              <DateTimePicker
+                value={firstDosageTime}
+                mode="time"
+                display="default"
+                onChange={handleTimeChange}
+              />
+            )}
+            {errors.firstDosageTime && <Text style={styles.errorText}>{errors.firstDosageTime}</Text>}
+          </View>
 
-      <TextInput
-        style={[styles.input, errors.quantityMl && styles.inputError]}
-        placeholder={t("medications.quantityMl")}
-        keyboardType="numeric"
-        value={quantityMl}
-        onChangeText={handleQuantityMlChange}
-        editable={quantityInt === "0" || quantityInt === ""}
-      />
-      {errors.quantityMl && <Text style={styles.errorText}>{errors.quantityMl}</Text>}
+          <View className="contanier-input">
+            <DropdownComponent
+              data={[
+                { label: "0.5 hora (30 minutos)", value: "0.5" },
+                { label: "1 hora", value: "1" },
+              ]}
+              label={t("medications.maxTakingTime", { time: maxTakingTime })}
+              navigation={null}
+              value={maxTakingTime}
+              setValue={setMaxTakingTime}
+              isInvalid={errors.maxTakingTime}
+            />
+            {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
 
-      <Text style={styles.label}>{t("medications.timeBetweenDoses", { hours: timeBetween })}</Text>
-      <Picker
-        selectedValue={timeBetween}
-        onValueChange={(itemValue) => setTimeBetween(itemValue)}
-        style={[styles.picker, errors.timeBetween && styles.inputError]}
-      >
-        <Picker.Item label="4 horas" value="4" />
-        <Picker.Item label="6 horas" value="6" />
-        <Picker.Item label="8 horas" value="8" />
-        <Picker.Item label="12 horas" value="12" />
-        <Picker.Item label="24 horas" value="24" />
-      </Picker>
-      {errors.timeBetween && <Text style={styles.errorText}>{errors.timeBetween}</Text>}
+          </View>
 
-      <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-        <Text style={[styles.datePickerText, errors.firstDosageTime && styles.inputError]}>
-          {t("medications.firstDose")}: {formatTimeForDisplay(firstDosageTime)}
-        </Text>
-      </TouchableOpacity>
-      {errors.firstDosageTime && <Text style={styles.errorText}>{errors.firstDosageTime}</Text>}
-
-      {showTimePicker && (
-        <DateTimePicker
-          value={firstDosageTime}
-          mode="time"
-          display="default"
-          onChange={handleTimeChange}
-        />
-      )}
-
-      <Text style={styles.label}>{t("medications.maxTakingTime", { time: maxTakingTime })}</Text>
-      <Picker
-        selectedValue={maxTakingTime}
-        onValueChange={(itemValue) => setMaxTakingTime(itemValue)}
-        style={[styles.picker, errors.maxTakingTime && styles.inputError]}
-      >
-        <Picker.Item label="0.5 hora (30 minutos)" value="0.5" />
-        <Picker.Item label="1 hora" value="1" />
-      </Picker>
-      {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
-
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>{t("common.save")}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-        <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>{t("common.save")}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };

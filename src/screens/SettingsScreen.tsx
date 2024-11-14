@@ -58,7 +58,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
 
 
   return (
-    <View className="flex-1 p-4">
+    <View className="flex-1 p-4 bg-white">
       <View className="w-full flex flex-col gap-2">
         {settingsOptions.map((option, index) => (
           <TouchableOpacity

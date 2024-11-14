@@ -5,6 +5,8 @@ import api from "@/server/api";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { validateEmail } from "@/data/validations/auth/auth";
 import { useTranslation } from 'react-i18next';
+import TextInputComponent from '@/components/forms/TextInput';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchResponsibles, fetchSupervisedUsers }) {
     const { t } = useTranslation();
@@ -48,26 +50,29 @@ export default function AddNewResponsibleScreen({ BASE_URL, closeModal, fetchRes
 
     return (
         <View style={styles.modalContainer}>
-            <Text style={styles.title}>{t("responsibles.inviteResponsible")}</Text>
+            <View className="flex flex-row w-full items-center justify-between pb-3">
+                <Text className="font-bold text-xl">{t("responsibles.inviteResponsible")}</Text>
+                <TouchableOpacity
+                    onPress={closeModal}
+                >
+                    <Icon name="close" size={25} color="#000" />
+                </TouchableOpacity>
+            </View>
+            <View className="container-input w-full">
+                <TextInputComponent
+                    isInvalid={!!errors.email}
+                    label={t("auth.login.email")}
+                    placeholder={t("responsibles.enterEmail")}
+                    value={email}
+                    setValue={setEmail}
+                    navigation={null}
+                />
+                {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+            </View>
 
-            <TextInput
-                style={[
-                    styles.input,
-                    errors.email && styles.inputError,
-                ]}
-                placeholder={t("responsibles.enterEmail")}
-                placeholderTextColor="#aaa"
-                value={email}
-                onChangeText={setEmail}
-            />
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-            <TouchableOpacity style={styles.sendButton} onPress={handleInvite}>
-                <Text style={styles.sendButtonText}>{t("responsibles.sendInvite")}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>{t("common.cancel")}</Text>
+            <TouchableOpacity className="bg-primary w-full button-icon" onPress={handleInvite}>
+                <Icon name="mail" size={20} color="#fff" />
+                <Text className="text-white font-semibold">{t("responsibles.sendInvite")}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -84,6 +89,7 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         alignItems: 'center',
+        gap: 15,
     },
     title: {
         fontSize: 18,

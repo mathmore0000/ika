@@ -271,6 +271,7 @@ const styles = StyleSheet.create({
   },
   videoItem: {
     padding: 15,
+    marginBottom: 10,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#ccc",

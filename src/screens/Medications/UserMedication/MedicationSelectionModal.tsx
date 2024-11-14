@@ -165,14 +165,21 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
       </Modal>
 
       <Modal visible={isNewUserMedicationModal} transparent={true} animationType="fade">
-        <UserMedicationModal
-          closeModal={closeNewUserMedicationModal}
-          closeMedicationSelectionModal={closeModal}
-          onUserMedicationCreated={onUserMedicationCreated}
-          selectedMedication={selectedMedication}
-        />
+        <View className="flex-1 flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+          <View className="bg-white rounded-t-lg flex items-center justify-center" style={{
+            width: width, // 80% da largura da tela
+            height: height * 0.8, // 80% da altura da tela
+          }}>
+            <UserMedicationModal
+              closeModal={closeNewUserMedicationModal}
+              closeMedicationSelectionModal={closeModal}
+              onUserMedicationCreated={onUserMedicationCreated}
+              selectedMedication={selectedMedication}
+            />
+          </View>
+        </View>
       </Modal>
-      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" style={{marginBottom: insets.bottom}}>
+      <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" style={{ marginBottom: insets.bottom }}>
         <TouchableOpacity onPress={openIsNewMedicationModal} className="w-1/2 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
           <IconEnty name="add-to-list" size={20} color="#23527c" />
           <Text className="font-bold text-primary">{t("medications.addMedicationButton")}</Text>

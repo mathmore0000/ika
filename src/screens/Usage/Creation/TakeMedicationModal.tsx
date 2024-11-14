@@ -9,6 +9,9 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import Toast from "react-native-toast-message";
 import { cancelMedicationRemindersForNextHour } from "@/utils/alarm"
+import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/AntDesign';
+import { getDateAndHour } from "@/utils/date";
 
 const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
 const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTaken }) => {
@@ -141,62 +144,76 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
 
   return (
     <Modal visible={isVisible} transparent animationType="slide">
-      <View style={styles.modalContainer}>
-        <Text style={styles.title}>{t("medications.takeMedication")}</Text>
+      <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
+        <View className="w-4/5 p-5 gap-3 bg-white rounded-xl">
+          <View className="flex flex-row items-center justify-between">
+            <Text className="font-bold text-xl">{t('medications.takeMedication')}</Text>
+            <Icon name="close" size={20} onPress={closeModal} />
+          </View>
+          <View className="flex flex-col gap-2 mt-4">
 
-        <FlatList
-          data={selectedStocks}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <View style={styles.stockItem}>
-              <Text>
-                {t("medications.stockExpiresIn", { date: item.stock.expirationDate })},{" "}
-                {t("medications.quantity")}: {item.quantity}
-              </Text>
-              <TouchableOpacity onPress={() => handleRemoveStock(index)}>
-                <Text style={styles.removeText}>{t("common.remove")}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        />
+            {/* Buttons for selecting video source */}            
+            <TouchableOpacity className="button-icon bg-primary" onPress={pickVideoFromGallery}>
+              <IconM name="camera-burst" color="#fff" size={20} />
+              <Text className="text-white font-semibold">{t("medications.chooseVideoFromGallery")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="button-icon bg-primary" onPress={pickVideoFromCamera}>
+              <IconM name="camera-outline" color="#fff" size={20} />
+              <Text className="text-white font-semibold">{t("medications.recordVideo")}</Text>
+            </TouchableOpacity>
+            {video && <Text className="text-primary font-bold text-center">{t("medications.videoSelected")}</Text>}
 
-        <TouchableOpacity onPress={() => setIsSelectStockModalVisible(true)}>
-          <Text style={styles.addButtonText}>{t("medications.selectStock")}</Text>
-        </TouchableOpacity>
+            <TouchableOpacity className="button-icon border border-primary mt-4" onPress={() => setIsSelectStockModalVisible(true)}>
+              <IconM name="menu" color="#23527c" size={20} />
+              <Text className="text-primary font-semibold">{t("medications.selectStock")}</Text>
+            </TouchableOpacity>
 
-        {/* Buttons for selecting video source */}
-        <TouchableOpacity onPress={pickVideoFromCamera}>
-          <Text style={styles.addButtonText}>{t("medications.recordVideo")}</Text>
-        </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity onPress={pickVideoFromGallery}>
-          <Text style={styles.addButtonText}>{t("medications.chooseVideoFromGallery")}</Text>
-        </TouchableOpacity>
+          <FlatList
+            data={selectedStocks}
+            ListHeaderComponent={
+              selectedStocks.length > 0 ? (
+                <View className="flex flex-row justify-between my-2">
+                  <Text className="font-bold">{t("medications.expirationDate")}</Text>
+                  <Text className="font-bold">{t("medications.quantity")}</Text>
+                  <Text className="font-bold">{t("common.remove")}</Text>
+                </View>
+              ) : null
+            }
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View className="p-2 border mb-2 border-slate-200 rounded-md bg-slate-100 flex flex-row justify-between">
+                <Text>{getDateAndHour(new Date(item.stock.expirationDate)).split(",")[0]}</Text>
+                <Text>{item.quantity}</Text>
+                <TouchableOpacity onPress={() => handleRemoveStock(index)}>
+                  <IconM name="trash-can-outline" color="red" size={20} />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
 
-        {video && <Text>{t("medications.videoSelected")}</Text>}
-
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>{t("common.save")}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-          <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
-        </TouchableOpacity>
-
-        <SelectStockModal
-          isVisible={isSelectStockModalVisible}
-          closeModal={() => setIsSelectStockModalVisible(false)}
-          stocks={stocks}
-          onAddStock={handleAddStock}
-          fetchStocks={fetchStocks}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPages={totalPages}
-          loading={loading}
-          refreshing={refreshing} // Adicionado
-          onRefresh={onRefresh} // Adicionado
-        />
+          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+            <Text style={styles.saveButtonText}>{t("common.save")}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+
+
+      <SelectStockModal
+        isVisible={isSelectStockModalVisible}
+        closeModal={() => setIsSelectStockModalVisible(false)}
+        stocks={stocks}
+        onAddStock={handleAddStock}
+        fetchStocks={fetchStocks}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        loading={loading}
+        refreshing={refreshing} // Adicionado
+        onRefresh={onRefresh} // Adicionado
+      />
       <Toast />
     </Modal>
   );
