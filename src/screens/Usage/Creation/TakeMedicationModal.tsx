@@ -63,8 +63,6 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
   };
 
   const handleAddStock = (stock, quantity) => {
-    console.log("stock", stock)
-    console.log("quantity", quantity)
     setStocks((prevStocks) =>
       prevStocks.map((s) =>
         s.id === stock.id ? { ...s, availableQuantity: s.availableQuantity - quantity } : s
