@@ -84,6 +84,7 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
           value={expirationDate}
           mode="date"
           display="default"
+          minimumDate={new Date()}
           onChange={handleDateChange}
         />
       )}
