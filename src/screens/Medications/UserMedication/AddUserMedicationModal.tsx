@@ -39,11 +39,13 @@ const AddUserMedicationModal = ({
     { label: "24 horas", value: "24" },
   ];
 
+  console.log("aijsdiosa")
   const handleSave = async () => {
     const validationErrors = {};
     if (!timeBetween) validationErrors.timeBetween = t("medications.validationErrors.timeBetweenRequired");
     if (!firstDosageTime) validationErrors.firstDosageTime = t("medications.validationErrors.firstDosageTimeRequired");
     if (!maxTakingTime) validationErrors.maxTakingTime = t("medications.validationErrors.maxTakingTimeRequired");
+    if ((quantityInt == "0" || quantityInt == "") && (quantityMl == "0" || quantityMl == "")) validationErrors.quantityMl = t("medications.validationErrors.quantityRequired");
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -126,7 +128,6 @@ const AddUserMedicationModal = ({
               setValue={handleQuantityIntChange}
               editable={quantityMl === "0" || quantityMl === ""}
             />
-            {errors.quantityInt && <Text style={styles.errorText}>{errors.quantityInt}</Text>}
           </View>
           <View className="contanier-input">
             <TextInputComponent
