@@ -87,7 +87,7 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text style={styles.title}>{item.message}</Text>
-        <Icon name="checkmark-done" size={18} color={item.seen ? "gray" : "#327ec2"} />
+        <Icon name="checkmark-done" size={18} color={item.seen ? "#327ec2" : "gray"} />
       </View>
       <Text style={styles.description}>{JSON.parse(item.detailedMessage)?.message}</Text>
       <Text style={styles.time}>{formatNotificationDate(new Date(item.createdAt))}</Text>
