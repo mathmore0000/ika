@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import api from "@/server/api";
+import { getDateAndHour } from "@/utils/date";
 
 const NotificationDetails: React.FC<{ route: any }> = ({ route }) => {
   const { id, createdAt, detailedMessage, message, onSeen } = route.params;
@@ -20,7 +21,7 @@ const NotificationDetails: React.FC<{ route: any }> = ({ route }) => {
     <View style={styles.container}>
       <Text style={styles.title}>{message}</Text>
       <Text style={styles.description}>{detailedMessage?.message}</Text>
-      <Text style={styles.time}>{createdAt}</Text>
+      <Text style={styles.time}>{getDateAndHour(new Date(createdAt))}</Text>
     </View>
   );
 };
