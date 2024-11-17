@@ -6,7 +6,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TextInput
+  TextInput,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import api from '@/server/api';
@@ -28,6 +30,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordEmptyError, setPasswordEmptyError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false)
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -36,10 +40,11 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
     }
 
     if (newPassword !== confirmPassword) {
+      setPasswordEmptyError(true)
       showErrorToast(t('account.passwordsDoNotMatch'));
       return;
     }
-    const passwordError = validatePassword(newPassword);
+    setPasswordError(validatePassword(newPassword) ? false : true);
     if (passwordError) return showErrorToast(t('account.passwordsNotStrongEnough'));
 
     try {
@@ -52,6 +57,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setPasswordEmptyError(false)
+      setPasswordError(false)
       onClose();
     } catch (error) {
       if (error.response.status == 401) {
@@ -64,46 +71,53 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.modalBackground}>
-        <View style={styles.modalContainer}>
-          <View className="flex flex-row items-center justify-between">
-            <Text className="font-bold text-xl">{t('account.changePassword')}</Text>
-            <Icon name="close" size={20} onPress={onClose} />
-          </View>
-          <View className="flex flex-col gap-3 mt-4">
-            <TextInputComponent
-              secureTextEntry={true}
-              label={t('account.currentPassword')}
-              value={currentPassword}
-              navigation={null}
-              setValue={setCurrentPassword}
-            />
-            <TextInputComponent
-              label={t('account.newPassword')}
-              navigation={null}
-              secureTextEntry
-              value={newPassword}
-              setValue={setNewPassword}
-            />
-            <TextInputComponent
-              label={t('account.confirmPassword')}
-              secureTextEntry
-              navigation={null}
-              value={confirmPassword}
-              setValue={setConfirmPassword}
-            />
-          </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.modalBackground}>
+          <View className="pop-up">
+            <View className="flex w-full flex-row items-center justify-between">
+              <Text className="font-bold text-xl">{t('account.changePassword')}</Text>
+              <Icon name="close" size={20} onPress={onClose} />
+            </View>
+            <View className="flex flex-col gap-3 mt-4">
+              <TextInputComponent
+                secureTextEntry={true}
+                label={t('account.currentPassword')}
+                value={currentPassword}
+                navigation={null}
+                setValue={setCurrentPassword}
+              />
+              <TextInputComponent
+                label={t('account.newPassword')}
+                navigation={null}
+                secureTextEntry
+                isInvalid={!!passwordEmptyError}
+                value={newPassword}
+                setValue={setNewPassword}
+              />
+              <TextInputComponent
+                label={t('account.confirmPassword')}
+                secureTextEntry
+                navigation={null}
+                isInvalid={!!passwordError}
+                value={confirmPassword}
+                setValue={setConfirmPassword}
+              />
+            </View>
 
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity onPress={handleChangePassword} style={styles.saveButton}>
-              <Text style={styles.saveButtonText}>{t('common.save')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity onPress={handleChangePassword} style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>{t('common.save')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+                <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <Toast />
     </Modal>
   );

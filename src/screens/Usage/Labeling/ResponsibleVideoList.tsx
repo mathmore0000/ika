@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, StyleSheet, RefreshControl, Button } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Modal, StyleSheet, RefreshControl, Button, ScrollView } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "@/server/api";
 import VideoModal from "./VideoModal";
@@ -140,7 +140,48 @@ const ResponsibleVideoList = () => {
 
       {/* Lista de vídeos */}
       <FlatList
-        data={videos}
+        data={[
+          {
+            id: "1",
+            user: {
+              avatarUrl: "https://via.placeholder.com/150",
+              displayName: "John Doe",
+              email: "johndoe@example.com",
+            },
+            actionTmstamp: "2024-11-16T12:30:00Z",
+            isApproved: null, // Ainda não classificado
+          },
+          {
+            id: "2",
+            user: {
+              avatarUrl: "https://via.placeholder.com/150",
+              displayName: "Jane Smith",
+              email: "janesmith@example.com",
+            },
+            actionTmstamp: "2024-11-15T15:45:00Z",
+            isApproved: true, // Rejeitado
+          },
+          {
+            id: "3",
+            user: {
+              avatarUrl: "https://via.placeholder.com/150",
+              displayName: "Alice Johnson",
+              email: "alicejohnson@example.com",
+            },
+            actionTmstamp: "2024-11-14T10:20:00Z",
+            isApproved: false, // Aprovado
+          },
+          {
+            id: "4",
+            user: {
+              avatarUrl: "https://via.placeholder.com/150",
+              displayName: "Bob Brown",
+              email: "bobbrown@example.com",
+            },
+            actionTmstamp: "2024-11-13T08:15:00Z",
+            isApproved: null, // Ainda não classificado
+          },
+        ]}
         keyExtractor={(item) => item.id}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
@@ -149,14 +190,14 @@ const ResponsibleVideoList = () => {
             <View className="flex flex-row gap-2">
               <RemoteImage uri={item.user.avatarUrl} style={styles.profileImage} />
               <View className="flex flex-col gap-1">
-                <Text className="text-base">{t("videos.user")}: {item.user.displayName}</Text>
-                <Text className="text-base">{t("videos.email")}: {item.user.email}</Text>
+                <Text className="text-sm">{t("videos.user")}: {item.user.displayName}</Text>
+                <Text className="text-sm">{t("videos.email")}: {item.user.email}</Text>
                 {/* <Text className="text-base">{t("videos.videoId")}: {item.id}</Text> */}
-                <Text className="text-base">{t("videos.timestamp")}: {getDateAndHour(new Date(item.actionTmstamp))}</Text>
+                <Text className="text-sm">{t("videos.timestamp")}: {getDateAndHour(new Date(item.actionTmstamp))}</Text>
               </View>
             </View>
-            <TouchableOpacity style={{borderColor: item.isApproved == null ? "#ca8a04" :  item.isApproved ? "#991b1b" : "#166534"}} className="rounded-md border p-1 flex items-center" onPress={() => setSelectedVideo(item)}>
-              <Text style={{color: item.isApproved == null ? "#ca8a04" :  item.isApproved ? "#991b1b" : "#166534"}}  className="text-lg text-white">
+            <TouchableOpacity style={{ borderColor: item.isApproved == null ? "#ca8a04" : item.isApproved ? "#991b1b" : "#166534" }} className="rounded-md border p-1 flex items-center" onPress={() => setSelectedVideo(item)}>
+              <Text style={{ color: item.isApproved == null ? "#ca8a04" : item.isApproved ? "#991b1b" : "#166534" }} className="text-lg text-white">
                 {item.isApproved == null ? t("videos.classify") : (item.isApproved ? t("videos.reject") : t("videos.approve"))}
               </Text>
             </TouchableOpacity>
@@ -171,24 +212,28 @@ const ResponsibleVideoList = () => {
       {selectedVideo && (
         <Modal transparent={true} animationType="slide">
           <View style={styles.modalBackground}>
-            <VideoModal url={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
-            <VideoActionsModal
-              closeModal={() => setSelectedVideo(null)}
-              video={selectedVideo}
-              onActionComplete={() => {
-                setVideos([]); setCurrentPage(0); fetchVideos(0, true);
-              }}
-            />
+            <ScrollView className="flex-1 flex">
+              <View className="flex flex-col items-center">
+                <VideoModal url={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
+                <VideoActionsModal
+                  closeModal={() => setSelectedVideo(null)}
+                  video={selectedVideo}
+                  onActionComplete={() => {
+                    setVideos([]); setCurrentPage(0); fetchVideos(0, true);
+                  }}
+                />
+              </View>
+            </ScrollView>
           </View>
           <Toast />
-        </Modal>
+        </Modal >
       )}
-    </View>
+    </View >
   );
 };
 
 const styles = StyleSheet.create({
-  profileImage:{
+  profileImage: {
     maxWidth: 70,
     maxHeight: 70,
     borderRadius: 50,

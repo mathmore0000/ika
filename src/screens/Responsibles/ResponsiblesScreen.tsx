@@ -86,7 +86,21 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom + (height * 0.03) }]}>
-      <View className="flex flex-row justify-end items-center py-3">
+      <View className="flex flex-row justify-between items-center py-3">
+        <View className="flex flex-col items-center gap-1">
+          <View className="flex-row items-center gap-1">
+            <View style={styles.acceptButton}>
+              <Icon name="checkcircleo" size={10} color="#fff" />
+            </View>
+            <Text className="text-xs font-semibold">{t('responsibles.accept')}</Text>
+          </View>
+          <View className="flex-row items-center gap-1">
+            <View style={styles.removeButton}>
+              <Icon name="closecircleo" size={10} color="#fff" />
+            </View>
+            <Text className="text-xs font-semibold">{t('responsibles.remove')}</Text>
+          </View>
+        </View>
         <TouchableOpacity
           className="bg-primary flex flex-row items-center justify-center gap-2 p-2 rounded-md"
           onPress={openModal}
@@ -96,97 +110,98 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-        {/* Toggle Button */}
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity
-            style={[styles.toggleButton, !isResonsibleView && styles.activeButton]}
-            onPress={() => setIsResonsibleView(false)}
-          >
-            <Text style={[styles.buttonText, !isResonsibleView && styles.activeButtonText]}>
-              {t("responsibles.responsibles")}
-            </Text>
-          </TouchableOpacity>
+      {/* Toggle Button */}
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[styles.toggleButton, !isResonsibleView && styles.activeButton]}
+          onPress={() => setIsResonsibleView(false)}
+        >
+          <Text style={[styles.buttonText, !isResonsibleView && styles.activeButtonText]}>
+            {t("responsibles.responsibles")}
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.toggleButton, isResonsibleView && styles.activeButton]}
-            onPress={() => setIsResonsibleView(true)}
-          >
-            <Text style={[styles.buttonText, isResonsibleView && styles.activeButtonText]}>
-              {t("responsibles.supervisedUsers")}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={[styles.toggleButton, isResonsibleView && styles.activeButton]}
+          onPress={() => setIsResonsibleView(true)}
+        >
+          <Text style={[styles.buttonText, isResonsibleView && styles.activeButtonText]}>
+            {t("responsibles.supervisedUsers")}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-        {/* Video List */}
-        <View style={[styles.listContainer]} className="flex-1">
-          {isResonsibleView ? (<FlatList
-            data={supervisedUsers}
-            ListEmptyComponent={<Text className="text-center" style={styles.emptyText}>{t("responsibles.noSupervisedUsersFound")}</Text>}
-            keyExtractor={(user) => user.id}
-            renderItem={({ item }) => (
-              <View className="flex flex-col gap-2 px-2 py-3">
-                <View className="flex flex-row gap-2 justify-between items-center">
-                  <View className="flex flex-row items-center gap-2">
-                    <RemoteImage
-                      uri={item.user.avatarUrl}
-                      style={styles.profileImage}
-                    />
-                    <Text>{item.user.displayName}</Text>
-                  </View>
+      {/* Video List */}
 
-                  <View className="flex flex-row items-center">
-                    {!item.accepted && (
-                      <TouchableOpacity
-                        style={styles.acceptButton}
-                        onPress={() => handleAcceptRequest(item.user.id)}
-                      >
-                        <Icon name="checkcircleo" size={20} color="#fff" />
-                        {/* <Text style={styles.buttonText}>{t("common.accept")}</Text> */}
-                      </TouchableOpacity>
-                    )}
-                    <TouchableOpacity
-                      style={styles.removeButton}
-                      onPress={() => handleRemoveUser(item.user.id, "user")}
-                    >
-                      <Icon name="closecircleo" size={20} color="#fff" />
-                      {/* <Text style={styles.buttonText}>{t("common.remove")}</Text> */}
-                    </TouchableOpacity>
-                  </View>
+      <View style={[styles.listContainer]} className="flex-1">
+        {isResonsibleView ? (<FlatList
+          data={supervisedUsers}
+          ListEmptyComponent={<Text className="text-center" style={styles.emptyText}>{t("responsibles.noSupervisedUsersFound")}</Text>}
+          keyExtractor={(user) => user.id}
+          renderItem={({ item }) => (
+            <View className="flex flex-col gap-2 px-2 py-3">
+              <View className="flex flex-row gap-2 justify-between items-center">
+                <View className="flex flex-row items-center gap-2">
+                  <RemoteImage
+                    uri={item.user.avatarUrl}
+                    style={styles.profileImage}
+                  />
+                  <Text>{item.user.displayName}</Text>
                 </View>
-                <View className="border-b w-full border-gray-300" />
-              </View>
-            )}
-          />) : (<FlatList
-            data={pendingResponsibles}
-            ListEmptyComponent={<Text className="text-center" style={styles.emptyText}>{t("responsibles.noResponsiblesFound")}</Text>}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View className="flex flex-col gap-2 px-2 py-3">
-                <View className="flex flex-row gap-2 justify-between items-center">
-                  <View className="flex flex-row items-center gap-2">
-                    <RemoteImage
-                      uri={item.responsible.avatarUrl}
-                      style={styles.profileImage}
-                    />
-                    <Text >{item.responsible.displayName}</Text>
-                  </View>
-                  <Text >
-                    {item.accepted == true ? t("responsibles.accepted") : t("responsibles.notAccepted")}
-                  </Text>
-                  <View className="flex flex-row items-center">
+
+                <View className="flex flex-row items-center">
+                  {!item.accepted && (
                     <TouchableOpacity
-                      style={styles.removeButton}
-                      onPress={() => handleRemoveUser(item.responsible.id, "responsible")}
+                      style={styles.acceptButton}
+                      onPress={() => handleAcceptRequest(item.user.id)}
                     >
-                      <Icon name="closecircleo" size={20} color="#fff" />
+                      <Icon name="checkcircleo" size={20} color="#fff" />
+                      {/* <Text style={styles.buttonText}>{t("common.accept")}</Text> */}
                     </TouchableOpacity>
-                  </View>
+                  )}
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => handleRemoveUser(item.user.id, "user")}
+                  >
+                    <Icon name="closecircleo" size={20} color="#fff" />
+                    {/* <Text style={styles.buttonText}>{t("common.remove")}</Text> */}
+                  </TouchableOpacity>
                 </View>
-                <View className="border-b w-full border-gray-300" />
               </View>
-            )}
-          />)}
-        </View>
+              <View className="border-b w-full border-gray-300" />
+            </View>
+          )}
+        />) : (<FlatList
+          data={pendingResponsibles}
+          ListEmptyComponent={<Text className="text-center" style={styles.emptyText}>{t("responsibles.noResponsiblesFound")}</Text>}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View className="flex flex-col gap-2 px-2 py-3">
+              <View className="flex flex-row gap-2 justify-between items-center">
+                <View className="flex flex-row items-center gap-2">
+                  <RemoteImage
+                    uri={item.responsible.avatarUrl}
+                    style={styles.profileImage}
+                  />
+                  <Text >{item.responsible.displayName}</Text>
+                </View>
+                <Text>
+                  {item.accepted == true ? t("responsibles.accepted") : t("responsibles.notAccepted")}
+                </Text>
+                <View className="flex flex-row items-center">
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => handleRemoveUser(item.responsible.id, "responsible")}
+                  >
+                    <Icon name="closecircleo" size={20} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View className="border-b w-full border-gray-300" />
+            </View>
+          )}
+        />)}
+      </View>
       <Modal
         visible={isModalVisible}
         animationType="fade"
@@ -194,7 +209,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
         onRequestClose={closeModal}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View className="pop-up">
             <AddNewResponsibleScreen
               BASE_URL={BASE_URL}
               fetchResponsibles={fetchResponsibles}

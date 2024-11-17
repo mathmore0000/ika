@@ -111,7 +111,7 @@ function App() {
         <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
         <Stack.Screen name="Responsibles" component={ResponsiblesScreen} />
         <Stack.Screen name="Medications" component={MedicationsScreen} />
-        <Stack.Screen name="Videos" component={VideoFilterScreen} />
+        <Stack.Screen name="Videos" options={{ headerShown: false }} component={VideoFilterScreen} />
         <Stack.Screen name="Account" component={AccountScreen} />
       </Stack.Navigator>
     );

@@ -1,6 +1,6 @@
 // VideoActionsModal.js
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import api from "@/server/api";
 import LabelSelectionModal from "./LabelSelectionModal";
 import { showErrorToast, showSuccessToast } from "@/utils/toast";
@@ -37,21 +37,28 @@ const VideoActionsModal = ({ closeModal, video, onActionComplete }) => {
   const displaySelectedLabels = selectedLabels.map(label => label.description).join(" ///");
 
   return (
-    <View style={styles.modalContainer}>
-      <Text style={styles.modalTitle}>{t("videos.reviewVideo")}</Text>
-      {/* <Text>{t("videos.videoId")}: {video.id}</Text> */}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ width: "100%" }}
+    >
+      <View style={styles.modalContainer}>
 
-      {/* <Text style={styles.modalLabel}>{t("videos.selectedLabels")}:</Text> */}
-      <View className="contanier-input">
-        <InputButtonComponent
-          onPress={()=> setIsLabelModalVisible(true)}
-          label={t("videos.selectedLabels")}//traduzir
-          placeholder={t("videos.chooseLabels")}
-          value={displaySelectedLabels/*traduzir*/}
-          isInvalid={validationError && selectedLabels.length === 0}
-        />
-      </View>
-      {/* <TouchableOpacity onPress={() => setIsLabelModalVisible(true)}>
+        <Text style={styles.modalTitle}>{t("videos.reviewVideo")}</Text>
+        {/* <Text>{t("videos.videoId")}: {video.id}</Text> */}
+
+
+        {/* <Text style={styles.modalLabel}>{t("videos.selectedLabels")}:</Text> */}
+        <View className="contanier-input">
+          <InputButtonComponent
+            navigation={null}
+            onPress={() => setIsLabelModalVisible(true)}
+            label={t("videos.selectedLabels")}//traduzir
+            placeholder={t("videos.chooseLabels")}
+            value={displaySelectedLabels/*traduzir*/}
+            isInvalid={validationError && selectedLabels.length === 0}
+          />
+        </View>
+        {/* <TouchableOpacity onPress={() => setIsLabelModalVisible(true)}>
         <Text style={[
           styles.selectLabelsText,
           validationError && selectedLabels.length === 0 && styles.errorBorder,
@@ -62,39 +69,41 @@ const VideoActionsModal = ({ closeModal, video, onActionComplete }) => {
         </Text>
       </TouchableOpacity> */}
 
-      <TextInput
-        style={[
-          styles.textInput,
-          validationError && obs === "" && styles.errorBorder,
-        ]}
-        textAlignVertical="top"
-        multiline
-        numberOfLines={4}
-        placeholder={t("videos.observation")}
-        value={obs}    
-        onChangeText={(text) => {
-          setObs(text);
-          if (validationError) setValidationError(false);
-        }}
-      />
+        <TextInput
+          style={[
+            styles.textInput,
+            validationError && obs === "" && styles.errorBorder,
+          ]}
+          textAlignVertical="top"
+          multiline
+          numberOfLines={4}
+          placeholder={t("videos.observation")}
+          value={obs}
+          onChangeText={(text) => {
+            setObs(text);
+            if (validationError) setValidationError(false);
+          }}
+        />
 
-      <View style={{marginLeft: -7}} className="flex flex-row items-center w-[98%] gap-2 mt-4">
-        <TouchableOpacity onPress={() => handleAction(true)} className="w-1/2 flex flex-row justify-center bg-green-700 p-3 rounded-sm">
-          <Text style={styles.buttonText}>{t("videos.approve")}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleAction(false)} className="w-1/2 bg-red-700 flex flex-row justify-center p-3 rounded-sm">
-          <Text style={styles.buttonText}>{t("videos.reject")}</Text>
-        </TouchableOpacity>
+
+        <View style={{ marginLeft: -7 }} className="flex flex-row items-center w-[98%] gap-2 mt-4">
+          <TouchableOpacity onPress={() => handleAction(true)} className="w-1/2 flex flex-row justify-center bg-green-700 p-3 rounded-sm">
+            <Text style={styles.buttonText}>{t("videos.approve")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleAction(false)} className="w-1/2 bg-red-700 flex flex-row justify-center p-3 rounded-sm">
+            <Text style={styles.buttonText}>{t("videos.reject")}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Label Selection Modal */}
+        <LabelSelectionModal
+          isVisible={isLabelModalVisible}
+          closeModal={() => setIsLabelModalVisible(false)}
+          onLabelSelect={(selected) => setSelectedLabels(selected)}
+          initialSelectedLabels={selectedLabels}
+        />
       </View>
-
-      {/* Label Selection Modal */}
-      <LabelSelectionModal
-        isVisible={isLabelModalVisible}
-        closeModal={() => setIsLabelModalVisible(false)}
-        onLabelSelect={(selected) => setSelectedLabels(selected)}
-        initialSelectedLabels={selectedLabels}
-      />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

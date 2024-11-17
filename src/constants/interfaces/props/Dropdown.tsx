@@ -7,6 +7,7 @@ export interface DropdownNodeProps extends DefaultProps {
   label: string;
   setValue: (value: any) => void;
   value: any;
+  disabled?: boolean;
   isInvalid?: boolean;
   search?: boolean;
 }

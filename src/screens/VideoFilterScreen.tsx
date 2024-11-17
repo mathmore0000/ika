@@ -14,7 +14,7 @@ const VideoFilterScreen = ({ navigation, local = 'Videos' }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + (height * 0.03) }]}>
 
       {/* Toggle Button */}
       <View style={styles.toggleContainer}>
@@ -49,7 +49,7 @@ const VideoFilterScreen = ({ navigation, local = 'Videos' }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "#fff",
   },
   toggleContainer: {
@@ -80,11 +80,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#333",
-    fontSize: 14,
+    fontSize: 13,
   },
   buttonText2: {
     color: "#333",
-    fontSize: 13,
+    fontSize: 12,
   },
   activeButtonText: {
     color: "#000",

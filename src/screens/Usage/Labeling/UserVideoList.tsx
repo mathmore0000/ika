@@ -247,7 +247,9 @@ const UserVideoList = () => {
       {/* Modal de vídeo */}
       {selectedVideo && (
         <Modal visible={true} transparent={true} animationType="slide">
-          <VideoModal url={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
+          <View style={{ alignItems: "center" }}>
+            <VideoModal url={selectedVideo.url} onClose={() => setSelectedVideo(null)} />
+          </View>
           <Toast />
         </Modal>
       )}

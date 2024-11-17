@@ -54,7 +54,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
     <View className="flex-1 flex flex-col gap-4 py-3">
       <View className="flex flex-col bg-white shadow-black rounded-lg border border-gray-300">
         <View className="flex flex-row justify-between items-center h-14 bg-primary p-4 rounded-t-lg">
-          <Text className="font-bold text-lg text-white">{userMedication.medication.name} - {userMedication.disabled ? "true" : "false"}</Text>
+          <Text className="font-bold text-lg text-white">{userMedication.medication.name}</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#81b0ff' }}
             thumbColor={!userMedication.disabled ? '#f4f3f4' : '#f4f3f4'}
@@ -85,7 +85,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
           </View>
           <Modal visible={isStockModalVisible} transparent={true} animationType="fade">
             <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
-              <View className="w-4/5 p-5 bg-white rounded-xl">
+              <View className="pop-up">
                 <StockModal
                   closeModal={() => setIsStockModalVisible(false)}
                   fetchStock={fetchStock}
@@ -98,7 +98,7 @@ const MedicationCard = ({ userMedication, onUserMedicationEdited, calculateDoseT
 
           <Modal visible={isEditModalVisible} transparent={true} animationType="fade">
             <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
-              <View className="w-4/5 p-5 bg-white rounded-xl">
+              <View className="pop-up">
                 <EditUserMedicationModal
                   closeModal={() => setIsEditModalVisible(false)}
                   onUserMedicationEdited={onUserMedicationEdited}

@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 // import AntDesign from '@expo/vector-icons/AntDesign';
 import { DropdownNodeProps } from "@/constants/interfaces/props/Dropdown";
 
-const DropdownComponent: React.FC<DropdownNodeProps> = ({navigation, local, data, placeholder, label, setValue, value, search = false, isInvalid = false}) => {
+const DropdownComponent: React.FC<DropdownNodeProps> = ({navigation, local, data, placeholder, label, setValue, value, search = false, isInvalid = false, disabled = false}) => {
     const [isFocus, setIsFocus] = useState(false);
 
     const renderLabel = () => {
@@ -22,7 +22,12 @@ const DropdownComponent: React.FC<DropdownNodeProps> = ({navigation, local, data
         <View style={styles.container}>
             {renderLabel()}
             <Dropdown
-                style={[styles.dropdown, isInvalid && { borderColor: 'red' }, isFocus && { borderColor: '#0047ab' }]}
+                style={[
+                    styles.dropdown,
+                    isInvalid && { borderColor: 'red' },
+                    isFocus && { borderColor: '#0047ab' },
+                    disabled && styles.dropdownDisabled, // Adiciona estilo desabilitado
+                ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -32,23 +37,18 @@ const DropdownComponent: React.FC<DropdownNodeProps> = ({navigation, local, data
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? (placeholder || 'Selecione') : '...'}//traduzir
-                searchPlaceholder="Search..."//traduzir
+                placeholder={!isFocus ? (placeholder || 'Selecione') : '...'} // traduzir
+                searchPlaceholder="Search..." // traduzir
                 value={value}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
+                onFocus={() => !disabled && setIsFocus(true)}
+                onBlur={() => !disabled && setIsFocus(false)}
+                disable={disabled}
                 onChange={item => {
-                    setValue(item.value);
-                    setIsFocus(false);
+                    if (!disabled) {
+                        setValue(item.value);
+                        setIsFocus(false);
+                    }
                 }}
-                // renderLeftIcon={() => (
-                //     <AntDesign
-                //         style={styles.icon}
-                //         color={isFocus ? 'blue' : 'black'}
-                //         name="Safety"
-                //         size={20}
-                //     />
-                // )}
             />
         </View>
     );
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',        
         width: '100%',
-        paddingTop: 10
+        paddingTop: 10,
     },
     dropdown: {
         height: 50,
@@ -69,6 +69,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 8,
+        backgroundColor: 'white', // Cor padrão
+    },
+    dropdownDisabled: {
+        backgroundColor: '#f0f0f0', // Cor de fundo desabilitada
+        borderColor: '#d3d3d3',    // Cor da borda desabilitada
     },
     icon: {
         marginRight: 5,

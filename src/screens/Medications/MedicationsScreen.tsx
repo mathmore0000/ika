@@ -144,7 +144,7 @@ const MedicationScreen = ({ navigation, local = "Medications" }) => {
 
 
   return (
-    <View className="flex-1 p-6 flex flex-col gap-2" style={{paddingBottom: insets.bottom + (height * 0.07)}}>
+    <View className="flex-1 p-3 flex flex-col gap-2" style={{paddingBottom: insets.bottom + (height * 0.07)}}>
       <View className="flex flex-row items-center justify-end">
         {/* <Text style={styles.header}>{t('medications.medicationList')}</Text> */}
         <TouchableOpacity style={styles.addButton} onPress={openModal}>

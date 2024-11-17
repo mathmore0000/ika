@@ -1,6 +1,6 @@
 // AddUserMedicationModal.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import api from "@/server/api";
@@ -117,79 +117,84 @@ const AddUserMedicationModal = ({
         </TouchableOpacity>
       </View>
       <ScrollView className="flex pt-5">
-        <View className="flex-1 flex flex-col gap-3 w-full">
-          <View className="contanier-input">
-            <TextInputComponent
-              navigation={null}
-              isInvalid={errors.quantityInt}
-              label={t("medications.quantityPills")}
-              keyboardType="numeric"
-              value={quantityInt}
-              setValue={handleQuantityIntChange}
-              editable={quantityMl === "0" || quantityMl === ""}
-            />
-          </View>
-          <View className="contanier-input">
-            <TextInputComponent
-              label={t("medications.quantityMl")}
-              keyboardType="numeric"
-              navigation={null}
-              value={quantityMl}
-              setValue={handleQuantityMlChange}
-              editable={quantityInt === "0" || quantityInt === ""}
-            />
-            {errors.quantityMl && <Text style={styles.errorText}>{errors.quantityMl}</Text>}
-          </View>
-          <View className="contanier-input">
-            <DropdownComponent
-              data={timeBetweenOptions}
-              label={t("medications.timeBetweenDoses", { hours: timeBetween })}
-              navigation={null}
-              value={timeBetween}
-              setValue={setTimeBetween}
-              isInvalid={errors.timeBetween}
-            />
-            {errors.timeBetween && <Text style={styles.errorText}>{errors.timeBetween}</Text>}
-          </View>
-
-          <View className="contanier-input">
-            <InputButtonComponent
-              label={t("medications.firstDose")}
-              value={formatTimeForDisplay(firstDosageTime)}
-              onPress={() => setShowTimePicker(true)}
-              isInvalid={errors.firstDosageTime}
-            />
-            {showTimePicker && (
-              <DateTimePicker
-                value={firstDosageTime}
-                mode="time"
-                display="default"
-                onChange={handleTimeChange}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View className="flex-1 flex flex-col gap-3 w-full">
+            <View className="contanier-input">
+              <TextInputComponent
+                navigation={null}
+                isInvalid={errors.quantityInt}
+                label={t("medications.quantityPills")}
+                keyboardType="numeric"
+                value={quantityInt}
+                setValue={handleQuantityIntChange}
+                editable={quantityMl === "0" || quantityMl === ""}
               />
-            )}
-            {errors.firstDosageTime && <Text style={styles.errorText}>{errors.firstDosageTime}</Text>}
+            </View>
+            <View className="contanier-input">
+              <TextInputComponent
+                label={t("medications.quantityMl")}
+                keyboardType="numeric"
+                navigation={null}
+                value={quantityMl}
+                setValue={handleQuantityMlChange}
+                editable={quantityInt === "0" || quantityInt === ""}
+              />
+              {errors.quantityMl && <Text style={styles.errorText}>{errors.quantityMl}</Text>}
+            </View>
+            <View className="contanier-input">
+              <DropdownComponent
+                data={timeBetweenOptions}
+                label={t("medications.timeBetweenDoses", { hours: timeBetween })}
+                navigation={null}
+                value={timeBetween}
+                setValue={setTimeBetween}
+                isInvalid={errors.timeBetween}
+              />
+              {errors.timeBetween && <Text style={styles.errorText}>{errors.timeBetween}</Text>}
+            </View>
+
+            <View className="contanier-input">
+              <InputButtonComponent
+                label={t("medications.firstDose")}
+                value={formatTimeForDisplay(firstDosageTime)}
+                onPress={() => setShowTimePicker(true)}
+                isInvalid={errors.firstDosageTime}
+              />
+              {showTimePicker && (
+                <DateTimePicker
+                  value={firstDosageTime}
+                  mode="time"
+                  display="default"
+                  onChange={handleTimeChange}
+                />
+              )}
+              {errors.firstDosageTime && <Text style={styles.errorText}>{errors.firstDosageTime}</Text>}
+            </View>
+
+            <View className="contanier-input">
+              <DropdownComponent
+                data={[
+                  { label: "0.5 hora (30 minutos)", value: "0.5" },
+                  { label: "1 hora", value: "1" },
+                ]}
+                label={t("medications.maxTakingTime", { time: maxTakingTime })}
+                navigation={null}
+                value={maxTakingTime}
+                setValue={setMaxTakingTime}
+                isInvalid={errors.maxTakingTime}
+              />
+              {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
+
+            </View>
+
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.saveButtonText}>{t("common.save")}</Text>
+            </TouchableOpacity>
           </View>
-
-          <View className="contanier-input">
-            <DropdownComponent
-              data={[
-                { label: "0.5 hora (30 minutos)", value: "0.5" },
-                { label: "1 hora", value: "1" },
-              ]}
-              label={t("medications.maxTakingTime", { time: maxTakingTime })}
-              navigation={null}
-              value={maxTakingTime}
-              setValue={setMaxTakingTime}
-              isInvalid={errors.maxTakingTime}
-            />
-            {errors.maxTakingTime && <Text style={styles.errorText}>{errors.maxTakingTime}</Text>}
-
-          </View>
-
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>{t("common.save")}</Text>
-          </TouchableOpacity>
-        </View>
+        </KeyboardAvoidingView>
       </ScrollView>
     </View>
   );

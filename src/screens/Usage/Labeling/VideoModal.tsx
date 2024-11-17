@@ -4,11 +4,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Video } from 'expo-av';
 import { showErrorToast } from "@/utils/toast";
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const VideoModal = ({ url, onClose }) => {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.modalContainer}>
+    <View style={[styles.modalContainer, {marginTop: insets.top}]}>
       <View style={styles.header}>
 
         <Text style={styles.title}>{t("videos.videoViewer")}</Text>

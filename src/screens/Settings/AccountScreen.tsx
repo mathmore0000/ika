@@ -359,7 +359,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
                         label={t('account.dateOfBirth')}
                         navigation={null}
                         value={dateOfBirthFormatted || t('account.notProvided')}
-                        editable={isEditingDOB}
+                        editable={false}
                         setValue={(text) => setDateOfBirth(text)}
                     />
                 </View>
@@ -395,8 +395,8 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
 
             <Modal visible={isEditPhotoModalVisible} transparent={true} animationType="fade">
                 <View className="flex-1 bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
-                    <View className="w-4/5 p-5 gap-3 bg-white rounded-xl">
-                        <View className="flex flex-row items-center justify-between">
+                    <View className="pop-up gap-3">
+                        <View className="flex w-full flex-row items-center justify-between">
                             <Text className="font-bold text-xl">{t('account.changeProfilePhoto')}</Text>
                             <Icon name="close" size={20} onPress={() => setIsEditPhotoModalVisible(false)} />
                         </View>

@@ -17,3 +17,7 @@
 .button-cancel {
     @apply flex items-center justify-center border p-3 rounded-lg border-primary;
 }
+
+.pop-up {
+    @apply mx-5 p-5 bg-white rounded-xl max-w-[500px]
+}

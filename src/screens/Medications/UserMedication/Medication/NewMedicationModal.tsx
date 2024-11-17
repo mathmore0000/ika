@@ -1,6 +1,6 @@
 // NewMedicationModal.js
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, Dimensions } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, Dimensions, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { medicationType, medicationErrorType, activeIngredientType, categoryType } from "@/constants/interfaces/Entities";
 import api from "@/server/api";
 import { Picker } from "@react-native-picker/picker";
@@ -15,6 +15,7 @@ import DropdownComponent from '@/components/forms/Dropdown';
 import TextInputComponent from '@/components/forms/TextInput';
 import InputButtonComponent from '@/components/forms/InputButton';
 import Toast from "react-native-toast-message";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface NewMedicationModalProps {
   closeModal: () => void;
@@ -33,6 +34,7 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
   const openIngredientModal = () => setIsIngredientModalVisible(true);
   const closeIngredientModal = () => setIsIngredientModalVisible(false);
   const { width, height } = Dimensions.get("window"); // Obtém a largura e altura da tela
+  const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
 
   const handleCategorySelected = (category: categoryType) => {
     updateCustomMedication({ category: category });
@@ -133,149 +135,157 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
   //teste
 
   return (
-    <View className="flex-1 px-5 pt-5 w-full">
-      <View className="flex flex-row items-center justify-between pb-4">
-        <Text className="font-bold text-xl">{t("medications.newMedication")}</Text>
-        <TouchableOpacity
-          onPress={closeModal}
-        >
-          <Icon name="return-up-back-outline" size={25} color="#000" />
-        </TouchableOpacity>
-      </View>
-      <ScrollView className="flex pt-5">
-        <View className="flex-1 flex flex-col gap-3 w-full">
-          <View className="contanier-input">
-            <TextInputComponent
-              label={t("medications.medicationName")}
-              isInvalid={!!errors.name}
-              navigation={null}
-              setValue={(value) => updateCustomMedication({ name: value })}
-              value={customMedication.name}
-            />
-            {errors.name && <Text style={styles.errorText}>{t(errors.name)}</Text>}
-          </View>
-
-          <View className="contanier-input">
-            <InputButtonComponent
-              onPress={openCategoryModal}
-              label="Categoria" //traduzir
-              value={customMedication.category.description/*traduzir*/}
-              isInvalid={!!errors.category}
-            />
-            {errors.category && <Text style={styles.errorText}>{t(errors.category)}</Text>}
-          </View>
-          <View className="contanier-input">
-            <TextInputComponent
-              navigation={null}
-              label={t("medications.quantityPills")}
-              isInvalid={!!errors.quantityInt}
-              placeholder={t("medications.quantityInt")}
-              keyboardType="numeric"
-              editable={customMedication.quantityMl === 0 || customMedication.quantityMl === null}
-              value={customMedication.quantityInt.toString()}
-              setValue={(value) => handleQuantityIntChange(parseInt(value, 10))}
-            />
-          </View>
-          <View className="contanier-input">
-            <TextInputComponent
-              navigation={null}
-              isInvalid={!!errors.quantityInt}
-              label={t("medications.quantityMl")}
-              placeholder={t("medications.quantityMlPlaceholder")}
-              keyboardType="numeric"
-              editable={customMedication.quantityInt === 0 || customMedication.quantityInt === null}
-              value={customMedication.quantityMl.toString()}
-              setValue={(value) => handleQuantityMlChange(parseInt(value, 10))}
-            />
-            {errors.quantityInt && <Text style={styles.errorText}>{t(errors.quantityInt)}</Text>}
-          </View>
-
-          <View className="contanier-input">
-            <TextInputComponent
-              navigation={null}
-              isInvalid={!!errors.dosage}
-              label={t("medications.dosageMg")}
-              setValue={(value) => updateCustomMedication({ dosage: value })}
-              keyboardType="numeric"
-              value={customMedication.dosage}
-            />
-            {errors.dosage && <Text style={styles.errorText}>{t(errors.dosage)}</Text>}
-          </View>
-          <View className="contanier-input">
-            <InputButtonComponent
-              onPress={openIngredientModal}
-              label="Ingrediente ativo" //traduzir
-              value={customMedication.activeIngredient.description/*traduzir*/}
-              isInvalid={!!errors.activeIngredient}
-            />
-            {errors.activeIngredient && <Text style={styles.errorText}>{t(errors.activeIngredient)}</Text>}
-          </View>
-          <View className="container-input">
-            <DropdownComponent
-              navigation={null}
-              label={t("medications.maxTakingTime", { time: customMedication.maxTakingTime })}
-              value={customMedication.maxTakingTime}
-              data={itemsMaxTakingTime}
-              setValue={(value) => updateCustomMedication({ maxTakingTime: value })}
-              isInvalid={!!errors.maxTakingTime}
-            />
-            {errors.maxTakingTime && <Text style={styles.errorText}>{t(errors.maxTakingTime)}</Text>}
-          </View>
-
-          <View className="container-input">
-            <DropdownComponent
-              navigation={null}
-              label={t("medications.timeBetweenDoses", { hours: customMedication.timeBetween })}
-              value={customMedication.timeBetween}
-              data={itemsTimeBetween}
-              setValue={(value) => updateCustomMedication({ timeBetween: value })}
-              isInvalid={!!errors.timeBetween}
-            />
-            {errors.timeBetween && <Text style={styles.errorText}>{t(errors.timeBetween)}</Text>}
-          </View>
-
-          <View className={`container-input`}>
-            <DropdownComponent
-              navigation={null}
-              label="Tarja"
-              value={customMedication.band}
-              data={itemsBands}
-              setValue={(value) => updateCustomMedication({ band: value })}
-              isInvalid={!!errors.band}
-            />
-            {errors.band && <Text style={styles.errorText}>{t(errors.band)}</Text>}
-          </View>
-
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>{t("common.save")}</Text>
+    <SafeAreaView>
+      <View className="flex-1 px-5 pt-5 w-full">
+        <View className="flex w-full flex-row items-center justify-between pb-4">
+          <Text className="font-bold text-xl">{t("medications.newMedication")}</Text>
+          <TouchableOpacity
+            onPress={closeModal}
+          >
+            <Icon name="return-up-back-outline" size={25} color="#000" />
           </TouchableOpacity>
+        </View>
+        <ScrollView className="flex">
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+          >
+            <View className="flex-1 pb-5 flex flex-col gap-3 w-full">
+              <View className="contanier-input">
+                <TextInputComponent
+                  label={t("medications.medicationName")}
+                  isInvalid={!!errors.name}
+                  navigation={null}
+                  setValue={(value) => updateCustomMedication({ name: value })}
+                  value={customMedication.name}
+                />
+                {errors.name && <Text style={styles.errorText}>{t(errors.name)}</Text>}
+              </View>
 
+              <View className="contanier-input">
+                <InputButtonComponent
+                  navigation={null}
+                  onPress={openCategoryModal}
+                  label="Categoria" //traduzir
+                  value={customMedication.category.description/*traduzir*/}
+                  isInvalid={!!errors.category}
+                />
+                {errors.category && <Text style={styles.errorText}>{t(errors.category)}</Text>}
+              </View>
+              <View className="contanier-input">
+                <TextInputComponent
+                  navigation={null}
+                  label={t("medications.quantityPills")}
+                  isInvalid={!!errors.quantityInt}
+                  placeholder={t("medications.quantityInt")}
+                  keyboardType="numeric"
+                  editable={customMedication.quantityMl === 0 || customMedication.quantityMl === null}
+                  value={customMedication.quantityInt.toString()}
+                  setValue={(value) => handleQuantityIntChange(parseInt(value, 10))}
+                />
+              </View>
+              <View className="contanier-input">
+                <TextInputComponent
+                  navigation={null}
+                  isInvalid={!!errors.quantityInt}
+                  label={t("medications.quantityMl")}
+                  placeholder={t("medications.quantityMlPlaceholder")}
+                  keyboardType="numeric"
+                  editable={customMedication.quantityInt === 0 || customMedication.quantityInt === null}
+                  value={customMedication.quantityMl.toString()}
+                  setValue={(value) => handleQuantityMlChange(parseInt(value, 10))}
+                />
+                {errors.quantityInt && <Text style={styles.errorText}>{t(errors.quantityInt)}</Text>}
+              </View>
+              <View className="contanier-input">
+                <TextInputComponent
+                  navigation={null}
+                  isInvalid={!!errors.dosage}
+                  label={t("medications.dosageMg")}
+                  setValue={(value) => updateCustomMedication({ dosage: value })}
+                  keyboardType="numeric"
+                  value={customMedication.dosage}
+                />
+                {errors.dosage && <Text style={styles.errorText}>{t(errors.dosage)}</Text>}
+              </View>
+              <View className="contanier-input">
+                <InputButtonComponent
+                  navigation={null}
+                  onPress={openIngredientModal}
+                  label="Ingrediente ativo" //traduzir
+                  value={customMedication.activeIngredient.description/*traduzir*/}
+                  isInvalid={!!errors.activeIngredient}
+                />
+                {errors.activeIngredient && <Text style={styles.errorText}>{t(errors.activeIngredient)}</Text>}
+              </View>
+              <View className="container-input">
+                <DropdownComponent
+                  navigation={null}
+                  label={t("medications.maxTakingTime", { time: customMedication.maxTakingTime })}
+                  value={customMedication.maxTakingTime}
+                  data={itemsMaxTakingTime}
+                  setValue={(value) => updateCustomMedication({ maxTakingTime: value })}
+                  isInvalid={!!errors.maxTakingTime}
+                />
+                {errors.maxTakingTime && <Text style={styles.errorText}>{t(errors.maxTakingTime)}</Text>}
+              </View>
+
+              <View className="container-input">
+                <DropdownComponent
+                  navigation={null}
+                  label={t("medications.timeBetweenDoses", { hours: customMedication.timeBetween })}
+                  value={customMedication.timeBetween}
+                  data={itemsTimeBetween}
+                  setValue={(value) => updateCustomMedication({ timeBetween: value })}
+                  isInvalid={!!errors.timeBetween}
+                />
+                {errors.timeBetween && <Text style={styles.errorText}>{t(errors.timeBetween)}</Text>}
+              </View>
+
+              <View className={`container-input`}>
+                <DropdownComponent
+                  navigation={null}
+                  label="Tarja"
+                  value={customMedication.band}
+                  data={itemsBands}
+                  setValue={(value) => updateCustomMedication({ band: value })}
+                  isInvalid={!!errors.band}
+                />
+                {errors.band && <Text style={styles.errorText}>{t(errors.band)}</Text>}
+              </View>
+
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                <Text style={styles.saveButtonText}>{t("common.save")}</Text>
+              </TouchableOpacity>
+
+              <Toast />
+            </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
+        <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
+          <View className="flex-1 w-full flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+            <View className="bg-white w-full rounded-t-lg flex items-center justify-center" style={{
+              width: width, // 80% da largura da tela
+              height: height * 0.8, // 80% da altura da tela
+            }}>
+              <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
+              <Toast />
+            </View>
+          </View>
+        </Modal>
+        <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
+          <View className="flex-1 w-full flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
+            <View className="bg-white w-full rounded-t-lg flex items-center justify-center" style={{
+              width: width, // 80% da largura da tela
+              height: height * 0.8, // 80% da altura da tela
+            }}>
+              <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
+            </View>
+          </View>
           <Toast />
-        </View>
-      </ScrollView>
-      <Modal visible={isCategoryModalVisible} transparent={true} animationType="fade">
-        <View className="flex-1 w-full flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
-          <View className="bg-white w-full rounded-t-lg flex items-center justify-center" style={{
-            width: width, // 80% da largura da tela
-            height: height * 0.8, // 80% da altura da tela
-          }}>
-            <CategorySelectionModal closeModal={closeCategoryModal} onCategorySelected={handleCategorySelected} />
-            <Toast />
-          </View>
-        </View>
-      </Modal>
-      <Modal visible={isIngredientModalVisible} transparent={true} animationType="fade">
-        <View className="flex-1 w-full flex justify-end items-center bg-[rgba(0,0,0,0.5)]">
-          <View className="bg-white w-full rounded-t-lg flex items-center justify-center" style={{
-            width: width, // 80% da largura da tela
-            height: height * 0.8, // 80% da altura da tela
-          }}>
-            <ActiveIngredientSelectionModal closeModal={closeIngredientModal} onActiveIngredientSelected={handleActiveIngredientSelected} />
-          </View>
-        </View>
-        <Toast />
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </SafeAreaView>
   );
 };
 

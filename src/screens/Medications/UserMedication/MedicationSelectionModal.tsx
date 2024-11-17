@@ -180,12 +180,12 @@ const MedicationSelectionModal = ({ closeModal, userMedications, onUserMedicatio
         </View>
       </Modal>
       <View className="border-t py-[2vh] border-gray-300 flex-row gap-2 w-full flex items-center" style={{ marginBottom: insets.bottom }}>
-        <TouchableOpacity onPress={openIsNewMedicationModal} className="w-1/2 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
+        <TouchableOpacity onPress={openIsNewMedicationModal} className="flex-1 gap-3 p-2 h-10 border border-primary rounded-md flex flex-row justify-center items-center">
           <IconEnty name="add-to-list" size={20} color="#23527c" />
           <Text className="font-bold text-primary">{t("medications.addMedicationButton")}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleNewUserMedicationModal} className="w-1/2 gap-1 p-2 h-10 bg-primary rounded-md flex flex-row justify-center items-center">
+        <TouchableOpacity onPress={handleNewUserMedicationModal} className="flex-1 min-w-16 gap-1 p-2 h-10 bg-primary rounded-md flex flex-row justify-center items-center">
           <Icon name="plus" size={20} color="#fff" />
           <Text className="text-white font-bold">{t("medications.addToInventory")}</Text>
         </TouchableOpacity>

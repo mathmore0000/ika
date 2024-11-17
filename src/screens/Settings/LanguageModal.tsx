@@ -18,8 +18,8 @@ const LanguageModal: React.FC<LanguageModalProps> = ({ visible, onClose, onSelec
 
   const languages = [
     { label: t('languages.portuguese'), value: 'pt', src: require('../../assets/images/brazil.png') },
-    { label: t('languages.english'), value: 'en', src: require('../../assets/images/spain.png') },
-    { label: t('languages.spanish'), value: 'es', src: require('../../assets/images/usa.png') },
+    { label: t('languages.english'), value: 'en', src: require('../../assets/images/usa.png') },
+    { label: t('languages.spanish'), value: 'es', src: require('../../assets/images/spain.png') },
   ];
 
   const handleSelectLanguage = (language: string) => {
@@ -31,7 +31,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({ visible, onClose, onSelec
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalBackground}>
-        <View style={styles.modalContainer}>
+        <View className='pop-up'>
           <View className="flex w-full flex-row items-center justify-between">
             <Text className="font-bold text-xl">{t('languages.selectLanguage')}</Text>
             <IconAnt name="close" size={20} onPress={onClose} />

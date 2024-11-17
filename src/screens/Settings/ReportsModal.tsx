@@ -151,57 +151,58 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             onRequestClose={onClose}
         >
             <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                    <View className="w-full flex flex-row items-center justify-between">
-                        <Text className="text-xl font-bold">{t('reports.selectReport')}</Text>
-                        <TouchableOpacity onPress={onClose}>
-                            <Icon name="close" size={20} />
-                        </TouchableOpacity>
-                    </View>
-                    <View className="w-full mt-4">
-                        <View className="container-input">
-                            <DropdownComponent
-                                data={months}
-                                label={t('reports.selectMonth')}
-                                navigation={null}
-                                setValue={setSelectedMonth}
-                                value={selectedMonth}
-                            />
+                <View className="pop-up">
+                    <View className="w-full">
+                        <View className="flex w-full flex-row items-center justify-between">
+                            <Text className="text-xl font-bold">{t('reports.selectReport')}</Text>
+                            <TouchableOpacity onPress={onClose}>
+                                <Icon name="close" size={20} />
+                            </TouchableOpacity>
                         </View>
-                        <View className="container-input">
-                            <DropdownComponent
-                                data={years.map(year => ({ label: year.toString(), value: year }))}
-                                label={t('reports.selectYear')}
-                                navigation={null}
-                                setValue={setSelectedYear}
-                                value={selectedYear}
-                            />
+                        <View className="mt-4">
+                            <View className="container-input">
+                                <DropdownComponent
+                                    data={months}
+                                    label={t('reports.selectMonth')}
+                                    navigation={null}
+                                    setValue={setSelectedMonth}
+                                    value={selectedMonth}
+                                />
+                            </View>
+                            <View className="container-input">
+                                <DropdownComponent
+                                    data={years.map(year => ({ label: year.toString(), value: year }))}
+                                    label={t('reports.selectYear')}
+                                    navigation={null}
+                                    setValue={setSelectedYear}
+                                    value={selectedYear}
+                                />
+                            </View>
                         </View>
+
+                        <View className="flex flex-col items-center pt-4 gap-2 justify-between">
+                            <TouchableOpacity
+                                className="button-cancel flex-row w-full"
+                                onPress={handleGenerateUserReport}
+                                disabled={loading}
+                            >
+                                <Icon name="filetext1" color="#23527c" size={20} />
+                                <Text className="font-semibold text-primary p-2">{t('reports.userReport')}</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                className="button-confirm flex-row w-full"
+                                onPress={handleGenerateResponsibleReport}
+                                disabled={loading}
+                            >
+                                <Icon name="filetext1" color="#fff" size={20} />
+                                <Text className="font-semibold text-white p-2">{t('reports.responsibleReport')}</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {loading && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 10 }} />}
+
                     </View>
-
-                    <View className="flex flex-col w-full items-center gap-2 justify-between">
-                        <TouchableOpacity
-                            className="button-cancel flex-row w-full"
-                            onPress={handleGenerateUserReport}
-                            disabled={loading}
-                        >
-                            <Icon name="filetext1" color="#23527c" size={20}/>
-                            <Text className="font-semibold text-primary p-2">{t('reports.userReport')}</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            className="button-confirm flex-row w-full"
-                            onPress={handleGenerateResponsibleReport}
-                            disabled={loading}
-                        >
-                            <Icon name="filetext1" color="#fff" size={20}/>
-                            <Text className="font-semibold text-white p-2">{t('reports.responsibleReport')}</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {loading && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 10 }} />}
-
-
                 </View>
             </View>
             <Toast />
