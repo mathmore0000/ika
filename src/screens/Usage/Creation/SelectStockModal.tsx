@@ -74,7 +74,7 @@ const SelectStockModal = ({
               </View>
 
               <FlatList
-                data={[{ id: 0, expirationDate: t("medications.all"), availableQuantity: 0 }].concat(stocks)}
+                data={stocks}
                 keyExtractor={(item) => item.id}
                 onEndReached={loadMoreStocks}
                 onEndReachedThreshold={0.5}

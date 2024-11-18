@@ -140,48 +140,7 @@ const ResponsibleVideoList = () => {
 
       {/* Lista de vídeos */}
       <FlatList
-        data={[
-          {
-            id: "1",
-            user: {
-              avatarUrl: "https://via.placeholder.com/150",
-              displayName: "John Doe",
-              email: "johndoe@example.com",
-            },
-            actionTmstamp: "2024-11-16T12:30:00Z",
-            isApproved: null, // Ainda não classificado
-          },
-          {
-            id: "2",
-            user: {
-              avatarUrl: "https://via.placeholder.com/150",
-              displayName: "Jane Smith",
-              email: "janesmith@example.com",
-            },
-            actionTmstamp: "2024-11-15T15:45:00Z",
-            isApproved: true, // Rejeitado
-          },
-          {
-            id: "3",
-            user: {
-              avatarUrl: "https://via.placeholder.com/150",
-              displayName: "Alice Johnson",
-              email: "alicejohnson@example.com",
-            },
-            actionTmstamp: "2024-11-14T10:20:00Z",
-            isApproved: false, // Aprovado
-          },
-          {
-            id: "4",
-            user: {
-              avatarUrl: "https://via.placeholder.com/150",
-              displayName: "Bob Brown",
-              email: "bobbrown@example.com",
-            },
-            actionTmstamp: "2024-11-13T08:15:00Z",
-            isApproved: null, // Ainda não classificado
-          },
-        ]}
+        data={videos}
         keyExtractor={(item) => item.id}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
