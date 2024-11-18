@@ -86,21 +86,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom + (height * 0.03) }]}>
-      <View className="flex flex-row justify-between items-center py-3">
-        <View className="flex flex-col items-center gap-1">
-          <View className="flex-row items-center gap-1">
-            <View style={styles.acceptButton}>
-              <Icon name="checkcircleo" size={10} color="#fff" />
-            </View>
-            <Text className="text-xs font-semibold">{t('responsibles.accept')}</Text>
-          </View>
-          <View className="flex-row items-center gap-1">
-            <View style={styles.removeButton}>
-              <Icon name="closecircleo" size={10} color="#fff" />
-            </View>
-            <Text className="text-xs font-semibold">{t('responsibles.remove')}</Text>
-          </View>
-        </View>
+      <View className="flex flex-row justify-end items-center py-3">
         <TouchableOpacity
           className="bg-primary flex flex-row items-center justify-center gap-2 p-2 rounded-md"
           onPress={openModal}
@@ -136,6 +122,22 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
       <View style={[styles.listContainer]} className="flex-1">
         {isResonsibleView ? (<FlatList
           data={supervisedUsers}
+          ListHeaderComponent={
+            supervisedUsers?.length &&
+            <View className="flex-col px-2">
+              <View className="flex w-full flex-row py-3 items-center justify-between">
+                <View className="flex-row gap-2">
+                  <Text className="ml-1 text-sm font-semibold">{t("responsibles.picture")}</Text>
+                  <Text className="text-sm font-semibold">{t("responsibles.name")}</Text>
+                </View>
+                <View className="flex-row gap-2">
+                  <Text className="text-sm font-semibold">{t("responsibles.accept")}</Text>
+                  <Text className="text-sm font-semibold">{t("responsibles.remove")}</Text>
+                </View>
+              </View>
+              <View className="border-b w-full border-gray-300" />
+            </View>
+          }
           ListEmptyComponent={<Text className="text-center" style={styles.emptyText}>{t("responsibles.noSupervisedUsersFound")}</Text>}
           keyExtractor={(user) => user.id}
           renderItem={({ item }) => (
@@ -173,7 +175,21 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
           )}
         />) : (<FlatList
           data={pendingResponsibles}
-          ListEmptyComponent={<Text className="text-center" style={styles.emptyText}>{t("responsibles.noResponsiblesFound")}</Text>}
+          ListHeaderComponent={
+            pendingResponsibles?.length && <View className="flex-col px-2">
+              <View className="flex w-full flex-row py-3 items-center justify-between">
+                <View className="flex-row gap-2">
+                  <Text className="ml-1 text-sm font-semibold">{t("responsibles.picture")}</Text>
+                  <Text className="text-sm font-semibold">{t("responsibles.name")}</Text>
+                </View>
+                <View className="flex-row gap-2">
+                  <Text className="text-sm font-semibold">{t("responsibles.accept")}</Text>
+                </View>
+              </View>
+              <View className="border-b w-full border-gray-300" />
+            </View>
+          }
+          ListEmptyComponent={<Text className="text-center mt-4" style={styles.emptyText}>{t("responsibles.noResponsiblesFound")}</Text>}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View className="flex flex-col gap-2 px-2 py-3">

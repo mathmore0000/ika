@@ -155,6 +155,8 @@
     "responsibles": "Responsables",
     "noSupervisedUsersFound": "No se encontraron supervisados.",
     "noResponsiblesFound": "No se encontraron responsables.",
+    "picture": "Foto",
+    "name": "nombre",
     "accept": "Aceptar",
     "remove": "Eliminar",
     "inviteResponsible": "Invitar Responsable",

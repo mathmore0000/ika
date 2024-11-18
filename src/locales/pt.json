@@ -150,13 +150,15 @@
     "description": "Descrição"
   },
   "responsibles": {
+    "picture": "Foto",
+    "name": "Nome",
+    "accept": "Aceitar",
+    "remove": "Remover",
     "supervised": "Supervisionados",
     "supervisedUsers": "Supervisionados",
     "responsibles": "Responsáveis",
     "noSupervisedUsersFound": "Nenhum supervisionado encontrado.",
     "noResponsiblesFound": "Nenhum responsável encontrado.",
-    "accept": "Aceitar",
-    "remove": "Remover",
     "inviteResponsible": "Convidar Responsável",
     "enterEmail": "Digite o e-mail",
     "sendInvite": "Enviar Convite",

@@ -30,17 +30,19 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordNotEqualError, setPasswordNotEqualError] = useState(false)
   const [passwordEmptyError, setPasswordEmptyError] = useState(false);
   const [passwordError, setPasswordError] = useState(false)
 
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordEmptyError(true)
       showErrorToast(t('account.enterAllFields'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordEmptyError(true)
+      setPasswordNotEqualError(true)
       showErrorToast(t('account.passwordsDoNotMatch'));
       return;
     }
@@ -59,6 +61,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
       setConfirmPassword('');
       setPasswordEmptyError(false)
       setPasswordError(false)
+      setPasswordNotEqualError(false)
       onClose();
     } catch (error) {
       if (error.response.status == 401) {
@@ -86,6 +89,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
                 secureTextEntry={true}
                 label={t('account.currentPassword')}
                 value={currentPassword}
+                isInvalid={passwordEmptyError && !currentPassword}
                 navigation={null}
                 setValue={setCurrentPassword}
               />
@@ -93,7 +97,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
                 label={t('account.newPassword')}
                 navigation={null}
                 secureTextEntry
-                isInvalid={!!passwordEmptyError}
+                isInvalid={!!passwordNotEqualError || (passwordEmptyError && !newPassword)}
                 value={newPassword}
                 setValue={setNewPassword}
               />
@@ -101,7 +105,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
                 label={t('account.confirmPassword')}
                 secureTextEntry
                 navigation={null}
-                isInvalid={!!passwordError}
+                isInvalid={!!passwordError || (passwordEmptyError && !confirmPassword)}
                 value={confirmPassword}
                 setValue={setConfirmPassword}
               />
