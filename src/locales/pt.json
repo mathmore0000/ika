@@ -149,6 +149,11 @@
     "time": "Hora",
     "description": "Descrição"
   },
+  "title": {
+    "notificationdetails": "Detalhes",
+    "responsibles": "Responsáveis",
+    "account": "Configurações"
+  },
   "responsibles": {
     "picture": "Foto",
     "name": "Nome",

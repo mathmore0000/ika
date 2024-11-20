@@ -299,6 +299,11 @@
     "true": "Verdadero",
     "notConnectedToInternet": "No está conectado a internet."
   },
+  "title": {
+    "NotificationDetails": "Detalles",
+    "Responsibles": "Responsables",
+    "Account": "Ajustes"
+  },
   "languages": {
     "selectLanguage": "Seleccionar idioma",
     "portuguese": "Português",

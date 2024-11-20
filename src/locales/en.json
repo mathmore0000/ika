@@ -222,6 +222,11 @@
     "videos": "Videos",
     "title": "Videos"
   },
+  "title": {
+    "NotificationDetails": "Details",
+    "Responsibles": "Responsibles",
+    "Account": "Settings"
+  },
   "labels": {
     "errorLoadingLabels": "Error loading labels.",
     "selectLabels": "Select Labels",
