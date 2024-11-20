@@ -95,7 +95,7 @@ const Notifications: React.FC<NotificationsProps> = ({ navigation, local = "Noti
   );
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + (height * 0.069) }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + (height * 0.069) }]}>
       <FlatList
         data={notifications}
         renderItem={renderItem}

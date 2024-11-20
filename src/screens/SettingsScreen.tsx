@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from "react-native";
 import AppLayout from "@/components/shared/AppLayout"; // Footer ou layout do app
 import { SettingsProps } from "@/constants/interfaces/props/Settings";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -9,13 +9,16 @@ import api from "@/server/api";
 import { useTranslation } from 'react-i18next';
 import { showSuccessToast, showErrorToast } from "@/utils/toast";
 import { logout } from '@/contexts/AuthContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ReportsModal from "@/screens/Settings/ReportsModal"; // Importe o ReportsModal
 
 const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) => {
   const { t } = useTranslation();
   const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+  const insets = useSafeAreaInsets(); // Obter as margens seguras do dispositivo
   const [isReportsModalVisible, setReportsModalVisible] = useState(false);
+  const { height } = Dimensions.get("window");
   const settingsOptions = [
     { title: t('settings.medications'), subtitle: t('settings.medicationsDescription'), destination: "Medications", icon: "medkit-outline" },
     { title: t('settings.calendar'), subtitle: t('settings.calendarDescription'), destination: "Calendar", icon: "calendar-outline" },
@@ -57,9 +60,8 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
     }
   };
 
-
   return (
-    <View className="flex-1 p-4 bg-white">
+    <View style={[{ paddingTop: insets.top, paddingBottom: insets.bottom + (height * 0.069) }]} className="flex-1 p-4 bg-white">
       <View className="w-full flex flex-col gap-2">
         {settingsOptions.map((option, index) => (
           <TouchableOpacity
@@ -89,9 +91,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, local = 'Settings' }) =
         </TouchableOpacity>
       </View>
       <AppLayout navigation={navigation} local={local} />
-
-
-
 
       {/* Language Modal */}
       <LanguageModal
