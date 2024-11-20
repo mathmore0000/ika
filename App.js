@@ -106,11 +106,11 @@ function App() {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Calendar" options={{ headerShown: false }} component={CalendarScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Settings" options={{ headerShown: false }} component={SettingsScreen} />
+        <Stack.Screen name="Notifications" options={{ headerShown: false }} component={NotificationsScreen} />
         <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
         <Stack.Screen name="Responsibles" component={ResponsiblesScreen} />
-        <Stack.Screen name="Medications" component={MedicationsScreen} />
+        <Stack.Screen name="Medications" options={{ headerShown: false }} component={MedicationsScreen} />
         <Stack.Screen name="Videos" options={{ headerShown: false }} component={VideoFilterScreen} />
         <Stack.Screen name="Account" component={AccountScreen} />
       </Stack.Navigator>

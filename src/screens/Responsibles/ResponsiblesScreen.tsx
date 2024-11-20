@@ -183,7 +183,7 @@ const ResponsiblesScreen: React.FC<ResponsiblesProps> = ({ navigation }) => {
                   <Text className="text-sm font-semibold">{t("responsibles.name")}</Text>
                 </View>
                 <View className="flex-row gap-2">
-                  <Text className="text-sm font-semibold">{t("responsibles.accept")}</Text>
+                  <Text className="text-sm font-semibold">{t("responsibles.remove")}</Text>
                 </View>
               </View>
               <View className="border-b w-full border-gray-300" />
