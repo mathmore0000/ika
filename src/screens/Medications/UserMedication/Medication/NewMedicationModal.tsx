@@ -16,6 +16,8 @@ import TextInputComponent from '@/components/forms/TextInput';
 import InputButtonComponent from '@/components/forms/InputButton';
 import Toast from "react-native-toast-message";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/store/loaderSlice';
 
 interface NewMedicationModalProps {
   closeModal: () => void;
@@ -26,6 +28,7 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
   const { t } = useTranslation();
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [isIngredientModalVisible, setIsIngredientModalVisible] = useState(false);
+  const dispatch = useDispatch();
 
 
   const openCategoryModal = () => setIsCategoryModalVisible(true);
@@ -122,6 +125,7 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
     }
 
     try {
+      dispatch(setLoading(true))
       await api.post("/medications", { ...customMedication, categoryId: customMedication.category.id, activeIngredientId: customMedication.activeIngredient.id });
       showSuccessToast(t("medications.medicationCreated"));
       await onMedicationCreated();
@@ -129,6 +133,9 @@ const NewMedicationModal: React.FC<NewMedicationModalProps> = ({ closeModal, onM
     } catch (error) {
       console.log(error.response.data)
       showErrorToast(t("medications.errorCreatingMedication"));
+    }
+    finally{
+      dispatch(setLoading(false))
     }
   };
 

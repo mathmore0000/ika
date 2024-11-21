@@ -12,6 +12,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 import DropdownComponent from '@/components/forms/Dropdown';
 import TextInputComponent from '@/components/forms/TextInput';
 import InputButtonComponent from '@/components/forms/InputButton';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/store/loaderSlice';
 
 const AddUserMedicationModal = ({
   closeModal,
@@ -38,6 +40,7 @@ const AddUserMedicationModal = ({
     { label: "12 horas", value: "12" },
     { label: "24 horas", value: "24" },
   ];
+  const dispatch = useDispatch();
 
   console.log("aijsdiosa")
   const handleSave = async () => {
@@ -53,6 +56,7 @@ const AddUserMedicationModal = ({
     }
 
     try {
+      dispatch(setLoading(true))
       const firstDosageTimeISO = firstDosageTime.toISOString();
       const response = await api.post("/user-medications", {
         idMedication: selectedMedication.id,
@@ -70,6 +74,9 @@ const AddUserMedicationModal = ({
     } catch (error) {
       console.log(error.response.data);
       showErrorToast(t("medications.errorAddingMedicationToUser"));
+    }
+    finally {
+      dispatch(setLoading(false))
     }
   };
 

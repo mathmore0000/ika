@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/AntDesign";
 import DropdownComponent from "@/components/forms/Dropdown";
 import InputButtonComponent from "@/components/forms/InputButton";
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/store/loaderSlice';
 
 const EditUserMedicationModal = ({ closeModal, userMedication, onUserMedicationEdited }) => {
   const { t } = useTranslation();
@@ -18,6 +20,7 @@ const EditUserMedicationModal = ({ closeModal, userMedication, onUserMedicationE
   const [firstDosageTime, setFirstDosageTime] = useState(new Date(userMedication.firstDosageTime));
   const [errors, setErrors] = useState({});
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const dispatch = useDispatch();
 
   const padZero = (num) => num.toString().padStart(2, '0');
   const formatTime = (date) => {
@@ -46,6 +49,7 @@ const EditUserMedicationModal = ({ closeModal, userMedication, onUserMedicationE
     }
 
     try {
+      dispatch(setLoading(true))
       const firstDosageTimeISO = firstDosageTime.toISOString();
       await api.put(`/user-medications/${userMedication.medication.id}`, {
         idMedication: userMedication.medication.id,
@@ -67,6 +71,9 @@ const EditUserMedicationModal = ({ closeModal, userMedication, onUserMedicationE
     } catch (error) {
       console.log(error.response.data);
       showErrorToast(t("medications.errorUpdatingMedication"));
+    }
+    finally{
+      dispatch(setLoading(false))
     }
   };
 
