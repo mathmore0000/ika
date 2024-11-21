@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     StyleSheet,
     Text,
@@ -46,6 +46,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
 
     const [isEditPhotoModalVisible, setIsEditPhotoModalVisible] = useState(false);
+    const imageRef = useRef(null); // Cria a referência
 
     useEffect(() => {
         if (!dateOfBirth) return;
@@ -177,9 +178,9 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
     };
 
     // Função para escolher foto da galeria
-    const handleChoosePhoto = async () => {
-        console.log("handleChoosePhoto");
+    const handleChoosePhoto = async () => {        
         try {
+            imageRef.current?.setLoading(true)
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
@@ -199,12 +200,15 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             console.log("Erro ao escolher foto: ", error);
             showErrorToast(t("user.choosePhotoError"));
         }
+        finally{
+            imageRef.current?.setLoading(false)
+        }
     };
 
     // Função para tirar foto com a câmera
     const handleTakePhoto = async () => {
-        console.log("handleTakePhoto");
         try {
+            imageRef.current?.setLoading(true)
             let result = await ImagePicker.launchCameraAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
@@ -229,6 +233,9 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             }
             showErrorToast(t("user.takePhotoError"));
             console.log("Erro ao tirar foto:" + error);
+        }
+        finally{
+            imageRef.current?.setLoading(false)
         }
     };
 
@@ -292,6 +299,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             <View className="flex flex-col items-center">
                 <TouchableOpacity onPress={handleChoosePhoto}>
                     <RemoteImage
+                        ref={imageRef}                    
                         uri={profilePicture}
                         style={styles.profileImage}
                     />

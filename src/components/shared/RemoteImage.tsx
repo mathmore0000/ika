@@ -1,33 +1,45 @@
-import React from "react";
-import { Image, StyleSheet, View, ActivityIndicator } from "react-native";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { Image, StyleSheet, View, ActivityIndicator, ViewStyle, ImageStyle } from "react-native";
 
 interface RemoteImageProps {
   uri: string | null;
   placeholder?: any; // Imagem padrão
-  style?: object;
+  style?: ImageStyle | ViewStyle;
+}
+
+export interface RemoteImageRef {
+  setLoading: (value: boolean) => void; // Método para recarregar a imagem
+  setError: (value: boolean) => void; // Método para redefinir erros
 }
 
 const default_placeholder = require("@/assets/images/default-user-image.jpg");
 
-const RemoteImage: React.FC<RemoteImageProps> = ({ uri, placeholder, style }) => {
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(false);
+const RemoteImage = forwardRef<RemoteImageRef, RemoteImageProps>(
+  ({ uri, placeholder, style }, ref) => {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-  return (
-    <View style={[styles.container, style]}>
-      {loading && <ActivityIndicator style={styles.loader} color="#666" />}
-      <Image
-        source={error || !uri ? (!placeholder ? default_placeholder : placeholder) : { uri }}
-        style={[styles.image, style]}
-        onLoadEnd={() => setLoading(false)}
-        onError={() => {
-          setLoading(false);
-          setError(true);
-        }}
-      />
-    </View>
-  );
-};
+    useImperativeHandle(ref, () => ({
+      setLoading: setLoading,
+      setError: setError,
+    }));
+
+    return (
+      <View style={[styles.container, style]}>
+        {loading && <ActivityIndicator style={styles.loader} color="#666" />}
+        <Image
+          source={error || !uri ? placeholder || default_placeholder : { uri }}
+          style={[styles.image, style]}
+          onLoadEnd={() => setLoading(false)}
+          onError={() => {
+            setLoading(false);
+            setError(true);
+          }}
+        />
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {
