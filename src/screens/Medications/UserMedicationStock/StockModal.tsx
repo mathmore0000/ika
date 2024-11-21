@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import Icon from "react-native-vector-icons/AntDesign";
 import InputButtonComponent from "@/components/forms/InputButton";
 import TextInputComponent from "@/components/forms/TextInput";
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/store/loaderSlice';
 
 const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
   const { t } = useTranslation();
@@ -16,6 +18,7 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
   const [expirationDate, setExpirationDate] = useState(new Date());
   const [errors, setErrors] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSaveStock = async () => {
     const newErrors = {};
@@ -28,6 +31,7 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
     }
 
     try {
+      dispatch(setLoading(true))
       await api.post("/user-medication-stocks", {
         userMedicationId: userMedicationId,
         quantityStocked: parseInt(quantityStocked),
@@ -38,6 +42,9 @@ const StockModal = ({ closeModal, userMedicationId, fetchStock }) => {
       closeModal();
     } catch (error) {
       showErrorToast(t("medications.errorAddingStock"));
+    }
+    finally{
+      dispatch(setLoading(false))
     }
   };
 

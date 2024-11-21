@@ -12,6 +12,8 @@ import { cancelMedicationRemindersForNextHour } from "@/utils/alarm"
 import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { getDateAndHour } from "@/utils/date";
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/store/loaderSlice';
 
 const minutesTimeBetweenRelation = { 0.5: 30, 1: 60 };
 const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTaken }) => {
@@ -22,9 +24,10 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
   const [video, setVideo] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLocalLoading] = useState(false);
   const [isSelectStockModalVisible, setIsSelectStockModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false); // Adicionado
+  const dispatch = useDispatch();
 
   const onRefresh = () => { // Adicionado
     setRefreshing(true);
@@ -49,7 +52,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
   const fetchStocks = async (page = currentPage, size = 10) => {
     if (loading || page >= totalPages) return;
 
-    setLoading(true);
+    setLocalLoading(true);
     try {
       const response = await api.get(`/user-medication-stocks/valid/${dose.medication.id}`, { params: { page, size } });
       setStocks((prevStocks) => [...prevStocks, ...response.data.content]);
@@ -58,7 +61,7 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
       console.error(t("medications.errorLoadingStocks"), error);
       showErrorToast(t("user.userReportError"));
     } finally {
-      setLoading(false);
+      setLocalLoading(false);
     }
   };
 
@@ -83,14 +86,18 @@ const TakeMedicationModal = ({ isVisible, closeModal, dose, handleMedicationTake
 
   const pickVideoFromCamera = async () => {
     console.log("pegando...")
+    dispatch(setLoading(true))
     let result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Videos });
     if (!result.cancelled) setVideo(result.assets[0].uri);
+    dispatch(setLoading(false))
     console.log("pego", video)
   };
 
   const pickVideoFromGallery = async () => {
+    dispatch(setLoading(true))
     let result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Videos });
     if (!result.canceled) setVideo(result.assets[0].uri);
+    dispatch(setLoading(false))
   };
 
   const handleSave = async () => {
