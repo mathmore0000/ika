@@ -13,6 +13,8 @@ import * as Device from "expo-device";
 import NetInfo from "@react-native-community/netinfo";
 import Constants from "expo-constants";
 import { useTranslation } from 'react-i18next';
+import { Provider } from 'react-redux';
+import store from '@/store/main';
 
 import SettingsScreen from "@/screens/SettingsScreen";
 import CalendarScreen from "@/screens/CalendarScreen";
@@ -26,6 +28,7 @@ import LoadingScreen from "@/screens/_aux/LoadingScreen";
 import VideoFilterScreen from "@/screens/VideoFilterScreen";
 import AccountScreen from "@/screens/Settings/AccountScreen";
 import NoInternetScreen from "@/screens/NoInternetScreen";
+import Loading from '@/components/shared/Loading';
 
 let checkAuth = () => { };
 
@@ -106,19 +109,22 @@ function App() {
   function MainStack() {
     const { t } = useTranslation();
     return (
-      <Stack.Navigator>
-        <Stack.Screen name="Calendar" options={{ headerShown: false }} component={CalendarScreen} />
-        <Stack.Screen name="Settings" options={{ headerShown: false }} component={SettingsScreen} />
-        <Stack.Screen name="Notifications" options={{ headerShown: false }} component={NotificationsScreen} />
-        <Stack.Screen name="NotificationDetails"
-          options={({ route }) => ({ title: t(`title.${route.name.toLowerCase()}`) })} component={NotificationDetailsScreen} />
-        <Stack.Screen name="Responsibles"
-          options={({ route }) => ({ title: t(`title.${route.name.toLowerCase()}`) })} component={ResponsiblesScreen} />
-        <Stack.Screen name="Medications" options={{ headerShown: false }} component={MedicationsScreen} />
-        <Stack.Screen name="Videos" options={{ headerShown: false }} component={VideoFilterScreen} />
-        <Stack.Screen name="Account"
-          options={({ route }) => ({ title: t(`title.${route.name.toLowerCase()}`) })} component={AccountScreen} />
-      </Stack.Navigator>
+      <Provider store={store}>
+        <Loading />
+        <Stack.Navigator>
+          <Stack.Screen name="Calendar" options={{ headerShown: false }} component={CalendarScreen} />
+          <Stack.Screen name="Settings" options={{ headerShown: false }} component={SettingsScreen} />
+          <Stack.Screen name="Notifications" options={{ headerShown: false }} component={NotificationsScreen} />
+          <Stack.Screen name="NotificationDetails"
+            options={({ route }) => ({ title: t(`title.${route.name.toLowerCase()}`) })} component={NotificationDetailsScreen} />
+          <Stack.Screen name="Responsibles"
+            options={({ route }) => ({ title: t(`title.${route.name.toLowerCase()}`) })} component={ResponsiblesScreen} />
+          <Stack.Screen name="Medications" options={{ headerShown: false }} component={MedicationsScreen} />
+          <Stack.Screen name="Videos" options={{ headerShown: false }} component={VideoFilterScreen} />
+          <Stack.Screen name="Account"
+            options={({ route }) => ({ title: t(`title.${route.name.toLowerCase()}`) })} component={AccountScreen} />
+        </Stack.Navigator>
+      </Provider>
     );
   }
 
