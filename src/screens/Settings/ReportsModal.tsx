@@ -11,6 +11,8 @@ import { Picker } from '@react-native-picker/picker';
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/AntDesign";
 import DropdownComponent from '@/components/forms/Dropdown';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/store/loaderSlice';
 
 interface ReportsModalProps {
     visible: boolean;
@@ -19,9 +21,9 @@ interface ReportsModalProps {
 
 const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1); // Mês atual
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear()); // Ano atual
-    const [loading, setLoading] = useState(false);
 
     const months = [
         { label: 'Janeiro', value: 1 },
@@ -52,7 +54,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
 
 
     const handleGenerateUserReport = async () => {
-        setLoading(true);
+        dispatch(setLoading(true))
         // Envie a requisição para gerar o PDF
         try {
             const response = await api.get('/reports/user', {
@@ -92,13 +94,13 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             console.log("Erro: ", error)
         }
         finally {
-            setLoading(false);
+            dispatch(setLoading(false))
         }
 
     };
 
     const handleGenerateResponsibleReport = async () => {
-        setLoading(true);
+        dispatch(setLoading(true))
         // Envie a requisição para gerar o PDF
         try {
             const response = await api.get('/reports/responsible', {
@@ -138,7 +140,7 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
             console.log("Erro: ", error)
         }
         finally {
-            setLoading(false);
+            dispatch(setLoading(false))
         }
 
     };
@@ -184,7 +186,6 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
                             <TouchableOpacity
                                 className="button-cancel flex-row w-full"
                                 onPress={handleGenerateUserReport}
-                                disabled={loading}
                             >
                                 <Icon name="filetext1" color="#23527c" size={20} />
                                 <Text className="font-semibold text-primary p-2">{t('reports.userReport')}</Text>
@@ -193,14 +194,12 @@ const ReportsModal: React.FC<ReportsModalProps> = ({ visible, onClose }) => {
                             <TouchableOpacity
                                 className="button-confirm flex-row w-full"
                                 onPress={handleGenerateResponsibleReport}
-                                disabled={loading}
                             >
                                 <Icon name="filetext1" color="#fff" size={20} />
                                 <Text className="font-semibold text-white p-2">{t('reports.responsibleReport')}</Text>
                             </TouchableOpacity>
                         </View>
 
-                        {loading && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 10 }} />}
 
                     </View>
                 </View>
