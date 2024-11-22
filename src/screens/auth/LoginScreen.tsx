@@ -24,10 +24,8 @@ import { setEmitFlags } from "typescript";
 const Login = ({ navigation, onLoginSuccess }) => {
   const { t } = useTranslation();
 
-  const [email, onChangeEmail] = React.useState(
-    "matheusmoreira2004@live.com"
-  );
-  const [password, onChangePassword] = React.useState("password12345");
+  const [email, onChangeEmail] = React.useState("");
+  const [password, onChangePassword] = React.useState("");
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
   const clearFields = () => {
@@ -150,7 +148,7 @@ const Login = ({ navigation, onLoginSuccess }) => {
         </View>
       </View>
 
-      {/* Condicional para exibir a View de rodapé apenas quando o teclado estiver fechado */}      
+      {/* Condicional para exibir a View de rodapé apenas quando o teclado estiver fechado */}
       <View className="flex items-center justify-center bg-white w-full rounded-t-[20rem] h-24" />
     </View>
   );
