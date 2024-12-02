@@ -57,7 +57,7 @@
     "dosage": "Dosagem",
     "selectedActiveIngredient": "Ingrediente ativo selecionado: {{ingredient}}",
     "selectActiveIngredientButton": "Selecionar Ingrediente Ativo",
-    "maxTakingTime": "Tempo Máximo de Tomação: {{time}} hora(s)",
+    "maxTakingTime": "Tempo Máximo de injestão: {{time}} hora(s)",
     "timeBetweenDoses": "Tempo entre doses: {{hours}} horas",
     "band": "Tarja: {{band}}",
     "save": "Salvar",
